@@ -29,14 +29,20 @@ Click on your project → **Variables** tab → Add these:
 ```env
 MONGODB_URI=mongodb+srv://PROJEXIA:diGKz0RyyjxGBdRQ@projexia.oo8nuhi.mongodb.net/?appName=PROJEXIA
 
+SENDGRID_API_KEY=<your-sendgrid-api-key-from-env-file>
+
 EMAIL_USER=alphi.fidelino11@gmail.com
-EMAIL_PASS=jsbuueebqdjjefef
 
 SESSION_SECRET=akjwdbawhdoawhd2uheopi3qjranwdonawdhnqw9qu432hj542u5o13nj3p13u-91u5rpij1508u1h51l3hr98wefy024rhlkwf8792fy8o
 
 NODE_ENV=production
 PORT=3000
 ```
+
+**Important**: 
+- Get the `SENDGRID_API_KEY` value from your `.env` file
+- Railway blocks SMTP (like Render), so we use SendGrid API instead
+- SendGrid uses HTTPS, which works on all hosting platforms
 
 ### 4. Configure Build Settings (if needed)
 Railway should auto-detect, but if not:
@@ -65,12 +71,13 @@ Railway will automatically deploy. Watch the logs in the **Deployments** tab.
 
 ---
 
-## 📧 Email Will Work!
+## 📧 Email Configuration
 
-Since Railway allows SMTP, your Gmail configuration will work perfectly:
-- No need for SendGrid
-- No need for API keys
-- Just use your existing Gmail App Password
+**UPDATE**: Railway also blocks SMTP ports (like Render), so we use **SendGrid API** instead:
+- ✅ Uses HTTPS (not blocked)
+- ✅ Free tier: 100 emails/day
+- ✅ More reliable than SMTP
+- ✅ Already configured in the code
 
 ---
 
