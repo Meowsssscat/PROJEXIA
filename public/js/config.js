@@ -6,7 +6,8 @@
 
 // API Configuration
 const API_CONFIG = {
-    BASE_URL: 'http://localhost:3000',
+    // Use current domain in production, localhost in development
+    BASE_URL: window.location.origin,
     ENDPOINTS: {
         SIGNUP: '/api/auth/signup',
         SIGNIN: '/api/auth/signin',
