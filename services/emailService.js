@@ -1,12 +1,21 @@
 const nodemailer = require('nodemailer');
 
-// Create transporter
+// Create transporter with better configuration
 const transporter = nodemailer.createTransport({
   service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false, // Use TLS
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS
-  }
+  },
+  tls: {
+    rejectUnauthorized: false
+  },
+  connectionTimeout: 10000, // 10 seconds
+  greetingTimeout: 10000,
+  socketTimeout: 10000
 });
 
 // Generate 5-digit OTP
@@ -164,12 +173,17 @@ const sendOTPEmail = async (email, otp) => {
   };
 
   try {
-    await transporter.sendMail(mailOptions);
-    console.log(`OTP sent to ${email}`);
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`✅ OTP sent to ${email}`);
+    console.log('Message ID:', info.messageId);
+    console.log('Response:', info.response);
     return true;
   } catch (error) {
-    console.error('Email sending error:', error);
-    throw new Error('Failed to send verification email');
+    console.error('❌ Email sending error:', error.message);
+    console.error('Error code:', error.code);
+    console.error('Error command:', error.command);
+    console.error('Full error:', JSON.stringify(error, null, 2));
+    throw new Error(`Failed to send verification email: ${error.message}`);
   }
 };
 
@@ -343,12 +357,17 @@ const sendPasswordResetEmail = async (email, otp) => {
   };
 
   try {
-    await transporter.sendMail(mailOptions);
-    console.log(`Password reset OTP sent to ${email}`);
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`✅ Password reset OTP sent to ${email}`);
+    console.log('Message ID:', info.messageId);
+    console.log('Response:', info.response);
     return true;
   } catch (error) {
-    console.error('Email sending error:', error);
-    throw new Error('Failed to send password reset email');
+    console.error('❌ Email sending error:', error.message);
+    console.error('Error code:', error.code);
+    console.error('Error command:', error.command);
+    console.error('Full error:', JSON.stringify(error, null, 2));
+    throw new Error(`Failed to send password reset email: ${error.message}`);
   }
 };
 
