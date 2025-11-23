@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Get Started - Projexia</title>
+    <link rel="stylesheet" href="/css/common.css" />
+    <link rel="stylesheet" href="/css/publicHeaderFooter.css" />
+    <link rel="stylesheet" href="/css/auth.css" />
+  </head>
+  <body>
+    <%- include('partials/publicHeader') %>
+    
+    <div class="auth-page">
+      <div class="auth-container">
+        
+        <!-- Left Side - Info -->
+        <div class="auth-info">
+          <div class="auth-info__badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            Free Account
+          </div>
+          
+          <h1 class="auth-info__title">Start Your Project Journey</h1>
+          <p class="auth-info__subtitle">
+            Join the CCS community and showcase your innovative projects to fellow students and faculty.
+          </p>
+          
+          <div class="auth-info__features">
+            <div class="feature-item">
+              <div class="feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                </svg>
+              </div>
+              <div class="feature-content">
+                <h3>Showcase Projects</h3>
+                <p>Upload and display your academic projects with images and descriptions</p>
+              </div>
+            </div>
+            
+            <div class="feature-item">
+              <div class="feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="2" y1="12" x2="22" y2="12"></line>
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+              </div>
+              <div class="feature-content">
+                <h3>Build Network</h3>
+                <p>Connect with batchmates and discover projects across all year levels</p>
+              </div>
+            </div>
+            
+            <div class="feature-item">
+              <div class="feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+              </div>
+              <div class="feature-content">
+                <h3>Get Recognition</h3>
+                <p>Receive likes, comments, and feedback from the CCS community</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Right Side - Form -->
+        <div class="auth-form-container">
+          <div class="auth-form__header">
+            <h2>Create Account</h2>
+            <p>Fill in your details to get started</p>
+          </div>
+          
+          <div id="errorMessage" class="form-error"></div>
+          <div id="successMessage" class="form-success"></div>
+          
+          <form id="signupForm" class="auth-form" novalidate>
+            <div class="form-group">
+              <label for="fullName">Full Name</label>
+              <input 
+                type="text" 
+                id="fullName" 
+                name="fullName" 
+                required 
+                placeholder="Juan Dela Cruz"
+                autocomplete="name"
+              />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="program">Program</label>
+                <select id="program" name="program" required>
+                  <option value="">Select Program</option>
+                  <option value="BSIT">BSIT</option>
+                  <option value="BSIS">BSIS</option>
+                  <option value="BSCS">BSCS</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="year">Year Level</label>
+                <select id="year" name="year" required>
+                  <option value="">Select Year</option>
+                  <option value="1st">1st Year</option>
+                  <option value="2nd">2nd Year</option>
+                  <option value="3rd">3rd Year</option>
+                  <option value="4th">4th Year</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="email">Institutional Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                placeholder="juan.delacruz@lspu.edu.ph"
+                pattern=".+@lspu\.edu\.ph$"
+                autocomplete="email"
+              />
+              <small class="form-hint">Use your LSPU institutional email</small>
+            </div>
+
+            <div class="form-group">
+              <label for="password">Create Password</label>
+              <input 
+                type="password" 
+                id="password" 
+                name="password" 
+                required 
+                placeholder="At least 8 characters"
+                autocomplete="new-password"
+              />
+              <small class="form-hint">At least 8 characters with one special character</small>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">
+              Create Account
+            </button>
+            
+            <div class="loading" id="loading" style="display: none; text-align: center; color: var(--color-neutral);">
+              Creating account...
+            </div>
+          </form>
+          
+          <div class="auth-divider">or</div>
+          
+          <div class="auth-link">
+            Already have an account? <a href="/signin">Sign In</a>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+    
+    <%- include('partials/publicFooter') %>
+
+    <script src="/js/config.js"></script>
+    <script src="/js/passwordToggle.js"></script>
+    <script src="/js/publicHeaderFooter.js"></script>
+    <script src="/js/signup.js"></script>
+  </body>
+</html>

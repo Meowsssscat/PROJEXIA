@@ -1,0 +1,53 @@
+
+
+
+<header class="app-header" role="banner">
+  <div class="app-header__inner">
+    <a class="app-header__logo" href="/home" aria-label="Projexia Home">
+      <span class="logo-text">PROJEXIA</span>
+    </a>
+    <div class="app-header__right">
+      
+    </div>
+  </div>
+</header>
+
+<nav class="app-nav" aria-label="Primary">
+  <ul class="app-nav__list">
+    <li class="app-nav__item">
+      <a href="/home" class="app-nav__link" data-route="home" aria-label="Home">Home</a>
+    </li>
+    <li class="app-nav__item">
+      <a href="/profile" class="app-nav__link" data-route="profile" aria-label="Profile">Profile</a>
+    </li>
+
+    <li class="app-nav__item">
+      <div class="notification-wrapper">
+        <button class="app-nav__link" id="notifBtn" aria-label="Notifications">Notifications</button>
+
+        <div id="notifDropdown" class="notif-dropdown" hidden>
+          <div class="notif-header">
+            <span>Notifications</span>
+            <button id="clearAllNotif">Clear All</button>
+          </div>
+          <div id="notifList" class="notif-list"></div>
+        </div>
+      </div>
+    </li>
+
+    <li class="app-nav__item">
+      <a href="/about" class="app-nav__link" data-route="about" aria-label="About">About</a>
+    </li>
+    
+    <li class="app-nav__item app-nav__item--menu">
+      <button class="app-nav__link" id="navMenuButton" aria-haspopup="true" aria-expanded="false" aria-controls="navDropdown">
+        Menu
+      </button>
+      <div class="app-nav__dropdown" id="navDropdown" role="menu" hidden>
+        <button class="app-nav__dropdown-item" data-action="settings" role="menuitem">Settings</button>
+        <button class="app-nav__dropdown-item" data-action="signout" role="menuitem">Sign out</button>
+      </div>
+    </li>
+  </ul>
+</nav>
+

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile - Projexia</title>
+    <link rel="stylesheet" href="/css/common.css" />
+    <link rel="stylesheet" href="/css/headerAndNavigationBar.css" />
+    <link rel="stylesheet" href="/css/footer.css" />
+    <link rel="stylesheet" href="/css/modal.css" />
+    <link rel="stylesheet" href="/css/otherProfile.css">
+    
+  </head> 
+  <body> 
+    <%- include('headerAndNavigationBar') %>
+    <main>
+      
+      <section class="profile-header" aria-label="User profile">
+        <div class="profile-header__details">
+          <h1><%= userToVisit.fullName %></h1>
+          <p class="profile-header__meta">
+            <span><%= userToVisit.program %></span>
+            <span aria-hidden="true">•</span>
+            <span><%= userToVisit.year %> Year</span>
+          </p>
+          <% if (userToVisit.lastProfileEdit) { %>
+          <p class="profile-last-edit">
+            Last edited: <%= new Date(userToVisit.lastProfileEdit).toDateString() %>
+          </p>
+          <% } %>
+        </div>
+      </section>
+
+      <section class="profile-projects" aria-label="User projects">
+        <h2><%= userToVisit.fullName %>'s Projects</h2>
+        <div id="projectsContainer" aria-live="polite">
+          <% if (Object.keys(data).length === 0) { %>
+            <p class="no-projects">
+              This user has not uploaded any projects yet.
+            </p>
+          <% } else { %>
+
+            <% for (let id in data) { %>
+            <a href="/project/<%= id %>" class="project-link">
+              <div class="project">
+                <img src="<%= data[id].projectThumbnail %>" alt="<%= data[id].projectName %> thumbnail">
+                <h3><%= data[id].projectName %></h3>
+                
+                <div class="tech-list">
+                  <% data[id].technologies.forEach(tech => { %>
+                    <span class="tech-item"><%= tech %></span>
+                  <% }) %>
+                </div>
+
+                <div class="project-stats">
+                  <div class="stat-item">
+                    <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                    <span class="stat-count"><%= data[id].likeCount %></span>
+                  </div>
+                  
+                  <div class="stat-item">
+                    <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span class="stat-count"><%= data[id].commentCount %></span>
+                  </div>
+                  
+                  <div class="stat-item">
+                    <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    <span class="stat-count"><%= data[id].viewCount %></span>
+                  </div>
+                </div>
+              </div>
+            </a>
+            <% } %>
+          <% } %>
+        </div>
+      </section>
+
+
+
+
+    </main>
+
+    <%- include('partials/footer') %>
+    <script src="/js/config.js"></script>
+    <script src="/js/modal.js"></script>
+    <script src="/js/headerAndNavigationBar.js"></script>
+    <script src="/js/footer.js"></script>
+
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

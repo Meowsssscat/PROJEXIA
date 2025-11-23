@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile - Projexia</title>
+    <link rel="stylesheet" href="/css/common.css" />
+    <link rel="stylesheet" href="/css/headerAndNavigationBar.css" />
+    <link rel="stylesheet" href="/css/footer.css" />
+    <link rel="stylesheet" href="/css/modal.css" />
+    <link rel="stylesheet" href="/css/profile.css" />
+  </head> 
+  <body> 
+    <%- include('headerAndNavigationBar') %>
+    <main>
+      <section class="profile-header" aria-label="User profile">
+        <div class="profile-header__details">
+          <h1 id="profileFullName"><%= currentUser.fullName %></h1>
+          <p class="profile-header__meta">
+            <span id="profileProgram"><%= currentUser.program %></span>
+            <span aria-hidden="true">•</span>
+            <span id="profileYear"><%= currentUser.year %> Year</span>
+          </p>
+          <div class="profile-header__actions">
+            <button class="btn-secondary" id="editProfileBtn" type="button" data-last-edit="<%= currentUser.lastProfileEdit %>">Edit profile</button>
+
+            <a class="btn-primary" id="uploadProjectBtn" href="/upload">Upload project</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="profile-projects" aria-label="Uploaded projects">
+        <h2>Your Projects</h2>
+        <div id="projectsList" class="projects-list" aria-live="polite"></div>
+      </section>
+
+
+
+      <div id="projectsContainer">
+        
+        <% for (let id in data) { %>
+
+        <a href="/project/<%= id %>" class="project-link">
+          <div class="project" 
+               data-program="<%= data[id].program %>" 
+               data-year="<%= data[id].year %>"
+               data-technologies="<%= data[id].technologies.join(',') %>"
+               data-project-name="<%= data[id].projectName.toLowerCase() %>">
+
+            <!-- Thumbnail -->
+            <img src="<%= data[id].projectThumbnail %>" alt="Project Thumbnail">
+
+            <!-- Project Name -->
+            <h3><%= data[id].projectName %></h3>
+
+            <!-- Technologies -->
+            <div class="tech-list">
+              <% data[id].technologies.forEach(tech => { %>
+                <p class="tech-item"><%= tech %></p>
+              <% }) %>
+            </div>
+
+            <!-- Stats (Likes, Comments, Views) -->
+            <div class="project-stats">
+              <div class="stat-item">
+                <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+                <span class="stat-count"><%= data[id].likeCount %></span>
+              </div>
+              
+              <div class="stat-item">
+                <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span class="stat-count"><%= data[id].commentCount %></span>
+              </div>
+              
+              <div class="stat-item">
+                <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <span class="stat-count"><%= data[id].viewCount %></span>
+              </div>
+            </div>
+
+          </div>
+        </a>
+
+        <% } %>
+
+      </div>
+
+            <!-- Warning Modal -->
+            <div id="warningModal" class="modal">
+              <div class="modal-content">
+                <h2>Notice</h2>
+                <p id="warningMessage"></p>
+                <div class="modal-actions">
+                  <button id="cancelEdit" class="btn-secondary">Cancel</button>
+                  <button id="proceedEdit" class="btn-primary">Proceed</button>
+                </div>
+              </div>
+            </div>
+
+
+
+
+                    
+              <!-- Save Changes Confirmation Modal -->
+              <div id="submitWarningModal" class="modal">
+                <div class="modal-content">
+                  <h2>Confirm Save</h2>
+                  <p id="submitWarningMessage">Are you sure you want to save changes? You can only edit your profile once every 30 days.</p>
+                  <div class="modal-actions">
+                    <button id="cancelSubmit" class="btn-secondary">Cancel</button>
+                    <button id="confirmSubmit" class="btn-primary">Confirm</button>
+                  </div>
+                </div>
+              </div>
+
+
+
+
+              <!-- No Changes Warning Modal -->
+              <div id="noChangesModal" class="modal" style="z-index: 1050;">
+                <div class="modal-content">
+                  <h2>Notice</h2>
+                  <p id="noChangesMessage">You didn’t make any changes. Edit credit will not be used.</p>
+                  <div class="modal-actions">
+                    <button id="closeNoChanges" class="btn-primary">OK</button>
+                  </div>
+                </div>
+              </div>
+
+
+
+
+
+                  <!-- Edit Profile Modal -->
+              <div id="editProfileModal" class="modal">
+                <div class="modal-content">
+                  <span class="close-modal" id="closeEditModal">&times;</span>
+                  <h2>Edit Profile</h2>
+
+                  <form action="/editProfile" method="POST" class="edit-profile-form">
+                    <label for="editFullName">Full Name</label>
+                    <input type="text" id="editFullName" name="fullName" value="<%= currentUser.fullName %>" required>
+
+                    <label for="editProgram">Program</label>
+                    <select id="editProgram" name="program" required>
+                      <option value="BSIT" <%= currentUser.program === 'BSIT' ? 'selected' : '' %>>BSIT</option>
+                      <option value="BSIS" <%= currentUser.program === 'BSIS' ? 'selected' : '' %>>BSIS</option>
+                      <option value="BSCS" <%= currentUser.program === 'BSCS' ? 'selected' : '' %>>BSCS</option>
+                    </select>
+
+                    <label for="editYear">Year Level</label>
+                    <select id="editYear" name="year" required>
+                      <option value="1st" <%= currentUser.year === '1st' ? 'selected' : '' %>>1st</option>
+                      <option value="2nd" <%= currentUser.year === '2nd' ? 'selected' : '' %>>2nd</option>
+                      <option value="3rd" <%= currentUser.year === '3rd' ? 'selected' : '' %>>3rd</option>
+                      <option value="4th" <%= currentUser.year === '4th' ? 'selected' : '' %>>4th</option>
+                    </select>
+
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                  </form>
+                </div>
+              </div>
+
+    </main>
+
+    <%- include('partials/footer') %>
+    <script src="/js/config.js"></script>
+    <script src="/js/modal.js"></script>
+    <script src="/js/headerAndNavigationBar.js"></script>
+    <script src="/js/footer.js"></script>
+    <script src="/js/profile.js"></script>
+
+  <script>
+  const USER_ID = "<%= currentUser._id %>";
+
+</script>
+
+  </body>
+</html>
+

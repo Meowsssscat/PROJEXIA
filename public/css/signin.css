@@ -1,0 +1,175 @@
+main {
+    max-width: 900px;
+}
+
+.signin-hero {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+}
+
+.signin-hero h1 {
+    font-size: 2.3rem;
+    line-height: 1.2;
+}
+
+.signin-hero p {
+    max-width: 520px;
+    color: #8d8f8c;
+    line-height: 1.6;
+}
+
+.signin-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem;
+}
+
+.signin-highlights {
+    border-radius: 1.2rem;
+    border: 1px solid #c93332;
+    padding: 2.25rem;
+    background: #f2f1ed;
+    display: grid;
+    gap: 1.25rem;
+}
+
+.signin-highlights h2 {
+    font-size: 1.6rem;
+    color: #c93332;
+}
+
+.signin-highlights ul {
+    list-style: none;
+    display: grid;
+    gap: 0.85rem;
+    padding: 0;
+}
+
+.signin-highlights li {
+    color: #141414;
+    display: grid;
+    gap: 0.35rem;
+}
+
+.signin-panel {
+    border-radius: 1.2rem;
+    padding: 2.25rem;
+    background: #141414;
+    color: #f2f1ed;
+    display: grid;
+    gap: 1.5rem;
+}
+
+.signin-panel form {
+    display: grid;
+    gap: 1.25rem;
+}
+
+.signin-panel label {
+    color: #f2f1ed;
+}
+
+.signin-panel input {
+    background: #f2f1ed;
+}
+
+.signup-link {
+    text-align: center;
+    font-size: 0.95rem;
+    color: #f09554;
+}
+
+.signup-link a {
+    color: #f09554;
+}
+
+@media (max-width: 860px) {
+    .signin-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .signin-panel,
+    .signin-highlights {
+        padding: 1.75rem;
+    }
+}
+
+
+/* Forgot Password Link */
+.forgot-password-link {
+    text-align: right;
+    margin-bottom: 1rem;
+}
+
+.forgot-password-link a {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.forgot-password-link a:hover {
+    color: var(--accent-strong);
+    text-decoration: underline;
+}
+
+/* Auth Step Styles for Forgot Password */
+.auth-step {
+    display: none;
+}
+
+.auth-step.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.step-description {
+    color: var(--neutral);
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+}
+
+.form-hint {
+    display: block;
+    margin-top: 0.5rem;
+    color: var(--neutral);
+    font-size: 0.85rem;
+}
+
+.success-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    background: linear-gradient(135deg, #4caf50, #45a049);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: white;
+    animation: scaleIn 0.5s ease;
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0);
+    }
+    to {
+        transform: scale(1);
+    }
+}

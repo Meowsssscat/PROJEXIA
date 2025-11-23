@@ -1,0 +1,439 @@
+/* Upload Project Page Styles */
+
+.upload-main {
+    min-height: calc(100vh - 200px);
+    padding: 3rem 2rem;
+    background: var(--base);
+}
+
+.upload-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.upload-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.upload-header h1 {
+    font-size: 2.5rem;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+}
+
+.upload-header p {
+    font-size: 1.1rem;
+    color: var(--neutral);
+}
+
+/* Form Styles */
+.upload-form {
+    background: white;
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.form-section {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(141, 143, 140, 0.15);
+}
+
+.form-section:last-of-type {
+    border-bottom: none;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.required {
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.form-group input[type="text"],
+.form-group input[type="url"],
+.form-group textarea {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid rgba(141, 143, 140, 0.2);
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.file-input {
+    width: 100%;
+    padding: 1rem;
+    border: 2px dashed rgba(141, 143, 140, 0.3);
+    border-radius: 10px;
+    background: var(--base);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.file-input:hover {
+    border-color: var(--accent);
+    background: rgba(201, 54, 46, 0.05);
+}
+
+.form-hint {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--neutral);
+}
+
+.image-counter {
+    margin-top: 0.75rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--neutral);
+}
+
+/* Technology Selection */
+.tech-selection-btn {
+    width: 100%;
+    padding: 1rem;
+    background: var(--base);
+    border: 2px solid rgba(141, 143, 140, 0.2);
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.tech-selection-btn:hover {
+    border-color: var(--accent);
+    background: rgba(201, 54, 46, 0.05);
+}
+
+.selected-techs {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tech-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--accent);
+    color: white;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.tech-tag button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 1.2rem;
+    line-height: 1;
+    padding: 0;
+    margin-left: 0.25rem;
+}
+
+/* Technology Modal */
+.tech-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(20, 20, 20, 0.75);
+    backdrop-filter: blur(4px);
+}
+
+.tech-modal.active {
+    display: flex;
+}
+
+.tech-modal-content {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    max-width: 700px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.tech-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.tech-modal-header h2 {
+    font-size: 1.75rem;
+    color: var(--ink);
+    margin: 0;
+}
+
+.tech-modal-close {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: var(--neutral);
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.tech-modal-close:hover {
+    background: var(--base);
+    color: var(--accent);
+}
+
+.tech-search {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid rgba(141, 143, 140, 0.2);
+    border-radius: 10px;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.tech-search:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.tech-checkbox {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--base);
+    border: 2px solid transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.tech-checkbox:hover {
+    background: rgba(201, 54, 46, 0.1);
+    border-color: var(--accent);
+}
+
+.tech-checkbox input {
+    margin-right: 0.5rem;
+    cursor: pointer;
+}
+
+.tech-checkbox input:checked + span {
+    font-weight: 600;
+    color: var(--accent);
+}
+
+.tech-modal-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.btn-modal {
+    padding: 0.875rem 2rem;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-modal-cancel {
+    background: var(--base);
+    color: var(--ink);
+}
+
+.btn-modal-cancel:hover {
+    background: var(--neutral);
+    color: white;
+}
+
+.btn-modal-confirm {
+    background: var(--accent);
+    color: white;
+}
+
+.btn-modal-confirm:hover {
+    background: var(--accent-strong);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(201, 54, 46, 0.3);
+}
+
+/* Submit Button */
+.btn-submit {
+    width: 100%;
+    padding: 1.25rem;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 2rem;
+}
+
+.btn-submit:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(201, 54, 46, 0.3);
+}
+
+.btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.loading {
+    text-align: center;
+    color: var(--neutral);
+    margin-top: 1rem;
+    font-weight: 500;
+}
+
+.form-error,
+.form-success {
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    display: none;
+}
+
+.form-error {
+    background: rgba(201, 54, 46, 0.1);
+    color: var(--accent);
+    border-left: 4px solid var(--accent);
+}
+
+.form-success {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+    border-left: 4px solid #28a745;
+}
+
+/* Dark Mode */
+[data-color-mode="dark"] .upload-main {
+    background: #0d0d0d;
+}
+
+[data-color-mode="dark"] .upload-form,
+[data-color-mode="dark"] .tech-modal-content {
+    background: #2a2a2a;
+}
+
+[data-color-mode="dark"] .upload-header h1,
+[data-color-mode="dark"] .section-title,
+[data-color-mode="dark"] .form-group label,
+[data-color-mode="dark"] .tech-modal-header h2 {
+    color: #f2f1ed;
+}
+
+[data-color-mode="dark"] .form-group input,
+[data-color-mode="dark"] .form-group textarea,
+[data-color-mode="dark"] .tech-search {
+    background: #1a1a1a;
+    color: #f2f1ed;
+    border-color: #444;
+}
+
+[data-color-mode="dark"] .file-input,
+[data-color-mode="dark"] .tech-selection-btn,
+[data-color-mode="dark"] .tech-checkbox {
+    background: #1a1a1a;
+    color: #f2f1ed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .upload-main {
+        padding: 2rem 1rem;
+    }
+
+    .upload-form {
+        padding: 2rem 1.5rem;
+    }
+
+    .upload-header h1 {
+        font-size: 2rem;
+    }
+
+    .tech-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tech-modal-content {
+        padding: 1.5rem;
+    }
+
+    .tech-modal-actions {
+        flex-direction: column;
+    }
+
+    .btn-modal {
+        width: 100%;
+    }
+}

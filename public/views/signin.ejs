@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign In - Projexia</title>
+    <link rel="stylesheet" href="/css/common.css" />
+    <link rel="stylesheet" href="/css/publicHeaderFooter.css" />
+    <link rel="stylesheet" href="/css/auth.css" />
+  </head>
+  <body>
+    <%- include('partials/publicHeader') %>
+    
+    <div class="auth-page">
+      <div class="auth-container">
+        
+        <!-- Left Side - Info -->
+        <div class="auth-info">
+          <div class="auth-info__badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            Secure Login
+          </div>
+          
+          <h1 class="auth-info__title">Welcome Back to Projexia</h1>
+          <p class="auth-info__subtitle">
+            Sign in to continue showcasing your projects and connecting with the CCS community.
+          </p>
+          
+          <div class="auth-info__features">
+            <div class="feature-item">
+              <div class="feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                  <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                </svg>
+              </div>
+              <div class="feature-content">
+                <h3>Your Projects</h3>
+                <p>Access and manage all your uploaded projects in one place</p>
+              </div>
+            </div>
+            
+            <div class="feature-item">
+              <div class="feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+              <div class="feature-content">
+                <h3>Community</h3>
+                <p>Engage with fellow students through likes and comments</p>
+              </div>
+            </div>
+            
+            <div class="feature-item">
+              <div class="feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+              </div>
+              <div class="feature-content">
+                <h3>Notifications</h3>
+                <p>Stay updated with real-time notifications on your projects</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Right Side - Form -->
+        <div class="auth-form-container">
+          <div class="auth-form__header">
+            <h2>Sign In</h2>
+            <p>Enter your credentials to access your account</p>
+          </div>
+          
+          <div id="errorMessage" class="form-error"></div>
+          <div id="successMessage" class="form-success"></div>
+          
+          <form id="signinForm" class="auth-form" novalidate>
+            <div class="form-group">
+              <label for="email">Institutional Email</label>
+              <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                required 
+                placeholder="juan.delacruz@lspu.edu.ph"
+                autocomplete="email"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input 
+                type="password" 
+                id="password" 
+                name="password" 
+                required 
+                placeholder="Enter your password"
+                autocomplete="current-password"
+              />
+              <div class="auth-link" style="text-align: right; margin-top: 0.5rem;">
+                <a href="/forgot-password">Forgot Password?</a>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">
+              Sign In
+            </button>
+            
+            <div class="loading" id="loading" style="display: none; text-align: center; color: var(--color-neutral);">
+              Signing in...
+            </div>
+          </form>
+          
+          <div class="auth-divider">or</div>
+          
+          <div class="auth-link">
+            Don't have an account? <a href="/signup">Get Started</a>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+    
+    <%- include('partials/publicFooter') %>
+
+    <script src="/js/config.js"></script>
+    <script src="/js/passwordToggle.js"></script>
+    <script src="/js/publicHeaderFooter.js"></script>
+    <script src="/js/signin.js"></script>
+  </body>
+</html>
+
