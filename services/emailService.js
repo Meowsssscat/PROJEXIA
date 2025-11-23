@@ -1,43 +1,28 @@
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 
-// Create transporter with Gmail SMTP (same as your working project)
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,
-  secure: false, // Use TLS
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  },
-  tls: {
-    rejectUnauthorized: false
-  }
-});
-
-// Verify configuration on startup
-transporter.verify((error, success) => {
-  if (error) {
-    console.error('❌ Email configuration error:', error.message);
-  } else {
-    console.log('✅ Email service is ready to send messages');
-  }
-});
+// Initialize SendGrid with API key
+if (process.env.SENDGRID_API_KEY) {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  console.log('✅ SendGrid initialized successfully');
+} else {
+  console.error('⚠️ SENDGRID_API_KEY not found in environment variables!');
+}
 
 // Generate 5-digit OTP
 const generateOTP = () => {
   return Math.floor(10000 + Math.random() * 90000).toString();
 };
 
-// Send OTP Email
+// Send OTP Email via SendGrid
 const sendOTPEmail = async (email, otp) => {
-  console.log('📧 Sending OTP:', otp, 'to:', email);
+  console.log('📧 Sending OTP via SendGrid:', otp, 'to:', email);
   
-  const mailOptions = {
-    from: {
-      name: 'PROJEXIA',
-      address: process.env.EMAIL_USER
-    },
+  const msg = {
     to: email,
+    from: {
+      email: process.env.EMAIL_USER || 'noreply@projexia.com',
+      name: 'PROJEXIA'
+    },
     subject: 'PROJEXIA - Email Verification Code',
     html: `
       <!DOCTYPE html>
@@ -180,27 +165,28 @@ const sendOTPEmail = async (email, otp) => {
   };
 
   try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log(`✅ OTP sent successfully to ${email}`);
-    console.log('Message ID:', info.messageId);
+    await sgMail.send(msg);
+    console.log(`✅ OTP sent successfully to ${email} via SendGrid`);
     return true;
   } catch (error) {
-    console.error('❌ Email sending error:', error.message);
-    console.error('Error code:', error.code);
+    console.error('❌ SendGrid error:', error.message);
+    if (error.response) {
+      console.error('SendGrid response:', JSON.stringify(error.response.body, null, 2));
+    }
     throw new Error(`Failed to send verification email: ${error.message}`);
   }
 };
 
-// Send Password Reset Email
+// Send Password Reset Email via SendGrid
 const sendPasswordResetEmail = async (email, otp) => {
-  console.log('📧 Sending Password Reset OTP:', otp, 'to:', email);
+  console.log('📧 Sending Password Reset OTP via SendGrid:', otp, 'to:', email);
   
-  const mailOptions = {
-    from: {
-      name: 'PROJEXIA',
-      address: process.env.EMAIL_USER
-    },
+  const msg = {
     to: email,
+    from: {
+      email: process.env.EMAIL_USER || 'noreply@projexia.com',
+      name: 'PROJEXIA'
+    },
     subject: 'PROJEXIA - Password Reset Code',
     html: `
       <!DOCTYPE html>
@@ -363,27 +349,26 @@ const sendPasswordResetEmail = async (email, otp) => {
   };
 
   try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log(`✅ Password reset OTP sent successfully to ${email}`);
-    console.log('Message ID:', info.messageId);
+    await sgMail.send(msg);
+    console.log(`✅ Password reset OTP sent successfully to ${email} via SendGrid`);
     return true;
   } catch (error) {
-    console.error('❌ Email sending error:', error.message);
-    console.error('Error code:', error.code);
+    console.error('❌ SendGrid error:', error.message);
+    if (error.response) {
+      console.error('SendGrid response:', JSON.stringify(error.response.body, null, 2));
+    }
     throw new Error(`Failed to send password reset email: ${error.message}`);
   }
 };
 
-// Verify email configuration
+// Verify SendGrid configuration
 const verifyEmailConfig = async () => {
-  try {
-    await transporter.verify();
-    console.log('✅ Email service verified and ready');
-    return true;
-  } catch (error) {
-    console.error('⚠️ Email service verification failed:', error.message);
+  if (!process.env.SENDGRID_API_KEY) {
+    console.error('⚠️ SENDGRID_API_KEY is not configured!');
     return false;
   }
+  console.log('✅ SendGrid is configured and ready');
+  return true;
 };
 
 module.exports = {
