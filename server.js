@@ -104,6 +104,17 @@ app.get('/signup', (req, res) => res.render('signup'));
 app.get('/confirmation', (req, res) => res.render('confirmation'));
 app.get('/forgot-password', (req, res) => res.render('forgotPassword'));
 
+// Debug endpoint (TEMPORARY - remove after fixing)
+app.get('/debug-env', (req, res) => {
+  res.json({
+    EMAIL_USER: process.env.EMAIL_USER || 'NOT SET',
+    EMAIL_PASS_EXISTS: !!process.env.EMAIL_PASS,
+    EMAIL_PASS_LENGTH: process.env.EMAIL_PASS?.length || 0,
+    NODE_ENV: process.env.NODE_ENV,
+    MONGODB_URI_EXISTS: !!process.env.MONGODB_URI
+  });
+});
+
 // 404 Handler
 app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' });
