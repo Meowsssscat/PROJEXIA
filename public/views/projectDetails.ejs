@@ -26,8 +26,13 @@
           
           <div class="project-meta">
             <div class="uploader-info">
-              <a href="/visit/profile/<%= uploader._id %>"><span class="uploader-name"><%= uploader.fullName %></span></a>
-              <span class="uploader-details"><%= uploader.program %> - <%= uploader.year %> Year</span>
+              <% if (uploader) { %>
+                <a href="/visit/profile/<%= uploader._id %>"><span class="uploader-name"><%= uploader.fullName %></span></a>
+                <span class="uploader-details"><%= uploader.program %> - <%= uploader.year %> Year</span>
+              <% } else { %>
+                <span class="uploader-name">Unknown User</span>
+                <span class="uploader-details">User account deleted</span>
+              <% } %>
             </div>
             <div class="upload-date">
               Uploaded on <%= new Date(project.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
