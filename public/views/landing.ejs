@@ -115,7 +115,11 @@
                         <div class="project-info">
                             <h3 class="project-name"><%= project.name %></h3>
                             <p class="project-author">
-                                by <%= project.userId.fullName %> • <%= project.userId.program %> <%= project.userId.year %>
+                                <% if (project.userId) { %>
+                                    by <%= project.userId.fullName %> • <%= project.userId.program %> <%= project.userId.year %>
+                                <% } else { %>
+                                    by Unknown User
+                                <% } %>
                             </p>
                             <div class="project-stats">
                                 <div class="stat-item">

@@ -10,9 +10,12 @@ exports.getLandingPage = async (req, res) => {
             .limit(50)
             .lean();
 
+        // Filter out projects without valid users
+        const validProjects = projects.filter(project => project.userId);
+
         // Calculate popularity score for each project
         const projectsWithPopularity = await Promise.all(
-            projects.map(async (project) => {
+            validProjects.map(async (project) => {
                 const Like = require('../models/likes');
                 const Comment = require('../models/comments');
                 const View = require('../models/views');
