@@ -7,8 +7,8 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false, // Use TLS
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
+    user: process.env.EMAIL_USER || process.env.EMAIL_HOST_USER,
+    pass: process.env.EMAIL_PASS || process.env.EMAIL_HOST_PASSWORD
   },
   tls: {
     rejectUnauthorized: false
@@ -25,11 +25,11 @@ const generateOTP = () => {
 
 // Send OTP Email
 const sendOTPEmail = async (email, otp) => {
-  console.log(otp)
+  console.log('Sending OTP:', otp, 'to:', email);
   const mailOptions = {
     from: {
       name: 'PROJEXIA',
-      address: process.env.EMAIL_USER
+      address: process.env.EMAIL_USER || process.env.EMAIL_HOST_USER
     },
     to: email,
     subject: 'PROJEXIA - Email Verification Code',
@@ -176,24 +176,21 @@ const sendOTPEmail = async (email, otp) => {
     const info = await transporter.sendMail(mailOptions);
     console.log(`✅ OTP sent to ${email}`);
     console.log('Message ID:', info.messageId);
-    console.log('Response:', info.response);
     return true;
   } catch (error) {
     console.error('❌ Email sending error:', error.message);
     console.error('Error code:', error.code);
-    console.error('Error command:', error.command);
-    console.error('Full error:', JSON.stringify(error, null, 2));
     throw new Error(`Failed to send verification email: ${error.message}`);
   }
 };
 
 // Send Password Reset Email
 const sendPasswordResetEmail = async (email, otp) => {
-  console.log('Password Reset OTP:', otp);
+  console.log('Sending Password Reset OTP:', otp, 'to:', email);
   const mailOptions = {
     from: {
       name: 'PROJEXIA',
-      address: process.env.EMAIL_USER
+      address: process.env.EMAIL_USER || process.env.EMAIL_HOST_USER
     },
     to: email,
     subject: 'PROJEXIA - Password Reset Code',
@@ -360,13 +357,10 @@ const sendPasswordResetEmail = async (email, otp) => {
     const info = await transporter.sendMail(mailOptions);
     console.log(`✅ Password reset OTP sent to ${email}`);
     console.log('Message ID:', info.messageId);
-    console.log('Response:', info.response);
     return true;
   } catch (error) {
     console.error('❌ Email sending error:', error.message);
     console.error('Error code:', error.code);
-    console.error('Error command:', error.command);
-    console.error('Full error:', JSON.stringify(error, null, 2));
     throw new Error(`Failed to send password reset email: ${error.message}`);
   }
 };
@@ -375,9 +369,9 @@ const sendPasswordResetEmail = async (email, otp) => {
 const verifyEmailConfig = async () => {
   try {
     await transporter.verify();
-    console.log('Email service is ready');
+    console.log('✅ Email service is ready');
   } catch (error) {
-    console.error('Email service error:', error);
+    console.error('⚠️ Email service error:', error.message);
   }
 };
 
