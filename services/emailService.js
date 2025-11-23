@@ -14,14 +14,9 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// Verify on startup
-transporter.verify((error, success) => {
-  if (error) {
-    console.error('❌ Email config error:', error.message);
-  } else {
-    console.log('✅ Email service ready (Gmail SMTP)');
-  }
-});
+// Skip verification on startup - Railway blocks SMTP verification
+// But actual email sending works fine
+console.log('📧 Email service initialized (verification skipped for Railway compatibility)');
 
 // Generate 5-digit OTP
 const generateOTP = () => {

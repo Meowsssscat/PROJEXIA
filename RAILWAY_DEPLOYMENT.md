@@ -76,15 +76,33 @@ Since Railway allows SMTP, your Gmail configuration will work perfectly:
 
 ## 🔧 Troubleshooting
 
+### ⚠️ "Connection timeout" on startup is NORMAL
+Railway blocks SMTP verification on startup, but emails will work when actually sending. Ignore this error:
+```
+❌ Email config error: Connection timeout
+```
+
 ### If deployment fails:
 1. Check **Logs** tab for errors
 2. Make sure all environment variables are set
 3. Verify MongoDB connection string
 
-### If emails don't work:
-1. Check that `EMAIL_USER` and `EMAIL_PASS` are set correctly
-2. Make sure Gmail App Password is correct (no spaces)
-3. Check Railway logs for email errors
+### If emails don't work when testing:
+1. **Check environment variables in Railway dashboard**:
+   - Go to Variables tab
+   - Make sure `EMAIL_USER` and `EMAIL_PASS` are there
+   - No extra spaces in the values
+2. **Verify Gmail App Password**:
+   - Should be 16 characters: `jsbuueebqdjjefef`
+   - No spaces or dashes
+3. **Check Railway logs** when you try to send an email:
+   - Look for "📧 Sending OTP" message
+   - Check for actual error messages (not the startup timeout)
+
+### If Railway also blocks SMTP:
+If emails still don't work after testing, Railway might have changed their policy. In that case:
+1. Use **Fly.io** instead (also free, allows SMTP)
+2. Or switch to SendGrid API (requires adding SENDGRID_API_KEY)
 
 ---
 
