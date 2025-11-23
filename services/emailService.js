@@ -1,12 +1,27 @@
-const sgMail = require('@sendgrid/mail');
+const nodemailer = require('nodemailer');
 
-// Initialize SendGrid
-if (process.env.SENDGRID_API_KEY) {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-  console.log('✅ SendGrid initialized');
-} else {
-  console.error('⚠️ SENDGRID_API_KEY not found!');
-}
+// Create transporter with Gmail SMTP (same as your working project)
+const transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false, // Use TLS
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  },
+  tls: {
+    rejectUnauthorized: false
+  }
+});
+
+// Verify configuration on startup
+transporter.verify((error, success) => {
+  if (error) {
+    console.error('❌ Email configuration error:', error.message);
+  } else {
+    console.log('✅ Email service is ready to send messages');
+  }
+});
 
 // Generate 5-digit OTP
 const generateOTP = () => {
@@ -15,14 +30,14 @@ const generateOTP = () => {
 
 // Send OTP Email
 const sendOTPEmail = async (email, otp) => {
-  console.log('Sending OTP via SendGrid:', otp, 'to:', email);
+  console.log('📧 Sending OTP:', otp, 'to:', email);
   
-  const msg = {
-    to: email,
+  const mailOptions = {
     from: {
-      email: 'noreply@projexia.com',
-      name: 'PROJEXIA'
+      name: 'PROJEXIA',
+      address: process.env.EMAIL_USER
     },
+    to: email,
     subject: 'PROJEXIA - Email Verification Code',
     html: `
       <!DOCTYPE html>
@@ -160,32 +175,32 @@ const sendOTPEmail = async (email, otp) => {
         </div>
       </body>
       </html>
-    `
+    `,
+    text: `PROJEXIA - Email Verification\n\nYour verification code is: ${otp}\n\nThis code will expire in 10 minutes.\nYou have 3 attempts to enter the correct code.\n\nIf you didn't request this code, please ignore this email.`
   };
 
   try {
-    await sgMail.send(msg);
+    const info = await transporter.sendMail(mailOptions);
     console.log(`✅ OTP sent successfully to ${email}`);
+    console.log('Message ID:', info.messageId);
     return true;
   } catch (error) {
-    console.error('❌ SendGrid error:', error.message);
-    if (error.response) {
-      console.error('Response body:', error.response.body);
-    }
+    console.error('❌ Email sending error:', error.message);
+    console.error('Error code:', error.code);
     throw new Error(`Failed to send verification email: ${error.message}`);
   }
 };
 
 // Send Password Reset Email
 const sendPasswordResetEmail = async (email, otp) => {
-  console.log('Sending Password Reset OTP via SendGrid:', otp, 'to:', email);
+  console.log('📧 Sending Password Reset OTP:', otp, 'to:', email);
   
-  const msg = {
-    to: email,
+  const mailOptions = {
     from: {
-      email: 'noreply@projexia.com',
-      name: 'PROJEXIA'
+      name: 'PROJEXIA',
+      address: process.env.EMAIL_USER
     },
+    to: email,
     subject: 'PROJEXIA - Password Reset Code',
     html: `
       <!DOCTYPE html>
@@ -343,30 +358,32 @@ const sendPasswordResetEmail = async (email, otp) => {
         </div>
       </body>
       </html>
-    `
+    `,
+    text: `PROJEXIA - Password Reset\n\nYour password reset code is: ${otp}\n\nThis code will expire in 10 minutes.\nYou have 3 attempts to enter the correct code.\n\nIf you didn't request a password reset, please ignore this email.`
   };
 
   try {
-    await sgMail.send(msg);
+    const info = await transporter.sendMail(mailOptions);
     console.log(`✅ Password reset OTP sent successfully to ${email}`);
+    console.log('Message ID:', info.messageId);
     return true;
   } catch (error) {
-    console.error('❌ SendGrid error:', error.message);
-    if (error.response) {
-      console.error('Response body:', error.response.body);
-    }
+    console.error('❌ Email sending error:', error.message);
+    console.error('Error code:', error.code);
     throw new Error(`Failed to send password reset email: ${error.message}`);
   }
 };
 
-// Verify SendGrid configuration
+// Verify email configuration
 const verifyEmailConfig = async () => {
-  if (!process.env.SENDGRID_API_KEY) {
-    console.error('⚠️ SENDGRID_API_KEY is not set!');
+  try {
+    await transporter.verify();
+    console.log('✅ Email service verified and ready');
+    return true;
+  } catch (error) {
+    console.error('⚠️ Email service verification failed:', error.message);
     return false;
   }
-  console.log('✅ SendGrid is configured');
-  return true;
 };
 
 module.exports = {
