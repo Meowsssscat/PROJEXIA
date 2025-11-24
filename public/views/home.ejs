@@ -49,14 +49,15 @@
       <% if (weeklyTop3 && weeklyTop3.length > 0) { %>
       <section class="section-top3">
         <div class="section-header">
-          <h2 class="section-title">
+          <div class="trending-badge">
             <svg class="trending-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
               <polyline points="17 6 23 6 23 12"></polyline>
             </svg>
-            🔥 Top 3 Trending
-          </h2>
-          <p class="section-subtitle">The 3 most popular projects</p>
+            Trending Now
+          </div>
+          <h2 class="section-title">Top 3 Most Popular Projects</h2>
+          <p class="section-subtitle">The highest-rated projects this week</p>
         </div>
 
         <div class="top3-container">
@@ -109,10 +110,8 @@
 
                 <!-- Popularity Score -->
                 <div class="popularity-badge">
-                  <svg class="fire-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2c1.5 3 4 4 6 4 0 5-3 8-6 12-3-4-6-7-6-12 2 0 4.5-1 6-4z"/>
-                  </svg>
-                  <span><%= project.popularity %> popularity</span>
+                  <span class="popularity-score"><%= project.popularity %></span>
+                  <span class="popularity-label">Score</span>
                 </div>
               </div>
             </a>
@@ -125,16 +124,8 @@
       <% if (currentUser && batchmateProjects && batchmateProjects.length > 0) { %>
       <section class="section-batchmates">
         <div class="section-header">
-          <h2 class="section-title">
-            <svg class="batchmate-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-              <circle cx="9" cy="7" r="4"></circle>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-            </svg>
-            Your Batchmates' Projects
-          </h2>
-          <p class="section-subtitle"><%= currentUser.year %> Year - <%= currentUser.program %></p>
+          <h2 class="section-title">Your Batchmates</h2>
+          <p class="section-subtitle"><%= currentUser.program %> <%= currentUser.year %> Year</p>
         </div>
 
         <div class="batchmate-container">
@@ -190,16 +181,8 @@
       <% if (remainingProjects && remainingProjects.length > 0) { %>
       <section class="section-all">
         <div class="section-header">
-          <h2 class="section-title">
-            <svg class="all-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="7" height="7"></rect>
-              <rect x="14" y="3" width="7" height="7"></rect>
-              <rect x="14" y="14" width="7" height="7"></rect>
-              <rect x="3" y="14" width="7" height="7"></rect>
-            </svg>
-            Discover More Projects
-          </h2>
-          <p class="section-subtitle">Explore all other amazing projects</p>
+          <h2 class="section-title">All Projects</h2>
+          <p class="section-subtitle">Explore more from the CCS community</p>
         </div>
 
         <div class="all-projects-container">
