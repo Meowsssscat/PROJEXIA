@@ -427,49 +427,45 @@
                     <div id="authSection">
                     <% if (!isLogin) { %>
                         <!-- Sign Up Only Fields -->
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="fullName">Full Name</label>
-                                <input 
-                                    type="text" 
-                                    id="fullName" 
-                                    name="fullName" 
-                                    placeholder="Juan Dela Cruz"
-                                    required
-                                />
-                            </div>
-                            <div class="form-group">
-                                <label for="studentId">Student ID</label>
-                                <input 
-                                    type="text" 
-                                    id="studentId" 
-                                    name="studentId" 
-                                    placeholder="2021-1234"
-                                    required
-                                />
-                            </div>
+                        <div class="form-group">
+                            <label for="fullName">Full Name</label>
+                            <input 
+                                type="text" 
+                                id="fullName" 
+                                name="fullName" 
+                                placeholder="Juan Dela Cruz"
+                                required
+                            />
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="program">Program</label>
                                 <select id="program" name="program" required>
-                                    <option value="">Select your program</option>
-                                    <option value="BSCS">BS Computer Science</option>
-                                    <option value="BSIT">BS Information Technology</option>
-                                    <option value="ACT">Associate in Computer Technology</option>
+                                    <option value="">Select Program</option>
+                                    <option value="BSIT">BSIT</option>
+                                    <option value="BSIS">BSIS</option>
+                                    <option value="BSCS">BSCS</option>
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label for="yearLevel">Year Level</label>
                                 <select id="yearLevel" name="yearLevel" required>
-                                    <option value="">Select year level</option>
-                                    <option value="1">1st Year</option>
-                                    <option value="2">2nd Year</option>
-                                    <option value="3">3rd Year</option>
-                                    <option value="4">4th Year</option>
+                                    <option value="">Select Year</option>
+                                    <option value="1st">1st Year</option>
+                                    <option value="2nd">2nd Year</option>
+                                    <option value="3rd">3rd Year</option>
+                                    <option value="4th">4th Year</option>
                                 </select>
                             </div>
+                        </div>
+
+                        <!-- Track field - shown only for 3rd and 4th year students -->
+                        <div class="form-group" id="trackGroup" style="display: none;">
+                            <label for="track">Specialization Track</label>
+                            <select id="track" name="track">
+                                <option value="">Select Track</option>
+                            </select>
                         </div>
                     <% } %>
 
@@ -635,6 +631,56 @@
             }
         }
 
+        // Track options based on program
+        const trackOptions = {
+            BSIT: ['WMAD', 'AMG', 'SMP', 'NETA'],
+            BSCS: ['IS', 'GV'],
+            BSIS: []
+        };
+
+        // Update track field visibility and options
+        function updateTrackField() {
+            const programSelect = document.getElementById('program');
+            const yearSelect = document.getElementById('yearLevel');
+            const trackGroup = document.getElementById('trackGroup');
+            const trackSelect = document.getElementById('track');
+            
+            if (!programSelect || !yearSelect) return;
+            
+            const program = programSelect.value;
+            const year = yearSelect.value;
+            const isThirdOrFourthYear = year === '3rd' || year === '4th';
+
+            if (isThirdOrFourthYear && program) {
+                trackGroup.style.display = 'block';
+                trackSelect.required = true;
+                updateTrackOptions(program);
+            } else {
+                trackGroup.style.display = 'none';
+                trackSelect.required = false;
+                trackSelect.value = '';
+            }
+        }
+
+        function updateTrackOptions(program) {
+            const trackSelect = document.getElementById('track');
+            const options = trackOptions[program] || [];
+            
+            trackSelect.innerHTML = '<option value="">Select Track</option>';
+            options.forEach(track => {
+                const option = document.createElement('option');
+                option.value = track;
+                option.textContent = track;
+                trackSelect.appendChild(option);
+            });
+        }
+
+        // Add event listeners for program and year changes
+        const programSelect = document.getElementById('program');
+        const yearSelect = document.getElementById('yearLevel');
+        if (programSelect) programSelect.addEventListener('change', updateTrackField);
+        if (yearSelect) yearSelect.addEventListener('change', updateTrackField);
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -645,8 +691,24 @@
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
 
+            // Determine if signup or signin
+            const isSignupForm = !!document.getElementById('fullName');
+            
+            // Validate track for 3rd and 4th year students
+            if (isSignupForm && (data.yearLevel === '3rd' || data.yearLevel === '4th') && !data.track) {
+                showMessage('Please select a specialization track', 'error');
+                submitBtn.disabled = false;
+                return;
+            }
+
+            // Convert yearLevel to year format for backend
+            if (data.yearLevel) {
+                data.year = data.yearLevel;
+                delete data.yearLevel;
+            }
+
             try {
-                isSignup = !!data.studentId;
+                isSignup = isSignupForm;
                 const endpoint = isSignup ? '/api/auth/signup' : '/api/auth/signin';
                 
                 const response = await fetch(endpoint, {
