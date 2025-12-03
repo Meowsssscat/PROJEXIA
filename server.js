@@ -93,6 +93,12 @@ app.use('/uploads', express.static(uploadsPath));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'public/views'));
 
+// Debug middleware - log all requests
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path}`);
+  next();
+});
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/', homeRoutes);

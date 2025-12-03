@@ -43,7 +43,8 @@ exports.getBrowseProjects = async (req, res) => {
         // Fetch projects
         const projects = await Project.find(filter)
             .populate('userId', 'fullName program year')
-            .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 })
+            .lean();
 
         // Enrich projects with stats
         const enrichedProjects = await Promise.all(
@@ -52,18 +53,20 @@ exports.getBrowseProjects = async (req, res) => {
                 const commentCount = await Comment.countDocuments({ projectId: project._id });
                 const viewCount = await View.countDocuments({ projectId: project._id });
 
-                // Preserve userId as an object with fullName
-                const projectObj = {
+                return {
                     ...project,
                     userId: project.userId || {},
                     likes: likeCount,
                     comments: commentCount,
                     viewCount: viewCount
                 };
-
-                return projectObj;
             })
         );
+
+        // Debug: Log first project's thumbnail
+        if (enrichedProjects.length > 0) {
+            console.log('First project thumbnail:', enrichedProjects[0].thumbnailUrl);
+        }
 
         res.render('browse-modern', {
             projects: enrichedProjects,

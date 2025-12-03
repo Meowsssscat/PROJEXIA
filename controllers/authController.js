@@ -172,10 +172,10 @@ const signin = async (req, res) => {
     // **STORE USER IN SESSION - ADD THIS HERE**
     req.session.userId = user._id.toString();
 
-    // Return user data (excluding password) with redirect to browse
+    // Return user data (excluding password) with redirect to home
     res.status(200).json({
       message: 'Sign in successful',
-      redirect: '/browse',
+      redirect: '/home',
       user: {
         id: user._id,
         fullName: user.fullName,
