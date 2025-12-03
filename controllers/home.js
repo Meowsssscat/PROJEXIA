@@ -43,9 +43,11 @@ const prepareProjectData = (users, projects, projectStats) => {
     const projectId = project._id.toString();
     const userId = project.userId.toString();
 
+    const thumbnailUrl = project.thumbnailUrl?.url || '/uploads/default-thumbnail.jpg';
+    
     data[projectId] = {
       projectId,
-      projectThumbnail: project.thumbnailUrl?.url || '',
+      projectThumbnail: thumbnailUrl,
       projectName: project.name,
       technologies: project.technologies,
       program: usersObject[userId]?.program || '',
@@ -56,6 +58,11 @@ const prepareProjectData = (users, projects, projectStats) => {
       popularity: calculatePopularity(projectStats, projectId),
       createdAt: project.createdAt
     };
+    
+    // Debug log
+    if (!project.thumbnailUrl?.url) {
+      console.log(`⚠️ Project "${project.name}" has no thumbnail URL`);
+    }
   });
 
   return data;

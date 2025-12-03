@@ -83,7 +83,9 @@
 
                                 <!-- Thumbnail --> 
                                 <div class="project-thumbnail">
-                                    <img src="<%= project.projectThumbnail %>" alt="<%= project.projectName %>">
+                                    <img src="<%= project.projectThumbnail %>" 
+                                         alt="<%= project.projectName %>"
+                                         onerror="this.src='/uploads/default-thumbnail.jpg'">
                                     <div class="popularity-badge">
                                         <span class="popularity-score"><%= project.popularity %></span>
                                     </div>
@@ -151,7 +153,7 @@
                                  data-popularity="<%= project.popularity %>">
 
                                 <div class="project-thumbnail">
-                                    <img src="<%= project.projectThumbnail %>" alt="<%= project.projectName %>">
+                                    <img src="<%= project.projectThumbnail %>" alt="<%= project.projectName %>" onerror="this.src='/uploads/default-thumbnail.jpg'">
                                 </div>
 
                                 <div class="project-content">
@@ -213,7 +215,7 @@
                                  data-popularity="<%= project.popularity %>">
 
                                 <div class="project-thumbnail">
-                                    <img src="<%= project.projectThumbnail %>" alt="<%= project.projectName %>">
+                                    <img src="<%= project.projectThumbnail %>" alt="<%= project.projectName %>" onerror="this.src='/uploads/default-thumbnail.jpg'">
                                 </div>
 
                                 <div class="project-content">
