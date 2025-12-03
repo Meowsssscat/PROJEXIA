@@ -31,7 +31,11 @@
           <a href="/help" class="footer-link">Help Center</a>
           <a href="/guidelines" class="footer-link">Guidelines</a>
           <a href="/contact" class="footer-link">Contact Faculty</a>
-          <a href="/report" class="footer-link">Report Issue</a>
+          <% if (typeof currentUser !== 'undefined' && currentUser) { %>
+            <a href="/report" class="footer-link">Report Issue</a>
+          <% } else { %>
+            <a href="/signin" class="footer-link">Report Issue</a>
+          <% } %>
         </div>
       </div>
     </div>

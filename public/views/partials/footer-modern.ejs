@@ -19,7 +19,11 @@
             <h4>Support</h4>
             <div class="footer-links">
               <a href="/donate" class="footer-link">Donate</a>
-              <a href="/report" class="footer-link">Report Issue</a>
+              <% if (typeof user !== 'undefined' && user) { %>
+                <a href="/report" class="footer-link">Report Issue</a>
+              <% } else { %>
+                <a href="/signin" class="footer-link">Report Issue</a>
+              <% } %>
             </div>
           </div>
           <div>
