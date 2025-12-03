@@ -32,9 +32,49 @@ const signup = async (req, res) => {
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
+    
     if (existingUser) {
+      // If user exists but is not verified, allow resending OTP
+      if (!existingUser.isVerified) {
+        // Generate new OTP
+        const otp = generateOTP();
+        
+        // Delete any existing OTP for this email
+        await OTP.findOneAndDelete({ email });
+        
+        // Save new OTP to database
+        await OTP.create({ 
+          email, 
+          otp,
+          attempts: 0 
+        });
+        
+        // Update user data with new information
+        existingUser.fullName = fullName;
+        existingUser.program = program;
+        existingUser.year = year;
+        existingUser.track = track || null;
+        
+        // Update password if provided
+        if (password) {
+          const salt = await bcrypt.genSalt(10);
+          existingUser.password = await bcrypt.hash(password, salt);
+        }
+        
+        await existingUser.save();
+        
+        // Send OTP email
+        await sendOTPEmail(email, otp);
+        
+        return res.status(200).json({ 
+          message: 'Verification code sent to your email. Please verify to complete registration.',
+          email 
+        });
+      }
+      
+      // User is already verified
       return res.status(400).json({ 
-        message: 'This email is already registered' 
+        message: 'This email is already registered and verified. Please sign in.' 
       });
     }
 
