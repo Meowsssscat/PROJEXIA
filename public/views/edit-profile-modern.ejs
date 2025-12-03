@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Profile - Projexia</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="/css/projexia-design-system.css" />
+    <link rel="stylesheet" href="/css/navbar-modern.css" />
+    <link rel="stylesheet" href="/css/modal-modern.css" />
+    <link rel="stylesheet" href="/css/footer-modern.css" />
+    <link rel="stylesheet" href="/css/utility-pages-modern.css" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+
+    <style>
+        .avatar-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        .avatar-display {
+            width: 120px;
+            height: 120px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0 auto 1rem;
+        }
+
+        .avatar-upload-btn {
+            display: inline-block;
+            margin-top: 1rem;
+        }
+    </style>
+    <script src="/js/theme.js"></script>
+</head>
+<body>
+    <div class="form-page-container">
+        <!-- Navbar -->
+        <%- include('partials/navbar-modern') %>
+        
+        <!-- Edit Profile Content -->
+        <main class="form-page-content">
+            <div class="container" style="max-width: 700px;">
+                <div class="form-page-header">
+                    <h1>Edit Profile</h1>
+                    <p>Update your profile information</p>
+                </div>
+
+                <div class="form-card">
+                    <div id="successMessage" class="form-message form-success"></div>
+                    <div id="errorMessage" class="form-message form-error"></div>
+
+                    <form id="editProfileForm" class="form-section">
+                        <!-- Avatar Section -->
+                        <div class="avatar-section">
+                            <div class="avatar-display">
+                                <%= user.fullName.charAt(0) %>
+                            </div>
+                            <div class="form-group avatar-upload-btn">
+                                <label for="avatar">Upload Avatar (Optional)</label>
+                                <div class="file-upload-area" id="avatarArea">
+                                    <svg class="file-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="1"></circle>
+                                        <circle cx="19" cy="12" r="1"></circle>
+                                        <circle cx="5" cy="12" r="1"></circle>
+                                        <path d="M12 9v6m-4-2a4 4 0 1 0 8 0"></path>
+                                    </svg>
+                                    <p class="file-upload-text">Click to upload</p>
+                                    <p class="file-upload-hint">PNG, JPG up to 2MB</p>
+                                    <input 
+                                        type="file" 
+                                        id="avatar" 
+                                        name="avatar" 
+                                        class="file-upload-input"
+                                        accept="image/*"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Personal Information -->
+                        <div class="form-group">
+                            <label for="fullName">Full Name</label>
+                            <input 
+                                type="text" 
+                                id="fullName" 
+                                name="fullName" 
+                                value="<%= user.fullName %>"
+                                required
+                            />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bio">Bio</label>
+                            <textarea 
+                                id="bio" 
+                                name="bio" 
+                                placeholder="Tell the community about yourself..."
+                            ><%= user.bio || '' %></textarea>
+                            <p class="form-help-text">Maximum 160 characters</p>
+                        </div>
+
+                        <!-- Academic Information -->
+                        <div class="form-group">
+                            <label for="program">Program</label>
+                            <select id="program" name="program" required>
+                                <option value="BSCS" <%= user.program === 'BSCS' ? 'selected' : '' %>>BS Computer Science</option>
+                                <option value="BSIT" <%= user.program === 'BSIT' ? 'selected' : '' %>>BS Information Technology</option>
+                                <option value="ACT" <%= user.program === 'ACT' ? 'selected' : '' %>>Associate in Computer Technology</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="yearLevel">Year Level</label>
+                            <select id="yearLevel" name="yearLevel" required>
+                                <option value="1" <%= user.year === 1 ? 'selected' : '' %>>1st Year</option>
+                                <option value="2" <%= user.year === 2 ? 'selected' : '' %>>2nd Year</option>
+                                <option value="3" <%= user.year === 3 ? 'selected' : '' %>>3rd Year</option>
+                                <option value="4" <%= user.year === 4 ? 'selected' : '' %>>4th Year</option>
+                            </select>
+                        </div>
+
+                        <!-- Contact Information -->
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                value="<%= user.email %>"
+                                disabled
+                            />
+                            <p class="form-help-text">Contact support to change your email</p>
+                        </div>
+
+                        <!-- Social Links -->
+                        <div class="form-group">
+                            <label for="github">GitHub Profile (Optional)</label>
+                            <input 
+                                type="url" 
+                                id="github" 
+                                name="github" 
+                                placeholder="https://github.com/yourprofile"
+                                value="<%= user.github || '' %>"
+                            />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="portfolio">Portfolio Website (Optional)</label>
+                            <input 
+                                type="url" 
+                                id="portfolio" 
+                                name="portfolio" 
+                                placeholder="https://yourportfolio.com"
+                                value="<%= user.portfolio || '' %>"
+                            />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="linkedin">LinkedIn Profile (Optional)</label>
+                            <input 
+                                type="url" 
+                                id="linkedin" 
+                                name="linkedin" 
+                                placeholder="https://linkedin.com/in/yourprofile"
+                                value="<%= user.linkedin || '' %>"
+                            />
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <a href="/profile" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <%- include('partials/footer-modern') %>
+    </div>
+
+    <script>
+        const editForm = document.getElementById('editProfileForm');
+        const avatarArea = document.getElementById('avatarArea');
+        const avatarInput = document.getElementById('avatar');
+        const errorMsg = document.getElementById('errorMessage');
+        const successMsg = document.getElementById('successMessage');
+
+        // File upload handling
+        avatarArea.addEventListener('click', () => avatarInput.click());
+
+        avatarArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            avatarArea.classList.add('drag-over');
+        });
+
+        avatarArea.addEventListener('dragleave', () => {
+            avatarArea.classList.remove('drag-over');
+        });
+
+        avatarArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            avatarArea.classList.remove('drag-over');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                avatarInput.files = files;
+            }
+        });
+
+        avatarInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                const fileName = e.target.files[0].name;
+                avatarArea.innerHTML = `
+                    <svg class="file-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: hsl(var(--primary));">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <p class="file-upload-text">${fileName} selected</p>
+                    <p class="file-upload-hint">Click to change file</p>
+                `;
+            }
+        });
+
+        // Form submission
+        editForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            errorMsg.classList.remove('show');
+            successMsg.classList.remove('show');
+
+            const formData = new FormData(editForm);
+
+            try {
+                const response = await fetch('/api/profile/update', {
+                    method: 'PUT',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || 'Update failed');
+                }
+
+                successMsg.textContent = 'Profile updated successfully!';
+                successMsg.classList.add('show');
+
+                setTimeout(() => {
+                    window.location.href = '/profile';
+                }, 1500);
+            } catch (error) {
+                errorMsg.textContent = error.message || 'An error occurred';
+                errorMsg.classList.add('show');
+            }
+        });
+    </script>
+    
+    <!-- Modal System -->
+    <script src="/js/modal.js"></script>
+    
+    <!-- Socket.IO Client -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Notifications System -->
+    <script src="/js/notifications.js"></script>
+</body>
+</html>

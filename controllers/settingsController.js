@@ -24,7 +24,7 @@ exports.getSettings = async (req, res) => {
       return res.redirect('/signin');
     }
 
-    return res.render('settings', {
+    return res.render('settings-modern', {
       currentUser: {
         _id: user._id,
         fullName: user.fullName,

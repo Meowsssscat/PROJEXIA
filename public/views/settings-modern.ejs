@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings - Projexia</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="/css/projexia-design-system.css" />
+    <link rel="stylesheet" href="/css/navbar-modern.css" />
+    <link rel="stylesheet" href="/css/modal-modern.css" />
+    <link rel="stylesheet" href="/css/footer-modern.css" />
+    <link rel="stylesheet" href="/css/utility-pages-modern.css" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+    <script src="/js/theme.js"></script>
+</head>
+<body>
+    <div class="form-page-container">
+        <!-- Navbar -->
+        <%- include('partials/navbar-modern') %>
+        
+        <!-- Settings Content -->
+        <main class="form-page-content">
+            <div class="container" style="max-width: 700px;">
+                <div class="form-page-header">
+                    <h1>Settings</h1>
+                    <p>Manage your account preferences and privacy</p>
+                </div>
+
+                <div id="successMessage" class="form-message form-success"></div>
+                <div id="errorMessage" class="form-message form-error"></div>
+
+                <!-- Account Settings -->
+                <div class="settings-grid">
+                    <!-- Profile Settings -->
+                    <div class="settings-group">
+                        <h3 class="settings-group-title">Profile Settings</h3>
+                        
+                        <form id="profileForm" class="form-section">
+                            <div class="form-group">
+                                <label for="fullName">Full Name</label>
+                                <input 
+                                    type="text" 
+                                    id="fullName" 
+                                    name="fullName" 
+                                    value="<%= user.fullName %>"
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="bio">Bio</label>
+                                <textarea 
+                                    id="bio" 
+                                    name="bio" 
+                                    placeholder="Tell us about yourself..."
+                                ><%= user.bio || '' %></textarea>
+                                <p class="form-help-text">Maximum 160 characters</p>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Email Settings -->
+                    <div class="settings-group">
+                        <h3 class="settings-group-title">Email & Account</h3>
+                        
+                        <div class="settings-item">
+                            <div class="settings-item-label">
+                                <h4>Email Address</h4>
+                                <p><%= user.email %></p>
+                            </div>
+                        </div>
+
+                        <div class="settings-item">
+                            <div class="settings-item-label">
+                                <h4>Change Password</h4>
+                                <p>Secure your account with a strong password</p>
+                            </div>
+                            <a href="/forgot-password" class="btn btn-secondary">Change</a>
+                        </div>
+                    </div>
+
+                    <!-- Privacy & Notifications -->
+                    <div class="settings-group">
+                        <h3 class="settings-group-title">Privacy & Notifications</h3>
+                        
+                        <div class="settings-item">
+                            <div class="settings-item-label">
+                                <h4>Public Profile</h4>
+                                <p>Let others see your profile and projects</p>
+                            </div>
+                            <div class="toggle-switch active" data-setting="publicProfile"></div>
+                        </div>
+
+                        <div class="settings-item">
+                            <div class="settings-item-label">
+                                <h4>Email Notifications</h4>
+                                <p>Receive notifications about likes and comments</p>
+                            </div>
+                            <div class="toggle-switch active" data-setting="emailNotifications"></div>
+                        </div>
+
+                        <div class="settings-item">
+                            <div class="settings-item-label">
+                                <h4>Allow Comments</h4>
+                                <p>Enable comments on your projects</p>
+                            </div>
+                            <div class="toggle-switch active" data-setting="allowComments"></div>
+                        </div>
+                    </div>
+
+                    <!-- Danger Zone -->
+                    <div class="settings-group">
+                        <h3 class="settings-group-title">Danger Zone</h3>
+                        
+                        <div class="settings-item">
+                            <div class="settings-item-label">
+                                <h4>Delete Account</h4>
+                                <p>Permanently delete your account and all data</p>
+                            </div>
+                            <button class="btn btn-secondary" onclick="confirmDeleteAccount()">Delete Account</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <%- include('partials/footer-modern') %>
+    </div>
+
+    <script>
+        const profileForm = document.getElementById('profileForm');
+        const errorMsg = document.getElementById('errorMessage');
+        const successMsg = document.getElementById('successMessage');
+
+        // Toggle switches
+        document.querySelectorAll('.toggle-switch').forEach(toggle => {
+            toggle.addEventListener('click', async function() {
+                const setting = this.dataset.setting;
+                this.classList.toggle('active');
+                
+                // Save setting to backend
+                try {
+                    const response = await fetch(`/api/settings/${setting}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ enabled: this.classList.contains('active') })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to update setting');
+                    }
+                } catch (error) {
+                    showMessage(error.message, 'error');
+                    this.classList.toggle('active');
+                }
+            });
+        });
+
+        // Profile form submission
+        profileForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            errorMsg.classList.remove('show');
+            successMsg.classList.remove('show');
+
+            const formData = new FormData(profileForm);
+            const data = Object.fromEntries(formData);
+
+            try {
+                const response = await fetch('/api/profile/update', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || 'Update failed');
+                }
+
+                showMessage('Profile updated successfully!', 'success');
+            } catch (error) {
+                showMessage(error.message, 'error');
+            }
+        });
+
+        function showMessage(message, type = 'error') {
+            const msgElement = type === 'error' ? errorMsg : successMsg;
+            msgElement.textContent = message;
+            msgElement.classList.add('show');
+            
+            if (type === 'success') {
+                setTimeout(() => msgElement.classList.remove('show'), 3000);
+            }
+        }
+
+        async function confirmDeleteAccount() {
+            const confirmed = await Modal.confirm('Are you sure you want to delete your account? This action cannot be undone.', 'Delete Account', 'Delete', 'Cancel');
+            if (confirmed) {
+                const deleteConfirm = await Modal.prompt('Type "DELETE" to confirm account deletion:', 'Final Confirmation', '', 'text');
+                if (deleteConfirm === 'DELETE') {
+                    fetch('/api/account/delete', {
+                        method: 'DELETE'
+                    }).then(response => {
+                        if (response.ok) {
+                            window.location.href = '/';
+                        } else {
+                            showMessage('Failed to delete account', 'error');
+                        }
+                    });
+                }
+            }
+        }
+    </script>
+    
+    <!-- Modal System -->
+    <script src="/js/modal.js"></script>
+    
+    <!-- Socket.IO Client -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Notifications System -->
+    <script src="/js/notifications.js"></script>
+</body>
+</html>

@@ -62,6 +62,24 @@ app.use(session({
   }
 }));
 
+// Optional user middleware - Attach user to req if logged in (doesn't require authentication)
+app.use(async (req, res, next) => {
+  try {
+    const userId = req.session?.userId;
+    if (userId) {
+      const User = require('./models/User');
+      const currentUser = await User.findById(userId).select('-password');
+      req.user = currentUser || null;
+    } else {
+      req.user = null;
+    }
+  } catch (err) {
+    console.error('Error in optional user middleware:', err);
+    req.user = null;
+  }
+  next();
+});
+
 // Serve static files
 app.use('/css', express.static(path.join(__dirname, 'public/css')));
 app.use('/js', express.static(path.join(__dirname, 'public/js')));
@@ -78,10 +96,12 @@ app.set('views', path.join(__dirname, 'public/views'));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/', homeRoutes);
+const pageRoutes = require('./routes/pageRoutes');
+app.use('/', pageRoutes);
 app.use('/', profileRoutes);
+app.use('/api/editProfile', editProfileRoute);
 app.use('/', uploadProjectRoutes);
 app.use('/', projects);
-app.use('/editProfile', editProfileRoute);
 const notificationRoutes = require('./routes/notificationRoutes');
 app.use('/notifications', notificationRoutes);
 app.use('/visit/profile', otherProfileRoutes);
@@ -94,15 +114,36 @@ app.use('/api/footer', footerRoutes);
 const aboutRoutes = require('./routes/about');
 app.use('/about', aboutRoutes);
 
+// API: Get current user ID (for notifications)
+app.get('/api/user-id', (req, res) => {
+  if (req.session?.userId) {
+    res.json({ userId: req.session.userId });
+  } else {
+    res.json({ userId: null });
+  }
+});
+
 // Root route
 const landingController = require('./controllers/landingController');
 app.get('/', landingController.getLandingPage);
 
-// Auth pages
-app.get('/signin', (req, res) => res.render('signin'));
-app.get('/signup', (req, res) => res.render('signup'));
+// Auth pages - redirect to modern auth page
+app.get('/signin', (req, res) => res.redirect('/auth?type=signin'));
+app.get('/signup', (req, res) => res.redirect('/auth?type=signup'));
 app.get('/confirmation', (req, res) => res.render('confirmation'));
 app.get('/forgot-password', (req, res) => res.render('forgotPassword'));
+
+// Logout route - clears session and redirects to landing page
+app.get('/auth/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Session destroy error:', err);
+      return res.redirect('/');
+    }
+    res.clearCookie('connect.sid');
+    res.redirect('/');
+  });
+});
 
 // Debug endpoint (TEMPORARY - remove after fixing)
 app.get('/debug-env', (req, res) => {

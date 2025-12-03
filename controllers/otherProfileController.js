@@ -66,7 +66,7 @@ exports.getProfile = async (req, res) => {
 
     console.log(data)
     console.log(userToVisit)
-    return res.render('otherProfile', { 
+    return res.render('otherProfile-modern', { 
     data,
     userToVisit: {
         fullName: userToVisit.fullName,

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= userProfile.fullName %> - Projexia</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="/css/projexia-design-system.css" />
+    <link rel="stylesheet" href="/css/navbar-modern.css" />
+    <link rel="stylesheet" href="/css/modal-modern.css" />
+    <link rel="stylesheet" href="/css/footer-modern.css" />
+    <link rel="stylesheet" href="/css/profile-modern.css" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+    
+    <style>
+        /* Profile Page Styles */
+        .profile-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-content {
+            flex: 1;
+            padding: 4rem 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Profile Header */
+        .profile-header {
+            background: linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--secondary) / 0.05));
+            border: 1px solid hsl(var(--border));
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            margin-bottom: 3rem;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 2rem;
+            align-items: center;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .profile-info h1 {
+            font-family: var(--font-orbitron);
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: 700;
+            color: hsl(var(--foreground));
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: hsl(var(--muted-foreground));
+            font-size: 0.95rem;
+        }
+
+        .meta-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: hsl(var(--primary) / 0.1);
+            color: hsl(var(--primary));
+            border-radius: 999px;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .profile-description {
+            color: hsl(var(--muted-foreground));
+            line-height: 1.6;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: var(--font-inter);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px hsl(var(--primary) / 0.3);
+        }
+
+        .btn-secondary {
+            background: hsl(var(--muted-foreground) / 0.1);
+            color: hsl(var(--foreground));
+            border: 1px solid hsl(var(--border));
+        }
+
+        .btn-secondary:hover {
+            background: hsl(var(--muted-foreground) / 0.2);
+        }
+
+        /* Stats Section */
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: hsl(var(--primary));
+            box-shadow: 0 4px 12px hsl(var(--primary) / 0.1);
+        }
+
+        .stat-value {
+            font-family: var(--font-orbitron);
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: hsl(var(--primary));
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: hsl(var(--muted-foreground));
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* Projects Section */
+        .projects-section {
+            margin-bottom: 3rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            gap: 1rem;
+        }
+
+        .section-title {
+            font-family: var(--font-orbitron);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: hsl(var(--foreground));
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .project-card {
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .project-card:hover {
+            border-color: hsl(var(--primary));
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px hsl(var(--primary) / 0.2);
+        }
+
+        .project-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background: hsl(var(--muted) / 0.5);
+        }
+
+        .project-content {
+            padding: 1.5rem;
+        }
+
+        .project-title {
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: hsl(var(--foreground));
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+
+        .project-description {
+            color: hsl(var(--muted-foreground));
+            font-size: 0.875rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tech-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: hsl(var(--primary) / 0.1);
+            color: hsl(var(--primary));
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .project-stats {
+            display: flex;
+            gap: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid hsl(var(--border));
+        }
+
+        .project-stat {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: hsl(var(--muted-foreground));
+            font-size: 0.875rem;
+        }
+
+        .project-stat svg {
+            width: 1rem;
+            height: 1rem;
+            color: hsl(var(--primary));
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: hsl(var(--muted) / 0.3);
+            border: 2px dashed hsl(var(--border));
+            border-radius: 12px;
+        }
+
+        .empty-state svg {
+            width: 3rem;
+            height: 3rem;
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            color: hsl(var(--foreground));
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 1.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .profile-content {
+                padding: 2rem 1rem;
+            }
+
+            .profile-header {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                padding: 1.5rem;
+            }
+
+            .profile-avatar {
+                width: 100px;
+                height: 100px;
+            }
+
+            .profile-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+    <script src="/js/theme.js"></script>
+</head>
+<body>
+    <div class="profile-container">
+        <!-- Navbar -->
+        <%- include('partials/navbar-modern') %>
+        
+        <!-- Profile Content -->
+        <main class="profile-content" style="padding-top: calc(4rem + 60px);">
+            <div class="container">
+                <!-- Profile Header -->
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <%= userProfile.fullName.charAt(0) %>
+                    </div>
+
+                    <div class="profile-info">
+                        <h1><%= userProfile.fullName %></h1>
+                        <div class="profile-meta">
+                            <span class="meta-badge"><%= userProfile.program %></span>
+                            <span class="meta-item">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path>
+                                </svg>
+                                Year <%= userProfile.year %>
+                            </span>
+                        </div>
+                        <p class="profile-description">
+                            CCS Student • Passionate about creating innovative projects
+                        </p>
+                    </div>
+
+                    <div class="profile-actions">
+                        <% if (isOwnProfile) { %>
+                            <a href="/editProfile" class="btn btn-secondary">Edit Profile</a>
+                            <a href="/upload" class="btn btn-primary">Upload Project</a>
+                        <% } else { %>
+                            <button class="btn btn-primary" onclick="followUser()">Follow</button>
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="profile-stats">
+                    <div class="stat-card">
+                        <div class="stat-value"><%= projects.length %></div>
+                        <div class="stat-label">Projects</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value"><%= totalLikes || 0 %></div>
+                        <div class="stat-label">Total Likes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value"><%= totalComments || 0 %></div>
+                        <div class="stat-label">Comments</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value"><%= totalViews || 0 %></div>
+                        <div class="stat-label">Views</div>
+                    </div>
+                </div>
+
+                <!-- Projects Section -->
+                <div class="projects-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Projects</h2>
+                    </div>
+
+                    <% if (projects && projects.length > 0) { %>
+                        <div class="projects-grid">
+                            <% projects.forEach((project, index) => { %>
+                                <a href="/project/<%= project._id %>" class="project-card">
+                                    <img 
+                                        src="<%= project.thumbnailUrl?.url || '/images/default-project.png' %>" 
+                                        alt="<%= project.name %>"
+                                        class="project-image"
+                                    />
+                                    <div class="project-content">
+                                        <h3 class="project-title"><%= project.name %></h3>
+                                        
+                                        <% if (project.technologies && project.technologies.length > 0) { %>
+                                            <div class="tech-tags">
+                                                <% project.technologies.slice(0, 4).forEach(tech => { %>
+                                                    <span class="tech-tag"><%= tech %></span>
+                                                <% }) %>
+                                                <% if (project.technologies.length > 4) { %>
+                                                    <span class="tech-tag">+<%= project.technologies.length - 4 %></span>
+                                                <% } %>
+                                            </div>
+                                        <% } %>
+
+                                        <div class="project-stats">
+                                            <div class="project-stat">
+                                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                                </svg>
+                                                <span><%= project.likes || 0 %></span>
+                                            </div>
+                                            <div class="project-stat">
+                                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                                </svg>
+                                                <span><%= project.comments || 0 %></span>
+                                            </div>
+                                            <div class="project-stat">
+                                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                    <circle cx="12" cy="12" r="3"></circle>
+                                                </svg>
+                                                <span><%= project.viewCount || 0 %></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
+                            <h3>No Projects Yet</h3>
+                            <p>This user hasn't uploaded any projects yet.</p>
+                            <% if (isOwnProfile) { %>
+                                <a href="/upload" class="btn btn-primary">Upload Your First Project</a>
+                            <% } %>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <%- include('partials/footer-modern') %>
+    </div>
+
+    <script>
+        async function followUser() {
+            // Placeholder for follow functionality
+            await Modal.alert('Follow functionality coming soon!', 'info');
+        }
+    </script>
+    
+    <!-- Modal System -->
+    <script src="/js/modal.js"></script>
+    
+    <!-- Socket.IO Client -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Notifications System -->
+    <script src="/js/notifications.js"></script>
+</body>
+</html>

@@ -16,7 +16,8 @@ exports.getAboutPage = async (req, res) => {
             return res.redirect('/signin');
         }
 
-        res.render('about', {
+        res.render('about-modern', {
+            user: currentUser,
             currentUser
         });
     } catch (error) {

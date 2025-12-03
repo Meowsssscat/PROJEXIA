@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= isLogin ? 'Sign In' : 'Sign Up' %> - Projexia</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="/css/projexia-design-system.css" />
+    <link rel="stylesheet" href="/css/navbar-modern.css" />
+    <link rel="stylesheet" href="/css/modal-modern.css" />
+    <link rel="stylesheet" href="/css/footer-modern.css" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+    
+    <style>
+        /* Auth Page Specific Styles */
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: hsl(var(--muted));
+        }
+
+        .auth-content {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 6rem 3rem;
+            width: 100%;
+            align-items: center;
+        }
+
+        .auth-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .auth-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: fit-content;
+            padding: 0.75rem 1.25rem;
+            background: linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--secondary) / 0.1));
+            border: 1px solid hsl(var(--primary) / 0.2);
+            border-radius: 9999px;
+            color: hsl(var(--primary));
+            font-size: 0.875rem;
+            font-weight: 500;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .auth-title {
+            font-family: var(--font-orbitron);
+            font-size: clamp(1.75rem, 5vw, 2.5rem);
+            font-weight: 900;
+            color: hsl(var(--foreground));
+            line-height: 1.2;
+        }
+
+        .auth-subtitle {
+            font-size: 1.125rem;
+            color: hsl(var(--muted-foreground));
+            line-height: 1.6;
+        }
+
+        .auth-features {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .feature-item {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            animation: slideDown 0.3s ease-out forwards;
+            opacity: 0;
+        }
+
+        .feature-item:nth-child(1) { animation-delay: 0.2s; }
+        .feature-item:nth-child(2) { animation-delay: 0.4s; }
+        .feature-item:nth-child(3) { animation-delay: 0.6s; }
+
+        .feature-icon {
+            width: 3rem;
+            height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--secondary) / 0.1));
+            border-radius: 12px;
+            color: hsl(var(--primary));
+            flex-shrink: 0;
+        }
+
+        .feature-icon svg {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .feature-content h3 {
+            font-weight: 600;
+            color: hsl(var(--foreground));
+            margin-bottom: 0.25rem;
+        }
+
+        .feature-content p {
+            font-size: 0.875rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        /* Form Container */
+        .auth-form-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            padding: 2.5rem;
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: scaleIn 0.4s ease-out;
+        }
+
+        .auth-header h2 {
+            font-family: var(--font-orbitron);
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: hsl(var(--foreground));
+        }
+
+        .auth-header p {
+            color: hsl(var(--muted-foreground));
+            margin-top: 0.5rem;
+        }
+
+        .form-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .form-error, .form-success {
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            display: none;
+        }
+
+        .form-error {
+            background: hsl(0 84% 60% / 0.1);
+            color: hsl(0 84% 60%);
+            border: 1px solid hsl(0 84% 60% / 0.3);
+        }
+
+        .form-error.show {
+            display: block;
+        }
+
+        .form-success {
+            background: hsl(142 76% 36% / 0.1);
+            color: hsl(142 76% 36%);
+            border: 1px solid hsl(142 76% 36% / 0.3);
+        }
+
+        .form-success.show {
+            display: block;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: hsl(var(--foreground));
+            font-size: 0.875rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 0.75rem 1rem;
+            border: 1px solid hsl(var(--border));
+            border-radius: 8px;
+            font-family: var(--font-inter);
+            font-size: 0.95rem;
+            background: hsl(var(--background));
+            color: hsl(var(--foreground));
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: hsl(var(--primary));
+            box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .form-button {
+            padding: 1rem 1.5rem;
+            background: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: var(--font-poppins);
+            width: 100%;
+            margin-top: 2rem;
+        }
+
+        .form-button:hover:not(:disabled) {
+            background: hsl(var(--primary) / 0.9);
+            box-shadow: 0 8px 16px hsl(var(--primary) / 0.25);
+        }
+
+        .form-button:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .form-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .auth-footer {
+            text-align: center;
+            color: hsl(var(--muted-foreground));
+            margin-top: 2rem;
+        }
+
+        .auth-footer a {
+            color: hsl(var(--primary));
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .auth-footer a:hover {
+            color: hsl(var(--secondary));
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .auth-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                padding: 2rem;
+            }
+
+            .auth-info {
+                display: none;
+            }
+
+            .auth-form-wrapper {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .auth-content {
+                padding: 1rem;
+            }
+
+            .auth-form-wrapper {
+                padding: 1.5rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .auth-header h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Dark Mode */
+        @media (prefers-color-scheme: dark) {
+            .auth-form-wrapper {
+                background: hsl(var(--card));
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            }
+        }
+    </style>
+    <script src="/js/theme.js"></script>
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Navbar -->
+        <%- include('partials/navbar-modern') %>
+        
+        <!-- Auth Content -->
+        <main class="auth-content">
+            <!-- Left Side - Info (Hidden on mobile) -->
+            <div class="auth-info">
+                <div class="auth-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                    Secure Authentication
+                </div>
+
+                <h1 class="auth-title">
+                    <% if (isLogin) { %>
+                        Welcome Back to Projexia
+                    <% } else { %>
+                        Join the CCS Community
+                    <% } %>
+                </h1>
+
+                <p class="auth-subtitle">
+                    <% if (isLogin) { %>
+                        Access your projects and connect with fellow students
+                    <% } else { %>
+                        Showcase your projects and collaborate with peers
+                    <% } %>
+                </p>
+
+                <div class="auth-features">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                            </svg>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Showcase Projects</h3>
+                            <p>Upload and share your best work with the community</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Connect & Collaborate</h3>
+                            <p>Engage with fellow CCS students through likes and comments</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Real-time Updates</h3>
+                            <p>Stay notified about likes, comments, and project activities</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side - Form -->
+            <div class="auth-form-wrapper">
+                <div class="auth-header">
+                    <h2><%= isLogin ? 'Sign In' : 'Create Account' %></h2>
+                    <p><%= isLogin ? 'Enter your credentials to continue' : 'Get started in just a few minutes' %></p>
+                </div>
+
+                <div class="form-messages">
+                    <div id="errorMessage" class="form-error"></div>
+                    <div id="successMessage" class="form-success"></div>
+                </div>
+
+                <form id="authForm" class="form-content" novalidate>
+                    <!-- OTP Verification Section (Initially Hidden) -->
+                    <div id="otpSection" style="display: none;">
+                        <div class="form-group">
+                            <label for="otp">Enter Verification Code</label>
+                            <p style="font-size: 0.9rem; color: hsl(var(--muted-foreground)); margin-bottom: 0.75rem;">
+                                We've sent a 6-digit verification code to <span id="otpEmail" style="font-weight: 600;"></span>
+                            </p>
+                            <input 
+                                type="text" 
+                                id="otp" 
+                                name="otp" 
+                                placeholder="000000"
+                                maxlength="6"
+                                inputmode="numeric"
+                                style="font-size: 1.5rem; letter-spacing: 0.5rem; text-align: center;"
+                            />
+                        </div>
+                        <p style="font-size: 0.85rem; color: hsl(var(--muted-foreground)); text-align: center; margin: 0.75rem 0;">
+                            Didn't receive the code? <a href="#" onclick="resendOTP(event)" style="color: hsl(var(--primary)); text-decoration: none;">Resend</a>
+                        </p>
+                        <button type="button" class="form-button" id="verifyOtpBtn" onclick="verifyOTP(event)">
+                            Verify Code
+                        </button>
+                        <button type="button" class="form-button" style="background: transparent; color: hsl(var(--primary)); border: 1px solid hsl(var(--border));" onclick="backToSignup()">
+                            Back
+                        </button>
+                    </div>
+
+                    <!-- Regular Auth Section -->
+                    <div id="authSection">
+                    <% if (!isLogin) { %>
+                        <!-- Sign Up Only Fields -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="fullName">Full Name</label>
+                                <input 
+                                    type="text" 
+                                    id="fullName" 
+                                    name="fullName" 
+                                    placeholder="Juan Dela Cruz"
+                                    required
+                                />
+                            </div>
+                            <div class="form-group">
+                                <label for="studentId">Student ID</label>
+                                <input 
+                                    type="text" 
+                                    id="studentId" 
+                                    name="studentId" 
+                                    placeholder="2021-1234"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="program">Program</label>
+                                <select id="program" name="program" required>
+                                    <option value="">Select your program</option>
+                                    <option value="BSCS">BS Computer Science</option>
+                                    <option value="BSIT">BS Information Technology</option>
+                                    <option value="ACT">Associate in Computer Technology</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="yearLevel">Year Level</label>
+                                <select id="yearLevel" name="yearLevel" required>
+                                    <option value="">Select year level</option>
+                                    <option value="1">1st Year</option>
+                                    <option value="2">2nd Year</option>
+                                    <option value="3">3rd Year</option>
+                                    <option value="4">4th Year</option>
+                                </select>
+                            </div>
+                        </div>
+                    <% } %>
+
+                    <!-- Common Fields -->
+                    <div class="form-group">
+                        <label for="email">Institutional Email</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            placeholder="juan.delacruz@lspu.edu.ph"
+                            required
+                        />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            placeholder="••••••••"
+                            required
+                        />
+                    </div>
+
+                    <button type="submit" class="form-button" id="submitBtn">
+                        <%= isLogin ? 'Sign In' : 'Create Account' %>
+                    </button>
+                </form>
+
+                <div class="auth-footer">
+                    <% if (isLogin) { %>
+                        Don't have an account? <a href="/auth?type=signup">Sign up here</a>
+                    <% } else { %>
+                        Already have an account? <a href="/auth?type=signin">Sign in here</a>
+                    <% } %>
+                </div>
+
+                <hr style="border: none; border-top: 1px solid hsl(var(--border)); margin: 1rem 0;">
+
+                <div class="auth-footer">
+                    <% if (isLogin) { %>
+                        <a href="/forgot-password">Forgot your password?</a>
+                    <% } %>
+                </div>
+                    </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <%- include('partials/footer-modern') %>
+    </div>
+
+    <script>
+        const form = document.getElementById('authForm');
+        const errorMsg = document.getElementById('errorMessage');
+        const successMsg = document.getElementById('successMessage');
+        const submitBtn = document.getElementById('submitBtn');
+        const otpSection = document.getElementById('otpSection');
+        const authSection = document.getElementById('authSection');
+        let currentEmail = '';
+        let isSignup = false;
+
+        function showMessage(message, type = 'error') {
+            const msgElement = type === 'error' ? errorMsg : successMsg;
+            msgElement.textContent = message;
+            msgElement.classList.add('show');
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    msgElement.classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        function showOTPSection(email) {
+            currentEmail = email;
+            document.getElementById('otpEmail').textContent = email;
+            authSection.style.display = 'none';
+            otpSection.style.display = 'block';
+            document.getElementById('otp').focus();
+        }
+
+        function backToSignup() {
+            authSection.style.display = 'block';
+            otpSection.style.display = 'none';
+            document.getElementById('otp').value = '';
+        }
+
+        async function verifyOTP(e) {
+            e.preventDefault();
+            const otpInput = document.getElementById('otp').value.trim();
+            const verifyBtn = document.getElementById('verifyOtpBtn');
+
+            if (otpInput.length !== 6 || isNaN(otpInput)) {
+                showMessage('Please enter a valid 6-digit code', 'error');
+                return;
+            }
+
+            verifyBtn.disabled = true;
+            errorMsg.classList.remove('show');
+
+            try {
+                const response = await fetch('/api/auth/verify-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        email: currentEmail,
+                        otp: otpInput 
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    showMessage(result.message || 'Verification failed', 'error');
+                    if (result.redirect) {
+                        setTimeout(() => {
+                            backToSignup();
+                        }, 2000);
+                    }
+                } else {
+                    showMessage('Email verified successfully! Redirecting...', 'success');
+                    setTimeout(() => {
+                        window.location.href = result.redirect || '/browse';
+                    }, 1500);
+                }
+            } catch (error) {
+                showMessage('An error occurred. Please try again.', 'error');
+            } finally {
+                verifyBtn.disabled = false;
+            }
+        }
+
+        async function resendOTP(e) {
+            e.preventDefault();
+            const resendBtn = e.target;
+            resendBtn.disabled = true;
+            resendBtn.textContent = 'Sending...';
+
+            try {
+                const response = await fetch('/api/auth/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        email: currentEmail,
+                        resend: true 
+                    })
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    showMessage('Verification code resent!', 'success');
+                } else {
+                    showMessage('Failed to resend code', 'error');
+                }
+            } catch (error) {
+                showMessage('An error occurred', 'error');
+            } finally {
+                resendBtn.disabled = false;
+                resendBtn.textContent = 'Resend';
+            }
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            errorMsg.classList.remove('show');
+            successMsg.classList.remove('show');
+            submitBtn.disabled = true;
+
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+
+            try {
+                isSignup = !!data.studentId;
+                const endpoint = isSignup ? '/api/auth/signup' : '/api/auth/signin';
+                
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    showMessage(result.message || 'Authentication failed', 'error');
+                } else if (isSignup && result.email) {
+                    // Signup - show OTP verification
+                    showMessage('Verification code sent! Check your email.', 'success');
+                    setTimeout(() => {
+                        showOTPSection(result.email);
+                    }, 1500);
+                } else {
+                    // Signin or already verified signup
+                    showMessage(result.message || 'Success!', 'success');
+                    setTimeout(() => {
+                        window.location.href = result.redirect || '/browse';
+                    }, 1500);
+                }
+            } catch (error) {
+                showMessage('An error occurred. Please try again.', 'error');
+            } finally {
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+    
+    <!-- Modal System -->
+    <script src="/js/modal.js"></script>
+    
+    <!-- Socket.IO Client -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Notifications System -->
+    <script src="/js/notifications.js"></script>
+</body>
+</html>

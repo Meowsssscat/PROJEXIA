@@ -1,0 +1,239 @@
+/* ==================
+   HOW IT WORKS COMPONENT
+   ================== */
+
+.how-it-works-section {
+  padding: 4rem 1.5rem;
+  background-color: hsl(var(--muted) / 0.3);
+}
+
+.how-it-works-container {
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+.how-it-works-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.how-it-works-title {
+  font-family: var(--font-poppins);
+  font-size: clamp(2rem, 5vw, 2.5rem);
+  font-weight: 700;
+  color: hsl(var(--foreground));
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.how-it-works-title .highlight {
+  color: hsl(var(--primary));
+}
+
+.how-it-works-description {
+  font-family: var(--font-inter);
+  font-size: 1.125rem;
+  color: hsl(var(--muted-foreground));
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+/* Steps Grid */
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.step-card {
+  position: relative;
+  background-color: hsl(var(--card));
+  border: 1px solid hsl(var(--border) / 0.5);
+  border-radius: var(--radius);
+  padding: 2rem 1.5rem 1.5rem;
+  transition: all 0.3s ease;
+  text-align: center;
+  animation: scaleIn 0.4s ease-out;
+}
+
+.step-card {
+  background: var(--gradient-card);
+}
+
+.step-card:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.step-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.step-card:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.step-card:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+.step-card:hover {
+  box-shadow: var(--shadow-soft);
+  transition: all 0.3s ease;
+}
+
+/* Step Number Badge */
+.step-number {
+  position: absolute;
+  top: -1rem;
+  left: 1.5rem;
+  width: 2rem;
+  height: 2rem;
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.875rem;
+  box-shadow: 0 2px 8px hsl(var(--primary) / 0.3);
+}
+
+/* Step Icon Container */
+.step-icon-container {
+  width: 3rem;
+  height: 3rem;
+  background-color: hsl(var(--secondary) / 0.1);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.step-card:hover .step-icon-container {
+  background-color: hsl(var(--secondary) / 0.2);
+}
+
+.step-icon-container svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: hsl(var(--secondary));
+}
+
+.step-title {
+  font-family: var(--font-poppins);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  margin-bottom: 0.5rem;
+}
+
+.step-description {
+  font-family: var(--font-inter);
+  font-size: 0.925rem;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.6;
+}
+
+/* Connector Lines */
+.step-connector {
+  display: none;
+  position: absolute;
+  top: 50%;
+  right: -1.5rem;
+  width: 1.5rem;
+  height: 2px;
+  background-color: hsl(var(--border));
+  transform: translateY(-50%);
+}
+
+@media (min-width: 1024px) {
+  .step-card:not(:last-child) .step-connector {
+    display: block;
+  }
+
+  .steps-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .steps-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .how-it-works-section {
+    padding: 2rem 1rem;
+  }
+
+  .how-it-works-header {
+    margin-bottom: 2rem;
+  }
+
+  .how-it-works-title {
+    font-size: 1.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .how-it-works-description {
+    font-size: 1rem;
+  }
+
+  .steps-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .step-card {
+    padding: 1.75rem 1.25rem 1.25rem;
+  }
+
+  .step-number {
+    left: 1.25rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .how-it-works-section {
+    padding: 1.5rem 1rem;
+  }
+
+  .how-it-works-title {
+    font-size: 1.5rem;
+  }
+
+  .steps-grid {
+    gap: 1rem;
+  }
+
+  .step-card {
+    padding: 1.5rem 1rem 1rem;
+  }
+
+  .step-number {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 0.75rem;
+    left: 1rem;
+  }
+
+  .step-icon-container {
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .step-title {
+    font-size: 1rem;
+  }
+
+  .step-description {
+    font-size: 0.875rem;
+  }
+}

@@ -3,18 +3,16 @@ const router = express.Router();
 const profileController = require('../controllers/profile');
 const checkUser = require('../middleware/checkUser');
 
-router.get('/profile', checkUser, profileController.getProfile);
+// API Routes for profile interactions
+// Note: GET /profile and GET /profile/:id are handled in pageRoutes (pageController.getProfilePage)
 
-router.get('/profile/:id', profileController.getProject);
+router.post('/api/profile/:id/view', checkUser, profileController.recordView);
 
-router.post('/api/profile/:id/view', profileController.recordView);
+router.post('/api/profile/:id/like', checkUser, profileController.toggleLike);
 
-router.post('/api/profile/:id/like', profileController.toggleLike);
+router.post('/api/profile/:id/comment', checkUser, profileController.addComment);
 
-router.post('/api/profile/:id/comment', profileController.addComment);
-
-router.put('/api/profile/:id', profileController.updateProject);
-
+router.put('/api/profile/:id', checkUser, profileController.updateProject);
 
 module.exports = router;
 

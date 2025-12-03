@@ -135,7 +135,7 @@ exports.getProject = async (req, res) => {
         // ========================================
         // PASS ALL DATA TO FRONTEND
         // ========================================
-        return res.render('profile', {
+        return res.render('profile-modern', {
             project: projectObject,
             uploader: userObject,
             comments: allComments,

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Explore Projects - Projexia</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="/css/projexia-design-system.css" />
+    <link rel="stylesheet" href="/css/navbar-modern.css" />
+    <link rel="stylesheet" href="/css/modal-modern.css" />
+    <link rel="stylesheet" href="/css/footer-modern.css" />
+    <link rel="stylesheet" href="/css/home-modern.css" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+    <script src="/js/theme.js"></script>
+</head>
+<body>
+    <div class="home-container">
+        <!-- Navbar -->
+        <%- include('partials/navbar-modern') %>
+        
+        <!-- Main Content -->
+        <main class="home-content">
+            <div class="home-wrapper">
+                <!-- Filter Container -->
+                <div class="filter-container">
+                    <input 
+                        type="text" 
+                        id="searchProject" 
+                        class="filter-input" 
+                        placeholder="Search project name..." 
+                        autocomplete="off"
+                    />
+
+                    <select class="filter-select" id="filterProgram" name="filterProgram">
+                        <option value="All">All Programs</option>
+                        <option value="BSIT">BSIT</option>
+                        <option value="BSIS">BSIS</option>
+                        <option value="BSCS">BSCS</option>
+                    </select>
+
+                    <select class="filter-select" id="filterYear" name="filterYear">
+                        <option value="All">All Years</option>
+                        <option value="1st">1st Year</option>
+                        <option value="2nd">2nd Year</option>
+                        <option value="3rd">3rd Year</option>
+                        <option value="4th">4th Year</option>
+                    </select>
+
+                    <select class="filter-select" id="filterTechnology" name="filterTechnology">
+                        <option value="All">All Technologies</option>
+                    </select>
+                </div>
+
+                <!-- Section 1: Weekly Top 3 Projects -->
+                <% if (weeklyTop3 && weeklyTop3.length > 0) { %>
+                <section class="section section-trending">
+                    <div class="section-header">
+                        <div class="trending-badge">
+                            <svg class="trending-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                <polyline points="17 6 23 6 23 12"></polyline>
+                            </svg>
+                            Trending Now
+                        </div>
+                        <h2 class="section-title">Top 3 Most Popular Projects</h2>
+                        <p class="section-subtitle">The highest-rated projects this week</p>
+                    </div>
+
+                    <div class="projects-grid top3-grid">
+                        <% weeklyTop3.forEach((project, index) => { %>
+                        <a href="/project/<%= project.id %>" class="project-card-link">
+                            <div class="project-card top3-card" 
+                                 data-program="<%= project.program %>" 
+                                 data-year="<%= project.year %>"
+                                 data-technologies="<%= project.technologies.join(',') %>"
+                                 data-project-name="<%= project.projectName.toLowerCase() %>"
+                                 data-popularity="<%= project.popularity %>">
+
+                                <!-- Thumbnail --> 
+                                <div class="project-thumbnail">
+                                    <img src="<%= project.projectThumbnail %>" alt="<%= project.projectName %>">
+                                    <div class="popularity-badge">
+                                        <span class="popularity-score"><%= project.popularity %></span>
+                                    </div>
+                                </div>
+
+                                <!-- Content -->
+                                <div class="project-content">
+                                    <h3 class="project-name"><%= project.projectName %></h3>
+
+                                    <!-- Technologies -->
+                                    <div class="tech-list">
+                                        <% project.technologies.slice(0, 3).forEach(tech => { %>
+                                        <span class="tech-tag"><%= tech %></span>
+                                        <% }) %>
+                                    </div>
+
+                                    <!-- Stats -->
+                                    <div class="project-stats">
+                                        <div class="stat">
+                                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                            </svg>
+                                            <span><%= project.likeCount %></span>
+                                        </div>
+                                        
+                                        <div class="stat">
+                                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                            </svg>
+                                            <span><%= project.commentCount %></span>
+                                        </div>
+                                        
+                                        <div class="stat">
+                                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
+                                            <span><%= project.viewCount %></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <% }) %>
+                    </div>
+                </section>
+                <% } %>
+
+                <!-- Section 2: Batchmate Projects -->
+                <% if (currentUser && batchmateProjects && batchmateProjects.length > 0) { %>
+                <section class="section section-batchmates">
+                    <div class="section-header">
+                        <h2 class="section-title">Your Batchmates</h2>
+                        <p class="section-subtitle"><%= currentUser.program %> • <%= currentUser.year %> Year</p>
+                    </div>
+
+                    <div class="projects-grid">
+                        <% batchmateProjects.forEach(project => { %>
+                        <a href="/project/<%= project.id %>" class="project-card-link">
+                            <div class="project-card" 
+                                 data-program="<%= project.program %>" 
+                                 data-year="<%= project.year %>"
+                                 data-technologies="<%= project.technologies.join(',') %>"
+                                 data-project-name="<%= project.projectName.toLowerCase() %>"
+                                 data-popularity="<%= project.popularity %>">
+
+                                <div class="project-thumbnail">
+                                    <img src="<%= project.projectThumbnail %>" alt="<%= project.projectName %>">
+                                </div>
+
+                                <div class="project-content">
+                                    <h3 class="project-name"><%= project.projectName %></h3>
+
+                                    <div class="tech-list">
+                                        <% project.technologies.slice(0, 3).forEach(tech => { %>
+                                        <span class="tech-tag"><%= tech %></span>
+                                        <% }) %>
+                                    </div>
+
+                                    <div class="project-stats">
+                                        <div class="stat">
+                                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                            </svg>
+                                            <span><%= project.likeCount %></span>
+                                        </div>
+                                        
+                                        <div class="stat">
+                                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                            </svg>
+                                            <span><%= project.commentCount %></span>
+                                        </div>
+                                        
+                                        <div class="stat">
+                                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
+                                            <span><%= project.viewCount %></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <% }) %>
+                    </div>
+                </section>
+                <% } %>
+
+                <!-- Section 3: All Other Projects -->
+                <% if (remainingProjects && remainingProjects.length > 0) { %>
+                <section class="section section-all">
+                    <div class="section-header">
+                        <h2 class="section-title">All Projects</h2>
+                        <p class="section-subtitle">Explore more from the CCS community</p>
+                    </div>
+
+                    <div class="projects-grid">
+                        <% remainingProjects.forEach(project => { %>
+                        <a href="/project/<%= project.id %>" class="project-card-link">
+                            <div class="project-card" 
+                                 data-program="<%= project.program %>" 
+                                 data-year="<%= project.year %>"
+                                 data-technologies="<%= project.technologies.join(',') %>"
+                                 data-project-name="<%= project.projectName.toLowerCase() %>"
+                                 data-popularity="<%= project.popularity %>">
+
+                                <div class="project-thumbnail">
+                                    <img src="<%= project.projectThumbnail %>" alt="<%= project.projectName %>">
+                                </div>
+
+                                <div class="project-content">
+                                    <h3 class="project-name"><%= project.projectName %></h3>
+
+                                    <div class="tech-list">
+                                        <% project.technologies.slice(0, 3).forEach(tech => { %>
+                                        <span class="tech-tag"><%= tech %></span>
+                                        <% }) %>
+                                    </div>
+
+                                    <div class="project-stats">
+                                        <div class="stat">
+                                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                            </svg>
+                                            <span><%= project.likeCount %></span>
+                                        </div>
+                                        
+                                        <div class="stat">
+                                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                            </svg>
+                                            <span><%= project.commentCount %></span>
+                                        </div>
+                                        
+                                        <div class="stat">
+                                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
+                                            <span><%= project.viewCount %></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <% }) %>
+                    </div>
+                </section>
+                <% } %>
+
+                <!-- No Projects Message -->
+                <% if ((!weeklyTop3 || weeklyTop3.length === 0) && (!batchmateProjects || batchmateProjects.length === 0) && (!remainingProjects || remainingProjects.length === 0)) { %>
+                <section class="section section-empty">
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                            <polyline points="13 2 13 9 20 9"></polyline>
+                        </svg>
+                        <h3>No Projects Yet</h3>
+                        <p>Check back soon for new projects from the community!</p>
+                    </div>
+                </section>
+                <% } %>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <%- include('partials/footer-modern') %>
+    </div>
+
+    <!-- Socket.IO Client -->
+    <script src="/socket.io/socket.io.js"></script>
+    <% if (locals.currentUser) { %>
+    <script>
+        const USER_ID = "<%= currentUser._id || '' %>";
+    </script>
+    <% } %>
+    
+    <!-- External Scripts -->
+    <script src="/js/home-modern.js"></script>
+    
+    <!-- Modal System -->
+    <script src="/js/modal.js"></script>
+    
+    <!-- Notification System -->
+    <script src="/js/notification.js"></script>
+    
+    <!-- Socket.IO Client -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Real-time Notifications System -->
+    <script src="/js/notifications.js"></script>
+</body>
+</html>

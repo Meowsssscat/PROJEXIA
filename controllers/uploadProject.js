@@ -4,7 +4,7 @@ const cloudinary = require('../config/cloudinaryConfig');
 const fs = require('fs');
 
 exports.getUploadPage = (req, res) => {
-  return res.render('uploadProject');
+  return res.render('upload-modern');
 };
 
 exports.listProjects = async (req, res) => {
@@ -26,6 +26,8 @@ exports.createProject = async (req, res) => {
     const userId = req.body.userId;
     const name = req.body.name || req.body.projectName;
     const description = req.body.description || '';
+    const program = req.body.program || '';
+    const yearLevel = req.body.yearLevel || '';
     const rawDevelopers = req.body['developers[]'] || req.body.developers;
     const rawTechnologies = req.body['technologies[]'] || req.body.technologies;
     const developers = (Array.isArray(rawDevelopers) ? rawDevelopers : (typeof rawDevelopers === 'string' ? rawDevelopers.split(',') : []))
@@ -51,17 +53,21 @@ exports.createProject = async (req, res) => {
     const thumb = files.thumbnail && files.thumbnail[0];
     const imgs = files.images || [];
 
+    // Debug logging
+    console.log('Files received:', {
+      hasFiles: !!req.files,
+      fileKeys: Object.keys(req.files || {}),
+      thumbnailCount: files.thumbnail ? files.thumbnail.length : 0,
+      imagesCount: imgs.length
+    });
+
     // Validate image limits
     if (!thumb) {
+      console.error('Thumbnail validation failed. Files:', req.files);
       return res.status(400).json({ message: 'Thumbnail is required' });
     }
 
-    if (imgs.length === 0) {
-      return res.status(400).json({ 
-        message: 'At least 1 project image is required (maximum 5)' 
-      });
-    }
-
+    // Images are now optional (can upload with just thumbnail)
     if (imgs.length > 5) {
       return res.status(400).json({ 
         message: 'You can only upload up to 5 project images' 
@@ -102,6 +108,8 @@ exports.createProject = async (req, res) => {
       description,
       developers,
       technologies,
+      program,
+      yearLevel,
       thumbnailUrl: thumbnail,
       otherImages,
       githubLink,

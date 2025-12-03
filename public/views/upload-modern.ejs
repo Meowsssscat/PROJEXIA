@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload Project - Projexia</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="/css/projexia-design-system.css" />
+    <link rel="stylesheet" href="/css/navbar-modern.css" />
+    <link rel="stylesheet" href="/css/modal-modern.css" />
+    <link rel="stylesheet" href="/css/footer-modern.css" />
+    <link rel="stylesheet" href="/css/utility-pages-modern.css" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+    <script src="/js/theme.js"></script>
+</head>
+<body>
+    <div class="form-page-container">
+        <!-- Navbar -->
+        <%- include('partials/navbar-modern') %>
+        
+        <!-- Form Content -->
+        <main class="form-page-content">
+            <div class="container" style="max-width: 700px;">
+                <div class="form-page-header">
+                    <h1>Upload Project</h1>
+                    <p>Share your amazing project with the CCS community</p>
+                </div>
+
+                <div class="form-card">
+                    <div id="successMessage" class="form-message form-success"></div>
+                    <div id="errorMessage" class="form-message form-error"></div>
+
+                    <form id="uploadForm" class="form-section" enctype="multipart/form-data" novalidate>
+                        <!-- Hidden User ID -->
+                        <input type="hidden" name="userId" value="<%= user._id %>" />
+
+                        <!-- Project Name -->
+                        <div class="form-group">
+                            <label for="projectName">Project Name *</label>
+                            <input 
+                                type="text" 
+                                id="projectName" 
+                                name="projectName" 
+                                placeholder="My Awesome Project"
+                                required
+                            />
+                        </div>
+
+                        <!-- Description -->
+                        <div class="form-group">
+                            <label for="description">Description *</label>
+                            <textarea 
+                                id="description" 
+                                name="description" 
+                                placeholder="Describe what your project does, its features, and technologies used..."
+                                required
+                            ></textarea>
+                        </div>
+
+                        <!-- Technologies -->
+                        <div class="form-group">
+                            <label for="technologies">Technologies Used *</label>
+                            <input 
+                                type="text" 
+                                id="technologies" 
+                                name="technologies" 
+                                placeholder="React, Node.js, MongoDB (comma-separated)"
+                                required
+                            />
+                            <p class="form-help-text">Separate multiple technologies with commas</p>
+                        </div>
+
+                        <!-- Developers/Team Members -->
+                        <div class="form-group">
+                            <label for="developers">Developers/Team Members *</label>
+                            <input 
+                                type="text" 
+                                id="developers" 
+                                name="developers" 
+                                placeholder="John Doe, Jane Smith, Mike Johnson (comma-separated)"
+                                required
+                            />
+                            <p class="form-help-text">List all team members who worked on this project (comma-separated)</p>
+                        </div>
+
+                        <!-- Program -->
+                        <div class="form-group">
+                            <label for="program">Program *</label>
+                            <select id="program" name="program" required>
+                                <option value="">Select your program</option>
+                                <option value="BSCS">BS Computer Science</option>
+                                <option value="BSIT">BS Information Technology</option>
+                                <option value="ACT">Associate in Computer Technology</option>
+                            </select>
+                        </div>
+
+                        <!-- Year Level -->
+                        <div class="form-group">
+                            <label for="yearLevel">Year Level *</label>
+                            <select id="yearLevel" name="yearLevel" required>
+                                <option value="">Select year level</option>
+                                <option value="1">1st Year</option>
+                                <option value="2">2nd Year</option>
+                                <option value="3">3rd Year</option>
+                                <option value="4">4th Year</option>
+                            </select>
+                        </div>
+
+                        <!-- Thumbnail Upload -->
+                        <div class="form-group">
+                            <label for="thumbnail">Project Thumbnail *</label>
+                            <div class="file-upload-area" id="thumbnailArea">
+                                <svg class="file-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                    <polyline points="21 15 16 10 5 21"></polyline>
+                                </svg>
+                                <p class="file-upload-text">Click to upload or drag and drop</p>
+                                <p class="file-upload-hint">PNG, JPG, GIF up to 5MB</p>
+                                <input 
+                                    type="file" 
+                                    id="thumbnail" 
+                                    name="thumbnail" 
+                                    class="file-upload-input"
+                                    accept="image/*"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <!-- Other Project Images (Optional) -->
+                        <div class="form-group">
+                            <label for="images">Project Images (Optional)</label>
+                            <div class="file-upload-area" id="imagesArea">
+                                <svg class="file-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                    <polyline points="21 15 16 10 5 21"></polyline>
+                                </svg>
+                                <p class="file-upload-text">Click to upload or drag and drop</p>
+                                <p class="file-upload-hint">PNG, JPG, GIF up to 5MB (maximum 5 images)</p>
+                                <input 
+                                    type="file" 
+                                    id="images" 
+                                    name="images" 
+                                    class="file-upload-input"
+                                    accept="image/*"
+                                    multiple
+                                />
+                            </div>
+                            <p class="form-help-text">Upload up to 5 additional project images to showcase your work</p>
+                        </div>
+
+                        <!-- Source Code Link (Optional) -->
+                        <div class="form-group">
+                            <label for="sourceCode">Source Code Link (Optional)</label>
+                            <input 
+                                type="url" 
+                                id="sourceCode" 
+                                name="sourceCode" 
+                                placeholder="https://github.com/username/project"
+                            />
+                            <p class="form-help-text">Link to your GitHub repository or other code hosting platform</p>
+                        </div>
+
+                        <!-- Live Demo Link (Optional) -->
+                        <div class="form-group">
+                            <label for="liveDemo">Live Demo Link (Optional)</label>
+                            <input 
+                                type="url" 
+                                id="liveDemo" 
+                                name="liveDemo" 
+                                placeholder="https://myproject.com"
+                            />
+                            <p class="form-help-text">Link to the live, deployed version of your project</p>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <a href="/home" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary" id="submitBtn">Upload Project</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <%- include('partials/footer-modern') %>
+    </div>
+
+    <script>
+        const uploadForm = document.getElementById('uploadForm');
+        const thumbnailArea = document.getElementById('thumbnailArea');
+        const thumbnailInput = document.getElementById('thumbnail');
+        const imagesArea = document.getElementById('imagesArea');
+        const imagesInput = document.getElementById('images');
+        const errorMsg = document.getElementById('errorMessage');
+        const successMsg = document.getElementById('successMessage');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // File upload drag and drop for thumbnail
+        thumbnailArea.addEventListener('click', () => thumbnailInput.click());
+        
+        thumbnailArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            thumbnailArea.classList.add('drag-over');
+        });
+
+        thumbnailArea.addEventListener('dragleave', () => {
+            thumbnailArea.classList.remove('drag-over');
+        });
+
+        thumbnailArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            thumbnailArea.classList.remove('drag-over');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                thumbnailInput.files = files;
+                thumbnailInput.dispatchEvent(new Event('change'));
+            }
+        });
+
+        thumbnailInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                const fileName = e.target.files[0].name;
+                thumbnailArea.innerHTML = `
+                    <svg class="file-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: hsl(var(--primary));">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <p class="file-upload-text">${fileName} selected</p>
+                    <p class="file-upload-hint">Click to change or drag another image</p>
+                `;
+            }
+        });
+
+        // File upload drag and drop for other images
+        imagesArea.addEventListener('click', () => imagesInput.click());
+        
+        imagesArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            imagesArea.classList.add('drag-over');
+        });
+
+        imagesArea.addEventListener('dragleave', () => {
+            imagesArea.classList.remove('drag-over');
+        });
+
+        imagesArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            imagesArea.classList.remove('drag-over');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                // Limit to 5 files
+                const limitedFiles = Array.from(files).slice(0, 5);
+                const dataTransfer = new DataTransfer();
+                limitedFiles.forEach(file => dataTransfer.items.add(file));
+                imagesInput.files = dataTransfer.files;
+                imagesInput.dispatchEvent(new Event('change'));
+            }
+        });
+
+        imagesInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                const fileCount = e.target.files.length;
+                const fileNames = Array.from(e.target.files).map(f => f.name).join(', ');
+                imagesArea.innerHTML = `
+                    <svg class="file-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: hsl(var(--primary));">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <p class="file-upload-text">${fileCount} image${fileCount !== 1 ? 's' : ''} selected</p>
+                    <p class="file-upload-hint">Click to change or drag other images</p>
+                `;
+            }
+        });
+
+        // Form submission
+        uploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            errorMsg.classList.remove('show');
+            successMsg.classList.remove('show');
+            submitBtn.disabled = true;
+
+            // Validate files before submission
+            if (!thumbnailInput.files || thumbnailInput.files.length === 0) {
+                errorMsg.textContent = 'Please select a thumbnail image';
+                errorMsg.classList.add('show');
+                submitBtn.disabled = false;
+                return;
+            }
+
+            if (!imagesInput.files || imagesInput.files.length === 0) {
+                errorMsg.textContent = 'Please select at least one project image';
+                errorMsg.classList.add('show');
+                submitBtn.disabled = false;
+                return;
+            }
+
+            // Create FormData and explicitly add files
+            const formData = new FormData(uploadForm);
+            
+            // Ensure files are added explicitly
+            formData.delete('thumbnail');
+            formData.delete('images');
+            
+            if (thumbnailInput.files.length > 0) {
+                formData.append('thumbnail', thumbnailInput.files[0]);
+            }
+            
+            if (imagesInput.files.length > 0) {
+                for (let i = 0; i < imagesInput.files.length; i++) {
+                    formData.append('images', imagesInput.files[i]);
+                }
+            }
+
+            try {
+                const response = await fetch('/api/projects', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || 'Upload failed');
+                }
+
+                successMsg.textContent = 'Project uploaded successfully!';
+                successMsg.classList.add('show');
+
+                setTimeout(() => {
+                    window.location.href = '/browse';
+                }, 1500);
+            } catch (error) {
+                errorMsg.textContent = error.message || 'An error occurred';
+                errorMsg.classList.add('show');
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+    
+    <!-- Modal System -->
+    <script src="/js/modal.js"></script>
+    
+    <!-- Socket.IO Client -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Notifications System -->
+    <script src="/js/notifications.js"></script>
+</body>
+</html>

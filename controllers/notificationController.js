@@ -164,3 +164,47 @@ exports.deleteNotification = async (req, res) => {
     res.status(500).json({ error: 'Failed to delete notification' });
   }
 };
+
+// ===============================
+// HANDLE NOTIFICATION CLICK
+// ===============================
+exports.handleNotificationClick = async (req, res) => {
+  try {
+    const userId = req.session?.userId;
+    const { notificationId } = req.params;
+    
+    if (!userId) {
+      return res.status(401).json({ error: 'Not logged in' });
+    }
+
+    // Find and mark notification as read
+    const notification = await Notification.findOneAndUpdate(
+      { _id: notificationId, recipientId: userId },
+      { isRead: true },
+      { new: true }
+    ).populate('projectId', '_id');
+
+    if (!notification) {
+      return res.status(404).json({ error: 'Notification not found' });
+    }
+
+    // Determine redirect route based on notification type
+    let redirectUrl = '/';
+    
+    if (notification.type === 'like' || notification.type === 'comment') {
+      if (notification.projectId?._id) {
+        redirectUrl = `/project/${notification.projectId._id}`;
+      }
+    } else if (notification.type === 'follow') {
+      if (notification.senderId) {
+        redirectUrl = `/profile/${notification.senderId}`;
+      }
+    }
+
+    res.json({ success: true, redirectUrl });
+
+  } catch (err) {
+    console.error('Error handling notification click:', err);
+    res.status(500).json({ error: 'Failed to handle notification click' });
+  }
+};

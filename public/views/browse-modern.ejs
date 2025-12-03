@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Browse Projects - Projexia</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="/css/projexia-design-system.css" />
+    <link rel="stylesheet" href="/css/navbar-modern.css" />
+    <link rel="stylesheet" href="/css/modal-modern.css" />
+    <link rel="stylesheet" href="/css/footer-modern.css" />
+    <link rel="stylesheet" href="/css/browse-projects.css" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+    <script src="/js/theme.js"></script>
+</head>
+<body>
+    <div class="min-h-screen flex flex-col">
+      <!-- Navbar -->
+      <%- include('partials/navbar-modern') %>
+      
+      <!-- Main Content -->
+      <main style="flex: 1; padding-top: 4rem;">
+        <!-- Browse Header -->
+        <section class="browse-header">
+          <div class="container">
+            <h1 class="browse-title">Browse Projects</h1>
+            <p class="browse-subtitle">Discover and explore amazing projects from your fellow CCS students</p>
+          </div>
+        </section>
+
+        <!-- Filters & Search -->
+        <section class="browse-controls">
+          <div class="container">
+            <div class="filters-grid">
+              <!-- Search -->
+              <div class="search-wrapper">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <input 
+                  type="text" 
+                  class="input search-input" 
+                  placeholder="Search projects by name, technology, or keyword..."
+                  id="searchInput"
+                />
+              </div>
+
+              <!-- Program Filter -->
+              <select class="input" id="programFilter">
+                <option value="">All Programs</option>
+                <option value="BSCS">BS Computer Science</option>
+                <option value="BSIT">BS Information Technology</option>
+                <option value="ACT">Associate in Computer Technology</option>
+              </select>
+
+              <!-- Year Filter -->
+              <select class="input" id="yearFilter">
+                <option value="">All Years</option>
+                <option value="1">1st Year</option>
+                <option value="2">2nd Year</option>
+                <option value="3">3rd Year</option>
+                <option value="4">4th Year</option>
+              </select>
+
+              <!-- Language Filter -->
+              <select class="input" id="languageFilter">
+                <option value="">All Languages</option>
+                <option value="javascript">JavaScript</option>
+                <option value="python">Python</option>
+                <option value="java">Java</option>
+                <option value="csharp">C#</option>
+                <option value="cpp">C++</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <!-- Projects Grid -->
+        <section class="browse-projects">
+          <div class="container">
+            <div id="projectsContainer" class="projects-grid">
+              <!-- Projects will be loaded here -->
+              <% if (projects && projects.length > 0) { %>
+                <% projects.forEach(project => { %>
+                  <a href="/project/<%= project._id %>" class="project-card-link" style="text-decoration: none; color: inherit;">
+                    <div class="project-card">
+                      <div class="project-image">
+                        <img src="<%= project.thumbnailUrl?.url || '/images/default-project.png' %>" alt="<%= project.name %>" />
+                      </div>
+                      <div class="project-content">
+                        <!-- Title -->
+                        <h3 class="project-title"><%= project.name %></h3>
+                        
+                        <!-- Author Info -->
+                        <div class="project-author-info">
+                          <span class="author-name"><%= project.userId?.fullName || 'Author' %></span>
+                        </div>
+                        
+                        <!-- Technologies -->
+                        <% if (project.technologies && project.technologies.length > 0) { %>
+                          <div class="tech-tags">
+                            <% project.technologies.slice(0, 4).forEach(tech => { %>
+                              <span class="tech-tag"><%= tech %></span>
+                            <% }) %>
+                            <% if (project.technologies.length > 4) { %>
+                              <span class="tech-tag">+<%= project.technologies.length - 4 %></span>
+                            <% } %>
+                          </div>
+                        <% } %>
+                        
+                        <!-- Stats -->
+                        <div class="project-stats">
+                          <div class="project-stat">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                            <span><%= project.likes || 0 %></span>
+                          </div>
+                          <div class="project-stat">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            <span><%= project.comments || 0 %></span>
+                          </div>
+                          <div class="project-stat">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                              <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <span><%= project.viewCount || 0 %></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                <% }); %>
+              <% } else { %>
+                <div class="empty-state" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+                  <svg style="width: 4rem; height: 4rem; margin: 0 auto 1rem; color: hsl(var(--muted-foreground));" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                  </svg>
+                  <h3 style="font-size: 1.25rem; color: hsl(var(--foreground)); margin-bottom: 0.5rem;">No projects found</h3>
+                  <p style="color: hsl(var(--muted-foreground));">Try adjusting your filters or search terms</p>
+                </div>
+              <% } %>
+            </div>
+          </div>
+        </section>
+      </main>
+      
+      <!-- Footer -->
+      <%- include('partials/footer-modern') %>
+    </div>
+
+    <script>
+      // Filter functionality
+      const searchInput = document.getElementById('searchInput');
+      const programFilter = document.getElementById('programFilter');
+      const yearFilter = document.getElementById('yearFilter');
+      const languageFilter = document.getElementById('languageFilter');
+
+      function applyFilters() {
+        const search = searchInput.value.toLowerCase();
+        const program = programFilter.value;
+        const year = yearFilter.value;
+        const language = languageFilter.value;
+
+        const cards = document.querySelectorAll('.project-card');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+          const title = card.querySelector('.project-title').textContent.toLowerCase();
+          const description = card.querySelector('.project-description').textContent.toLowerCase();
+          
+          const matchesSearch = title.includes(search) || description.includes(search);
+          const matchesFilters = (!program || card.textContent.includes(program)) &&
+                               (!year || card.textContent.includes(`Year ${year}`)) &&
+                               (!language || card.textContent.includes(language));
+
+          if (matchesSearch && matchesFilters) {
+            card.style.display = '';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        if (visibleCount === 0) {
+          const container = document.getElementById('projectsContainer');
+          if (!container.querySelector('.empty-state-temp')) {
+            const emptyState = document.createElement('div');
+            emptyState.className = 'empty-state-temp';
+            emptyState.style.cssText = 'grid-column: 1 / -1; text-align: center; padding: 3rem; color: hsl(var(--muted-foreground));';
+            emptyState.innerHTML = '<p>No projects match your filters</p>';
+            container.appendChild(emptyState);
+          }
+        } else {
+          const emptyState = document.querySelector('.empty-state-temp');
+          if (emptyState) emptyState.remove();
+        }
+      }
+
+      searchInput.addEventListener('input', applyFilters);
+      programFilter.addEventListener('change', applyFilters);
+      yearFilter.addEventListener('change', applyFilters);
+      languageFilter.addEventListener('change', applyFilters);
+    </script>
+    
+    <!-- Modal System -->
+    <script src="/js/modal.js"></script>
+    
+    <!-- Socket.IO Client -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Notifications System -->
+    <script src="/js/notifications.js"></script>
+</body>
+</html>

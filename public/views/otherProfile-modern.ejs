@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= userToVisit.fullName %> - Projexia</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="/css/projexia-design-system.css" />
+    <link rel="stylesheet" href="/css/navbar-modern.css" />
+    <link rel="stylesheet" href="/css/modal-modern.css" />
+    <link rel="stylesheet" href="/css/footer-modern.css" />
+    <link rel="stylesheet" href="/css/other-profile-modern.css" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+    <script src="/js/theme.js"></script>
+</head>
+<body>
+    <div class="profile-container">
+        <!-- Navbar -->
+        <%- include('partials/navbar-modern') %>
+        
+        <!-- Main Content -->
+        <main class="profile-content">
+            <div class="profile-wrapper">
+                <!-- Profile Header -->
+                <section class="profile-header" aria-label="User profile header">
+                    <div class="header-container">
+                        <!-- User Avatar -->
+                        <div class="profile-avatar">
+                            <%= userToVisit.fullName.charAt(0).toUpperCase() %>
+                        </div>
+
+                        <!-- User Info -->
+                        <div class="user-info">
+                            <h1 class="user-name"><%= userToVisit.fullName %></h1>
+                            <div class="user-meta">
+                                <span class="meta-item">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 10c0 7-9 13-8 13s-8-6-8-13a8 8 0 0 1 16 0Z"></path>
+                                        <circle cx="12" cy="10" r="3"></circle>
+                                    </svg>
+                                    <span><%= userToVisit.program %></span>
+                                </span>
+                                <span class="meta-item">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                    </svg>
+                                    <span><%= userToVisit.year %> Year</span>
+                                </span>
+                            </div>
+                            <% if (userToVisit.lastProfileEdit) { %>
+                            <p class="last-edit">
+                                Last updated: <%= new Date(userToVisit.lastProfileEdit).toLocaleDateString() %>
+                            </p>
+                            <% } %>
+                        </div>
+
+                        <!-- Stats -->
+                        <div class="header-stats">
+                            <div class="stat-card">
+                                <div class="stat-value"><%= Object.keys(data).length %></div>
+                                <div class="stat-label">Projects</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Projects Section -->
+                <section class="projects-section" aria-label="User projects">
+                    <div class="section-header">
+                        <h2 class="section-title"><%= userToVisit.fullName %>'s Projects</h2>
+                        <p class="section-subtitle"><%= Object.keys(data).length %> project<%= Object.keys(data).length !== 1 ? 's' : '' %> showcased</p>
+                    </div>
+
+                    <div id="projectsContainer">
+                        <% if (Object.keys(data).length === 0) { %>
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                                <polyline points="13 2 13 9 20 9"></polyline>
+                            </svg>
+                            <h3>No Projects Yet</h3>
+                            <p><%= userToVisit.fullName %> hasn't uploaded any projects yet.</p>
+                        </div>
+                        <% } else { %>
+                        <div class="projects-grid">
+                            <% for (let id in data) { %>
+                            <a href="/project/<%= id %>" class="project-card-link">
+                                <div class="project-card">
+                                    <!-- Thumbnail -->
+                                    <div class="project-thumbnail">
+                                        <img src="<%= data[id].projectThumbnail %>" alt="<%= data[id].projectName %>">
+                                    </div>
+
+                                    <!-- Content -->
+                                    <div class="project-content">
+                                        <h3 class="project-name"><%= data[id].projectName %></h3>
+
+                                        <!-- Technologies -->
+                                        <div class="tech-list">
+                                            <% data[id].technologies.slice(0, 3).forEach(tech => { %>
+                                            <span class="tech-tag"><%= tech %></span>
+                                            <% }) %>
+                                        </div>
+
+                                        <!-- Stats -->
+                                        <div class="project-stats">
+                                            <div class="stat">
+                                                <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                                </svg>
+                                                <span><%= data[id].likeCount %></span>
+                                            </div>
+                                            
+                                            <div class="stat">
+                                                <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                                </svg>
+                                                <span><%= data[id].commentCount %></span>
+                                            </div>
+                                            
+                                            <div class="stat">
+                                                <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                    <circle cx="12" cy="12" r="3"></circle>
+                                                </svg>
+                                                <span><%= data[id].viewCount %></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                            <% } %>
+                        </div>
+                        <% } %>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <%- include('partials/footer-modern') %>
+    </div>
+    
+    <!-- Modal System -->
+    <script src="/js/modal.js"></script>
+    
+    <!-- Socket.IO Client -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Notifications System -->
+    <script src="/js/notifications.js"></script>
+</body>
+</html>

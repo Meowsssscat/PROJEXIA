@@ -133,7 +133,7 @@ exports.getProject = async (req, res) => {
         // ========================================
         // PASS ALL DATA TO FRONTEND
         // ========================================
-        return res.render('projectDetails', {
+        return res.render('project-detail-modern', {
             userId,
             project: projectObject,
             uploader: userObject,
@@ -349,6 +349,74 @@ exports.deleteComment = async (req, res) => {
     }
 }
 
+// ========================================
+// ADD REPLY TO COMMENT
+// ========================================
+exports.addReply = async (req, res) => {
+    try {
+        const { projectId, commentId } = req.params;
+        const userId = req.session.userId;
+        const { text } = req.body;
+        
+        if (!userId) {
+            return res.status(401).json({ error: 'User not logged in' });
+        }
+        
+        if (!text || text.trim().length === 0) {
+            return res.status(400).json({ error: 'Reply text is required' });
+        }
+        
+        // Get project, comment, and user info
+        const project = await Project.findById(projectId);
+        const comment = await Comment.findById(commentId);
+        const user = await User.findById(userId);
+        
+        if (!project) {
+            return res.status(404).json({ error: 'Project not found' });
+        }
+        
+        if (!comment) {
+            return res.status(404).json({ error: 'Comment not found' });
+        }
+        
+        // Add reply to comment's replies array
+        const reply = {
+            userId,
+            text: text.trim(),
+            createdAt: new Date()
+        };
+        
+        comment.replies.push(reply);
+        await comment.save();
+        
+        // Populate user details for response
+        const populatedComment = await Comment.findById(commentId)
+            .populate('replies.userId', 'fullName email program year')
+            .lean();
+        
+        const addedReply = populatedComment.replies[populatedComment.replies.length - 1];
+        
+        // Send notification to comment author
+        const notifyUser = require('../utils/notifyUser');
+        await notifyUser(
+            comment.userId,
+            userId,
+            projectId,
+            'reply',
+            `${user.fullName} replied to your comment on "${project.name}"`
+        );
+        
+        return res.status(201).json({
+            success: true,
+            reply: addedReply
+        });
+        
+    } catch (error) {
+        console.error('Error adding reply:', error);
+        return res.status(500).json({ error: 'Failed to add reply' });
+    }
+}
+
 
 
 
@@ -452,6 +520,7 @@ module.exports = {
     toggleLike: exports.toggleLike,
     addComment: exports.addComment,
     deleteComment: exports.deleteComment,
+    addReply: exports.addReply,
     updateProject: exports.updateProject,
     deleteProject: exports.deleteProject
 };

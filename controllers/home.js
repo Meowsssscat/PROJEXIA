@@ -197,7 +197,7 @@ exports.getHome = async (req, res) => {
     console.log("Home page data prepared with sections");
     console.log(`Top 3 Trending: ${top3Ids.length}, Batchmates: ${batchmateIds.length}, Remaining: ${remainingProjects.length}`);
 
-    return res.render('home', { 
+    return res.render('home-modern', { 
       weeklyTop3,
       batchmateProjects,
       remainingProjects,
