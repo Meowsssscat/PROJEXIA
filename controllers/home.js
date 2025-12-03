@@ -212,7 +212,8 @@ exports.getHome = async (req, res) => {
         _id: currentUser._id,
         year: currentUser.year,
         program: currentUser.program
-      } : null
+      } : null,
+      user: currentUser // Add user for navbar compatibility
     });
   } catch (error) {
     console.error('getHome error', error);

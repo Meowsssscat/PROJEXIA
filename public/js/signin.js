@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Redirect to home page after 1 second
             setTimeout(() => {
-                window.location.href = data.redirect || '/home';
+                window.location.href = result.data.redirect || '/home';
             }, 1000);
         } else {
             Utils.showError('errorMessage', result.data.message);
