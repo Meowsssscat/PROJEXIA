@@ -19,7 +19,7 @@ router.get('/settings', checkUser, pageController.getSettingsPage);
 
 // Support pages
 router.get('/donate', pageController.getDonatePage);
-router.get('/report', pageController.getReportPage);
+router.get('/report', checkUser, pageController.getReportPage);
 
 // Forgot password page
 router.get('/forgot-password', pageController.getForgotPasswordPage);
