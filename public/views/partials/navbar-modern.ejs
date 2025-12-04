@@ -119,11 +119,49 @@
     <!-- Mobile Navigation -->
     <div class="navbar-mobile-nav" id="mobileNav">
       <div class="navbar-mobile-nav-content">
+        <!-- Mobile Theme Toggle and Notifications -->
+        <div class="navbar-mobile-controls">
+          <!-- Theme Toggle Button -->
+          <button class="navbar-theme-toggle-mobile" id="themeToggleMobile" type="button" aria-label="Toggle dark mode" title="Toggle theme">
+            <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <svg class="moon-icon hidden" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+            <span>Dark Mode</span>
+          </button>
+          
+          <% if (user) { %>
+            <!-- Notifications Button -->
+            <button class="navbar-notifications-btn-mobile" id="notificationBellBtnMobile" type="button" aria-label="Notifications" title="View notifications">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+              <span>Notifications</span>
+              <span class="navbar-notifications-badge-mobile" id="notificationBadgeMobile" style="display: none;">0</span>
+            </button>
+          <% } %>
+        </div>
+        
+        <div class="navbar-mobile-nav-divider"></div>
+        
         <a href="<%= user ? '/home' : '/browse' %>" class="navbar-mobile-nav-link">Browse Projects</a>
         <a href="/about" class="navbar-mobile-nav-link">About</a>
         
         <% if (user) { %>
           <a href="/upload" class="navbar-mobile-nav-link">Upload Project</a>
+          <a href="/profile" class="navbar-mobile-nav-link">Profile</a>
+          <a href="/settings" class="navbar-mobile-nav-link">Settings</a>
         <% } %>
         
         <div class="navbar-mobile-nav-divider"></div>
@@ -172,4 +210,6 @@
       }
     });
   }
+
+
 </script>

@@ -188,16 +188,29 @@
     }
   }
 
-  // Update badge with unread count
+  // Update badge with unread count (both desktop and mobile)
   function updateUnreadCountBadge(count) {
     const badge = document.getElementById('notificationBadge');
-    if (!badge) return;
+    const badgeMobile = document.getElementById('notificationBadgeMobile');
 
-    if (count > 0) {
-      badge.textContent = count > 99 ? '99+' : count;
-      badge.style.display = 'flex';
-    } else {
-      badge.style.display = 'none';
+    // Update desktop badge
+    if (badge) {
+      if (count > 0) {
+        badge.textContent = count > 99 ? '99+' : count;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+    
+    // Update mobile badge
+    if (badgeMobile) {
+      if (count > 0) {
+        badgeMobile.textContent = count > 99 ? '99+' : count;
+        badgeMobile.style.display = 'flex';
+      } else {
+        badgeMobile.style.display = 'none';
+      }
     }
   }
 
@@ -299,12 +312,14 @@
     setInterval(loadNotifications, 30000); // Poll every 30 seconds
   }
 
-  // Setup notification panel toggle
+  // Setup notification panel toggle (both desktop and mobile)
   function setupNotificationPanel() {
     const bellBtn = document.getElementById('notificationBellBtn');
+    const bellBtnMobile = document.getElementById('notificationBellBtnMobile');
     const panel = document.getElementById('notificationPanel');
     const clearBtn = document.getElementById('clearNotificationsBtn');
 
+    // Desktop notification button
     if (bellBtn && panel) {
       bellBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -319,6 +334,18 @@
       document.addEventListener('click', (e) => {
         if (!e.target.closest('.navbar-notifications-wrapper')) {
           panel.style.display = 'none';
+        }
+      });
+    }
+    
+    // Mobile notification button
+    if (bellBtnMobile && panel) {
+      bellBtnMobile.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isHidden = panel.style.display === 'none';
+        panel.style.display = isHidden ? 'flex' : 'none';
+        if (isHidden) {
+          loadNotifications();
         }
       });
     }

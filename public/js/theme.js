@@ -34,33 +34,64 @@
     updateThemeButton(theme);
   }
 
-  // Update the theme toggle button UI
+  // Update the theme toggle button UI (both desktop and mobile)
   function updateThemeButton(theme) {
     const toggleButton = document.getElementById('themeToggle');
-    if (!toggleButton) return;
-
-    const sunIcon = toggleButton.querySelector('.sun-icon');
-    const moonIcon = toggleButton.querySelector('.moon-icon');
+    const toggleButtonMobile = document.getElementById('themeToggleMobile');
     
-    if (theme === 'dark') {
-      toggleButton.setAttribute('aria-label', 'Switch to light mode');
-      if (sunIcon) {
-        sunIcon.style.display = 'none';
-        sunIcon.classList.add('hidden');
+    // Update desktop button
+    if (toggleButton) {
+      const sunIcon = toggleButton.querySelector('.sun-icon');
+      const moonIcon = toggleButton.querySelector('.moon-icon');
+      
+      if (theme === 'dark') {
+        toggleButton.setAttribute('aria-label', 'Switch to light mode');
+        if (sunIcon) {
+          sunIcon.style.display = 'none';
+          sunIcon.classList.add('hidden');
+        }
+        if (moonIcon) {
+          moonIcon.style.display = 'inline-block';
+          moonIcon.classList.remove('hidden');
+        }
+      } else {
+        toggleButton.setAttribute('aria-label', 'Switch to dark mode');
+        if (sunIcon) {
+          sunIcon.style.display = 'inline-block';
+          sunIcon.classList.remove('hidden');
+        }
+        if (moonIcon) {
+          moonIcon.style.display = 'none';
+          moonIcon.classList.add('hidden');
+        }
       }
-      if (moonIcon) {
-        moonIcon.style.display = 'inline-block';
-        moonIcon.classList.remove('hidden');
-      }
-    } else {
-      toggleButton.setAttribute('aria-label', 'Switch to dark mode');
-      if (sunIcon) {
-        sunIcon.style.display = 'inline-block';
-        sunIcon.classList.remove('hidden');
-      }
-      if (moonIcon) {
-        moonIcon.style.display = 'none';
-        moonIcon.classList.add('hidden');
+    }
+    
+    // Update mobile button
+    if (toggleButtonMobile) {
+      const sunIconMobile = toggleButtonMobile.querySelector('.sun-icon');
+      const moonIconMobile = toggleButtonMobile.querySelector('.moon-icon');
+      
+      if (theme === 'dark') {
+        toggleButtonMobile.setAttribute('aria-label', 'Switch to light mode');
+        if (sunIconMobile) {
+          sunIconMobile.style.display = 'none';
+          sunIconMobile.classList.add('hidden');
+        }
+        if (moonIconMobile) {
+          moonIconMobile.style.display = 'inline-block';
+          moonIconMobile.classList.remove('hidden');
+        }
+      } else {
+        toggleButtonMobile.setAttribute('aria-label', 'Switch to dark mode');
+        if (sunIconMobile) {
+          sunIconMobile.style.display = 'inline-block';
+          sunIconMobile.classList.remove('hidden');
+        }
+        if (moonIconMobile) {
+          moonIconMobile.style.display = 'none';
+          moonIconMobile.classList.add('hidden');
+        }
       }
     }
   }
@@ -94,10 +125,18 @@
     const theme = getTheme();
     applyTheme(theme);
     
-    // Set up theme toggle button
+    // Set up desktop theme toggle button
     const toggleButton = document.getElementById('themeToggle');
     if (toggleButton) {
       toggleButton.addEventListener('click', toggleTheme);
+      // Update button immediately
+      updateThemeButton(theme);
+    }
+    
+    // Set up mobile theme toggle button
+    const toggleButtonMobile = document.getElementById('themeToggleMobile');
+    if (toggleButtonMobile) {
+      toggleButtonMobile.addEventListener('click', toggleTheme);
       // Update button immediately
       updateThemeButton(theme);
     }
