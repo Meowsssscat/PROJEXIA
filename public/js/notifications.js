@@ -87,15 +87,15 @@
     }
 
     list.innerHTML = notifications.map(notif => `
-      <div class="navbar-notification-item ${notif.isRead ? '' : 'unread'}" data-id="${notif._id}">
+      <div class="navbar-notification-item ${notif.isRead ? '' : 'unread'}" data-id="${notif._id}" onclick="window.location.href='/project/${notif.projectId}'" style="cursor: pointer;">
         <div class="navbar-notification-content">
           <div class="navbar-notification-message">
-            <strong>${notif.senderName}</strong> ${getNotificationMessage(notif)}
+            <strong><a href="/visit/profile/${notif.senderId}" onclick="event.stopPropagation();" style="color: inherit; text-decoration: none; border-bottom: 1px solid currentColor;">${notif.senderName}</a></strong> ${getNotificationMessage(notif)}
           </div>
           <div class="navbar-notification-meta">
-            <a href="/projects/${notif.projectId}" style="color: inherit; text-decoration: underline;">
+            <span style="color: hsl(var(--primary));">
               ${notif.projectName}
-            </a>
+            </span>
             · ${formatTime(notif.createdAt)}
           </div>
         </div>
@@ -124,15 +124,17 @@
     const item = document.createElement('div');
     item.className = 'navbar-notification-item unread';
     item.setAttribute('data-id', notif._id);
+    item.style.cursor = 'pointer';
+    item.onclick = () => window.location.href = `/project/${notif.projectId}`;
     item.innerHTML = `
       <div class="navbar-notification-content">
         <div class="navbar-notification-message">
-          <strong>${notif.senderName}</strong> ${getNotificationMessage(notif)}
+          <strong><a href="/visit/profile/${notif.senderId}" onclick="event.stopPropagation();" style="color: inherit; text-decoration: none; border-bottom: 1px solid currentColor;">${notif.senderName}</a></strong> ${getNotificationMessage(notif)}
         </div>
         <div class="navbar-notification-meta">
-          <a href="/projects/${notif.projectId}" style="color: inherit; text-decoration: underline;">
+          <span style="color: hsl(var(--primary));">
             ${notif.projectName}
-          </a>
+          </span>
           · just now
         </div>
       </div>
@@ -260,6 +262,7 @@
       z-index: 10000;
       max-width: 350px;
       animation: slideIn 0.3s ease;
+      cursor: pointer;
     `;
 
     toast.innerHTML = `
@@ -267,6 +270,11 @@
       <br>
       <small style="color: hsl(var(--muted-foreground));">${notif.projectName}</small>
     `;
+
+    // Make toast clickable
+    toast.onclick = () => {
+      window.location.href = `/project/${notif.projectId}`;
+    };
 
     document.body.appendChild(toast);
 

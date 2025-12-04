@@ -19,7 +19,7 @@ const signup = async (req, res) => {
 
     // Validate track based on program
     const validTracks = {
-      'BSIT': ['WMAD', 'AMG', 'SMP', 'NETA'],
+      'BSIT': ['WMAD', 'AMG', 'SMP', 'NETAD'],
       'BSCS': ['IS', 'GV'],
       'BSIS': []
     };
@@ -187,7 +187,8 @@ const verifyOTP = async (req, res) => {
     await OTP.findOneAndDelete({ email });
 
     res.status(200).json({ 
-      message: 'Account verified successfully! You can now sign in.'
+      message: 'Account verified successfully! You can now sign in.',
+      redirect: '/signin'
     });
 
   } catch (error) {

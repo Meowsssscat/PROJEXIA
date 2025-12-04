@@ -131,7 +131,8 @@ app.get('/api/user-id', (req, res) => {
 
 // Root route
 const landingController = require('./controllers/landingController');
-app.get('/', landingController.getLandingPage);
+const optionalAuth = require('./middleware/optionalAuth');
+app.get('/', optionalAuth, landingController.getLandingPage);
 
 // Auth pages - redirect to modern auth page
 app.get('/signin', (req, res) => res.redirect('/auth?type=signin'));

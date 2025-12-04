@@ -32,47 +32,89 @@
                         type="text" 
                         id="searchProject" 
                         class="filter-input" 
-                        placeholder="Search project name..." 
+                        placeholder="Search projects..." 
                         autocomplete="off"
+                        value="<%= searchTerm || '' %>"
                     />
 
                     <select class="filter-select" id="filterProgram" name="filterProgram">
-                        <option value="All">All Programs</option>
-                        <option value="BSIT">BSIT</option>
-                        <option value="BSIS">BSIS</option>
-                        <option value="BSCS">BSCS</option>
+                        <option value="">All Programs</option>
+                        <option value="BSIT" <%= selectedProgram === 'BSIT' ? 'selected' : '' %>>BSIT</option>
+                        <option value="BSIS" <%= selectedProgram === 'BSIS' ? 'selected' : '' %>>BSIS</option>
+                        <option value="BSCS" <%= selectedProgram === 'BSCS' ? 'selected' : '' %>>BSCS</option>
                     </select>
 
                     <select class="filter-select" id="filterYear" name="filterYear">
-                        <option value="All">All Years</option>
-                        <option value="1st">1st Year</option>
-                        <option value="2nd">2nd Year</option>
-                        <option value="3rd">3rd Year</option>
-                        <option value="4th">4th Year</option>
+                        <option value="">All Years</option>
+                        <option value="1" <%= selectedYear === '1' ? 'selected' : '' %>>1st Year</option>
+                        <option value="2" <%= selectedYear === '2' ? 'selected' : '' %>>2nd Year</option>
+                        <option value="3" <%= selectedYear === '3' ? 'selected' : '' %>>3rd Year</option>
+                        <option value="4" <%= selectedYear === '4' ? 'selected' : '' %>>4th Year</option>
                     </select>
 
-                    <select class="filter-select" id="filterTechnology" name="filterTechnology">
-                        <option value="All">All Technologies</option>
+                    <!-- Track Filter (only show for 3rd and 4th year with BSIT or BSCS) -->
+                    <select class="filter-select" id="filterTrack" name="filterTrack" style="display: none;">
+                        <option value="">All Tracks</option>
+                        <!-- BSIT Tracks -->
+                        <option value="WMAD" data-program="BSIT" <%= selectedTrack === 'WMAD' ? 'selected' : '' %>>WMAD</option>
+                        <option value="AMG" data-program="BSIT" <%= selectedTrack === 'AMG' ? 'selected' : '' %>>AMG</option>
+                        <option value="SMP" data-program="BSIT" <%= selectedTrack === 'SMP' ? 'selected' : '' %>>SMP</option>
+                        <option value="NETAD" data-program="BSIT" <%= selectedTrack === 'NETAD' ? 'selected' : '' %>>NETAD</option>
+                        <!-- BSCS Tracks -->
+                        <option value="IS" data-program="BSCS" <%= selectedTrack === 'IS' ? 'selected' : '' %>>IS</option>
+                        <option value="GV" data-program="BSCS" <%= selectedTrack === 'GV' ? 'selected' : '' %>>GV</option>
                     </select>
+
+                    <!-- Technology Filter (Multi-select) -->
+                    <div class="tech-filter-wrapper" style="position: relative; display: inline-block;">
+                        <button type="button" class="filter-select tech-filter-button" id="techFilterButton" style="text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 200px;">
+                            <span id="techFilterLabel">All Technologies</span>
+                            <svg style="width: 1rem; height: 1rem;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="tech-filter-dropdown" id="techFilterDropdown" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: 0.5rem; margin-top: 0.25rem; max-height: 300px; overflow-y: auto; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <div style="padding: 0.5rem;">
+                                <label style="display: flex; align-items: center; padding: 0.5rem; cursor: pointer; border-radius: 0.25rem;" onmouseover="this.style.background='hsl(var(--accent))'" onmouseout="this.style.background=''">
+                                    <input type="checkbox" value="" id="techAll" style="margin-right: 0.5rem;" checked>
+                                    <span>All Technologies</span>
+                                </label>
+                                <% if (availableTechnologies && availableTechnologies.length > 0) { %>
+                                    <% availableTechnologies.forEach(tech => { %>
+                                        <label style="display: flex; align-items: center; padding: 0.5rem; cursor: pointer; border-radius: 0.25rem;" onmouseover="this.style.background='hsl(var(--accent))'" onmouseout="this.style.background=''">
+                                            <input type="checkbox" class="tech-checkbox" value="<%= tech %>" style="margin-right: 0.5rem;">
+                                            <span><%= tech %></span>
+                                        </label>
+                                    <% }); %>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Section 1: Weekly Top 3 Projects -->
-                <% if (weeklyTop3 && weeklyTop3.length > 0) { %>
-                <section class="section section-trending">
-                    <div class="section-header">
-                        <div class="trending-badge">
-                            <svg class="trending-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-                                <polyline points="17 6 23 6 23 12"></polyline>
+                <!-- Clear Filters Button -->
+                <% if (searchTerm || selectedProgram || selectedYear || selectedTrack || (selectedLanguages && selectedLanguages.length > 0)) { %>
+                    <div style="margin: 1rem 0; text-align: center;">
+                        <button onclick="window.location.href='/home'" class="btn btn-outline" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                            <svg style="width: 1rem; height: 1rem;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
                             </svg>
-                            Trending Now
-                        </div>
-                        <h2 class="section-title">Top 3 Most Popular Projects</h2>
-                        <p class="section-subtitle">The highest-rated projects this week</p>
+                            Clear All Filters
+                        </button>
+                    </div>
+                <% } %>
+
+                <!-- Section 1: Top 10 Trending Projects (Carousel) -->
+                <% if (top10Trending && top10Trending.length > 0) { %>
+                <section class="section section-trending" style="background: linear-gradient(135deg, hsl(var(--primary) / 0.05) 0%, hsl(var(--secondary) / 0.05) 100%); padding: 3rem 0; border-radius: 1rem; margin-bottom: 3rem;">
+                    <div class="section-header">
+                        <h2 class="section-title">Top 10 Trending Projects</h2>
+                        <p class="section-subtitle">Most popular projects based on likes and views</p>
                     </div>
 
                     <div class="projects-grid top3-grid">
-                        <% weeklyTop3.forEach((project, index) => { %>
+                        <% top10Trending.forEach((project, index) => { %>
                         <a href="/project/<%= project.id %>" class="project-card-link">
                             <div class="project-card top3-card" 
                                  data-program="<%= project.program %>" 
@@ -134,7 +176,7 @@
                 </section>
                 <% } %>
 
-                <!-- Section 2: Batchmate Projects -->
+                <!-- Section 2: Your Batchmates' Projects -->
                 <% if (currentUser && batchmateProjects && batchmateProjects.length > 0) { %>
                 <section class="section section-batchmates">
                     <div class="section-header">
@@ -196,7 +238,7 @@
                 </section>
                 <% } %>
 
-                <!-- Section 3: All Other Projects -->
+                <!-- Section 3: Discover More Projects -->
                 <% if (remainingProjects && remainingProjects.length > 0) { %>
                 <section class="section section-all">
                     <div class="section-header">
@@ -259,7 +301,7 @@
                 <% } %>
 
                 <!-- No Projects Message -->
-                <% if ((!weeklyTop3 || weeklyTop3.length === 0) && (!batchmateProjects || batchmateProjects.length === 0) && (!remainingProjects || remainingProjects.length === 0)) { %>
+                <% if ((!top10Trending || top10Trending.length === 0) && (!batchmateProjects || batchmateProjects.length === 0) && (!remainingProjects || remainingProjects.length === 0)) { %>
                 <section class="section section-empty">
                     <div class="empty-state">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -278,6 +320,168 @@
         <%- include('partials/footer-modern') %>
     </div>
 
+    <script>
+        // Filter functionality - server-side filtering
+        const searchInput = document.getElementById('searchProject');
+        const programFilter = document.getElementById('filterProgram');
+        const yearFilter = document.getElementById('filterYear');
+        const trackFilter = document.getElementById('filterTrack');
+        const techFilterButton = document.getElementById('techFilterButton');
+        const techFilterDropdown = document.getElementById('techFilterDropdown');
+        const techFilterLabel = document.getElementById('techFilterLabel');
+        const techAllCheckbox = document.getElementById('techAll');
+        const techCheckboxes = document.querySelectorAll('.tech-checkbox');
+
+        // Set initial values for selected technologies
+        const selectedTechs = <%- JSON.stringify(selectedLanguages || []) %>;
+        if (selectedTechs.length > 0) {
+            techCheckboxes.forEach(checkbox => {
+                if (selectedTechs.includes(checkbox.value)) {
+                    checkbox.checked = true;
+                }
+            });
+            techAllCheckbox.checked = false;
+            updateTechFilterLabel();
+        }
+
+        // Toggle technology filter dropdown
+        if (techFilterButton) {
+            techFilterButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                techFilterDropdown.style.display = techFilterDropdown.style.display === 'none' ? 'block' : 'none';
+            });
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (techFilterButton && !techFilterButton.contains(e.target) && !techFilterDropdown.contains(e.target)) {
+                techFilterDropdown.style.display = 'none';
+            }
+        });
+
+        // Handle "All Technologies" checkbox
+        if (techAllCheckbox) {
+            techAllCheckbox.addEventListener('change', () => {
+                if (techAllCheckbox.checked) {
+                    techCheckboxes.forEach(cb => cb.checked = false);
+                    updateTechFilterLabel();
+                    applyFilters();
+                }
+            });
+        }
+
+        // Handle individual technology checkboxes
+        techCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                if (checkbox.checked) {
+                    techAllCheckbox.checked = false;
+                }
+                
+                const anyChecked = Array.from(techCheckboxes).some(cb => cb.checked);
+                if (!anyChecked) {
+                    techAllCheckbox.checked = true;
+                }
+                
+                updateTechFilterLabel();
+                applyFilters();
+            });
+        });
+
+        // Update the label to show selected technologies
+        function updateTechFilterLabel() {
+            const selected = Array.from(techCheckboxes).filter(cb => cb.checked);
+            if (selected.length === 0) {
+                techFilterLabel.textContent = 'All Technologies';
+            } else if (selected.length === 1) {
+                techFilterLabel.textContent = selected[0].value;
+            } else {
+                techFilterLabel.textContent = `${selected.length} Technologies`;
+            }
+        }
+
+        // Show/hide track filter based on year and program
+        function updateTrackFilterVisibility() {
+            const year = yearFilter.value;
+            const program = programFilter.value;
+            
+            // Show track filter for BSIT or BSCS programs (regardless of year)
+            const shouldShowTrack = (program === 'BSIT' || program === 'BSCS');
+            
+            if (shouldShowTrack) {
+                trackFilter.style.display = '';
+                
+                const options = trackFilter.querySelectorAll('option[data-program]');
+                options.forEach(option => {
+                    const optionProgram = option.getAttribute('data-program');
+                    if (optionProgram === program) {
+                        option.style.display = '';
+                    } else {
+                        option.style.display = 'none';
+                    }
+                });
+                
+                const selectedOption = trackFilter.options[trackFilter.selectedIndex];
+                if (selectedOption && selectedOption.getAttribute('data-program') !== program && selectedOption.value !== '') {
+                    trackFilter.value = '';
+                }
+            } else {
+                trackFilter.style.display = 'none';
+                trackFilter.value = '';
+            }
+        }
+
+        updateTrackFilterVisibility();
+
+        function applyFilters() {
+            const params = new URLSearchParams();
+            
+            const search = searchInput.value.trim();
+            const program = programFilter.value;
+            const year = yearFilter.value;
+            const track = trackFilter.value;
+            
+            const selectedTechnologies = Array.from(techCheckboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+
+            if (search) params.set('search', search);
+            if (program) params.set('program', program);
+            if (year) params.set('yearLevel', year);
+            if (track) params.set('track', track); // Track filter works independently
+            
+            selectedTechnologies.forEach(tech => {
+                params.append('language', tech);
+            });
+
+            window.location.href = '/home' + (params.toString() ? '?' + params.toString() : '');
+        }
+
+        // Apply filters on change
+        programFilter.addEventListener('change', () => {
+            updateTrackFilterVisibility();
+            applyFilters();
+        });
+        yearFilter.addEventListener('change', () => {
+            updateTrackFilterVisibility();
+            applyFilters();
+        });
+        trackFilter.addEventListener('change', applyFilters);
+
+        // Apply search on Enter key or after typing stops
+        let searchTimeout;
+        searchInput.addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(applyFilters, 500);
+        });
+
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                clearTimeout(searchTimeout);
+                applyFilters();
+            }
+        });
+    </script>
+
     <!-- Socket.IO Client -->
     <script src="/socket.io/socket.io.js"></script>
     <% if (locals.currentUser) { %>
@@ -295,8 +499,6 @@
     <!-- Notification System -->
     <script src="/js/notification.js"></script>
     
-    <!-- Socket.IO Client -->
-    <script src="/socket.io/socket.io.js"></script>
     <!-- Real-time Notifications System -->
     <script src="/js/notifications.js"></script>
 </body>

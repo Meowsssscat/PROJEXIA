@@ -1,6 +1,6 @@
 // Track options based on program
 const trackOptions = {
-  BSIT: ['WMAD', 'AMG', 'SMP', 'NETA'],
+  BSIT: ['WMAD', 'AMG', 'SMP', 'NETAD'],
   BSCS: ['IS', 'GV'],
   BSIS: []
 };

@@ -99,14 +99,25 @@
 
             <div class="form-group">
               <label for="password">Password</label>
-              <input 
-                type="password" 
-                id="password" 
-                name="password" 
-                required 
-                placeholder="Enter your password"
-                autocomplete="current-password"
-              />
+              <div style="position: relative;">
+                <input 
+                  type="password" 
+                  id="password" 
+                  name="password" 
+                  required 
+                  placeholder="Enter your password"
+                  autocomplete="current-password"
+                  style="padding-right: 45px;"
+                />
+                <button 
+                  type="button" 
+                  onclick="togglePassword('password')" 
+                  style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.2rem; color: #8d8f8c; padding: 5px;"
+                  aria-label="Toggle password visibility"
+                >
+                  <span id="password-icon">👁️</span>
+                </button>
+              </div>
               <div class="auth-link" style="text-align: right; margin-top: 0.5rem;">
                 <a href="/forgot-password">Forgot Password?</a>
               </div>
@@ -137,6 +148,21 @@
     <script src="/js/passwordToggle.js"></script>
     <script src="/js/publicHeaderFooter.js"></script>
     <script src="/js/signin.js"></script>
+    <script>
+      // Toggle password visibility
+      function togglePassword(fieldId) {
+        const field = document.getElementById(fieldId);
+        const icon = document.getElementById(fieldId + '-icon');
+        
+        if (field.type === 'password') {
+          field.type = 'text';
+          icon.textContent = '🙈';
+        } else {
+          field.type = 'password';
+          icon.textContent = '👁️';
+        }
+      }
+    </script>
   </body>
 </html>
 

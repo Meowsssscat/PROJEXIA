@@ -109,13 +109,15 @@
 /* Projects Grid */
 .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.5rem;
+    align-items: stretch;
 }
 
 .top3-grid {
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.5rem;
+    align-items: stretch;
 }
 
 /* Project Card Link */
@@ -123,12 +125,15 @@
     text-decoration: none;
     color: inherit;
     display: flex;
+    height: 100%;
 }
 
 /* Project Card */
 .project-card {
     display: flex;
     flex-direction: column;
+    width: 100%;
+    min-height: 400px;
     height: 100%;
     background: hsl(var(--card));
     border: 1px solid hsl(var(--border));

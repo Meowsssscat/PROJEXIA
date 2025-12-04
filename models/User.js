@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
   track: {
     type: String,
     enum: {
-      values: ['WMAD', 'AMG', 'SMP', 'NETA', 'IS', 'GV', null],
+      values: ['WMAD', 'AMG', 'SMP', 'NETAD', 'IS', 'GV', null],
       message: '{VALUE} is not a valid track'
     },
     default: null,
@@ -35,8 +35,8 @@ const userSchema = new mongoose.Schema({
         if ((this.year === '3rd' || this.year === '4th') && !value) {
           return false;
         }
-        // BSIT students can have: WMAD, AMG, SMP, NETA
-        if (this.program === 'BSIT' && value && !['WMAD', 'AMG', 'SMP', 'NETA'].includes(value)) {
+        // BSIT students can have: WMAD, AMG, SMP, NETAD
+        if (this.program === 'BSIT' && value && !['WMAD', 'AMG', 'SMP', 'NETAD'].includes(value)) {
           return false;
         }
         // BSCS students can have: IS, GV
@@ -51,6 +51,37 @@ const userSchema = new mongoose.Schema({
       },
       message: 'Invalid track for this program and year level'
     }
+  },
+  bio: {
+    type: String,
+    default: '',
+    maxlength: [160, 'Bio cannot exceed 160 characters'],
+    trim: true
+  },
+  profilePicture: {
+    url: {
+      type: String,
+      default: ''
+    },
+    public_id: {
+      type: String,
+      default: ''
+    }
+  },
+  github: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  portfolio: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  linkedin: {
+    type: String,
+    default: '',
+    trim: true
   },
   email: {
     type: String,

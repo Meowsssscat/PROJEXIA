@@ -8,34 +8,49 @@ const cloudinary = require('../config/cloudinaryConfig');
 exports.getProject = async (req, res) => {
     try {
         const projectId = req.params.id;
+        console.log('🚀 GET PROJECT CALLED - ID:', projectId);
         
         // ========================================
         // GET PROJECT OBJECT
         // ========================================
-        const projectObject = await Project.findById(projectId);
+        const projectObject = await Project.findById(projectId).lean();
         
         if (!projectObject) {
             return res.status(404).json({ error: 'Project not found' });
         }
          
         // ========================================
-        // GET UPLOADER/USER OBJECT
+        // GET UPLOADER/USER OBJECT (Manual fetch to ensure track is included)
         // ========================================
-        const userId = projectObject.userId.toString();
-        const userObject = await User.findById(userId);
+        const userObject = await User.findById(projectObject.userId).lean();
+        const userId = userObject._id.toString();
+        
+        // DEBUG: Log uploader info
+        console.log('\n🔍 UPLOADER DEBUG:');
+        console.log('Full Name:', userObject?.fullName);
+        console.log('Program:', userObject?.program);
+        console.log('Year:', userObject?.year);
+        console.log('Track:', userObject?.track);
+        console.log('Track exists?:', 'track' in userObject);
+        console.log('Track value type:', typeof userObject?.track);
+        console.log('Full User Object:', JSON.stringify(userObject, null, 2));
+        console.log('================\n');
         
         // ========================================
         // 1. RETRIEVE ALL COMMENTS
         // ========================================
         const allComments = await Comment.find({ projectId: projectId })
             .populate('userId', 'fullName email program year')
+            .populate('replies.userId', 'fullName email program year')
             .sort({ createdAt: -1 })
             .lean();
         
         // ========================================
-        // 2. GET COMMENT COUNT
+        // 2. GET COMMENT COUNT (including replies)
         // ========================================
-        const commentCount = await Comment.countDocuments({ projectId: projectId });
+        const commentCount = allComments.reduce((total, comment) => {
+            return total + 1 + (comment.replies?.length || 0);
+        }, 0);
         
         // ========================================
         // 3. GET LIKE COUNT
@@ -111,9 +126,16 @@ exports.getProject = async (req, res) => {
         // LOG ALL DATA (for debugging)
         // ========================================
         console.log('=== PROJECT DATA ===');
-        console.log('Project:', projectObject);
-        // console.log('Project:', projectObject);
-        console.log('Uploader:', userObject);
+        console.log('Project ID:', projectObject._id);
+        console.log('Project Name:', projectObject.name);
+        console.log('Project Program:', projectObject.program);
+        console.log('Project Year Level:', projectObject.yearLevel);
+        console.log('\n=== UPLOADER INFO ===');
+        console.log('Uploader Full Name:', userObject?.fullName);
+        console.log('Uploader Program:', userObject?.program);
+        console.log('Uploader Year:', userObject?.year);
+        console.log('Uploader Track:', userObject?.track);
+        console.log('Full Uploader Object:', JSON.stringify(userObject, null, 2));
         console.log('Is Uploader:', isUploader);
         console.log('\n=== COMMENTS ===');
         console.log('All Comments:', allComments);

@@ -88,29 +88,6 @@
                             <p class="form-help-text">List all team members who worked on this project (comma-separated)</p>
                         </div>
 
-                        <!-- Program -->
-                        <div class="form-group">
-                            <label for="program">Program *</label>
-                            <select id="program" name="program" required>
-                                <option value="">Select your program</option>
-                                <option value="BSCS">BS Computer Science</option>
-                                <option value="BSIT">BS Information Technology</option>
-                                <option value="ACT">Associate in Computer Technology</option>
-                            </select>
-                        </div>
-
-                        <!-- Year Level -->
-                        <div class="form-group">
-                            <label for="yearLevel">Year Level *</label>
-                            <select id="yearLevel" name="yearLevel" required>
-                                <option value="">Select year level</option>
-                                <option value="1">1st Year</option>
-                                <option value="2">2nd Year</option>
-                                <option value="3">3rd Year</option>
-                                <option value="4">4th Year</option>
-                            </select>
-                        </div>
-
                         <!-- Thumbnail Upload -->
                         <div class="form-group">
                             <label for="thumbnail">Project Thumbnail *</label>
@@ -297,12 +274,7 @@
                 return;
             }
 
-            if (!imagesInput.files || imagesInput.files.length === 0) {
-                errorMsg.textContent = 'Please select at least one project image';
-                errorMsg.classList.add('show');
-                submitBtn.disabled = false;
-                return;
-            }
+            // Project images are now optional (removed validation)
 
             // Create FormData and explicitly add files
             const formData = new FormData(uploadForm);
@@ -330,16 +302,22 @@
                 const result = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(result.message || 'Upload failed');
+                    // Provide more user-friendly error messages
+                    let errorMessage = result.message || 'Upload failed';
+                    if (errorMessage.includes('Stale request')) {
+                        errorMessage = 'Upload failed due to a timing issue. Please try again.';
+                    }
+                    throw new Error(errorMessage);
                 }
 
                 successMsg.textContent = 'Project uploaded successfully!';
                 successMsg.classList.add('show');
 
                 setTimeout(() => {
-                    window.location.href = '/browse';
+                    window.location.href = '/profile';
                 }, 1500);
             } catch (error) {
+                console.error('Upload error:', error);
                 errorMsg.textContent = error.message || 'An error occurred';
                 errorMsg.classList.add('show');
                 submitBtn.disabled = false;

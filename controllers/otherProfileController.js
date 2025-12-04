@@ -64,14 +64,27 @@ exports.getProfile = async (req, res) => {
 
     const data = this.prepareData(users, projects, projectStats);
 
+    // Get current logged-in user for navbar
+    let currentUser = null;
+    if (currentUserId) {
+      currentUser = await User.findById(currentUserId);
+    }
+
     console.log(data)
     console.log(userToVisit)
     return res.render('otherProfile-modern', { 
     data,
+    user: currentUser, // Pass current logged-in user for navbar
     userToVisit: {
         fullName: userToVisit.fullName,
         program: userToVisit.program,
         year: userToVisit.year,
+        track: userToVisit.track,
+        bio: userToVisit.bio,
+        profilePicture: userToVisit.profilePicture,
+        github: userToVisit.github,
+        portfolio: userToVisit.portfolio,
+        linkedin: userToVisit.linkedin,
         email: userToVisit.email,
         lastProfileEdit: userToVisit.lastProfileEdit  
     }

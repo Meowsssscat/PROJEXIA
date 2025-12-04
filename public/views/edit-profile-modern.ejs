@@ -117,20 +117,36 @@
                         <div class="form-group">
                             <label for="program">Program</label>
                             <select id="program" name="program" required>
-                                <option value="BSCS" <%= user.program === 'BSCS' ? 'selected' : '' %>>BS Computer Science</option>
                                 <option value="BSIT" <%= user.program === 'BSIT' ? 'selected' : '' %>>BS Information Technology</option>
-                                <option value="ACT" <%= user.program === 'ACT' ? 'selected' : '' %>>Associate in Computer Technology</option>
+                                <option value="BSIS" <%= user.program === 'BSIS' ? 'selected' : '' %>>BS Information Systems</option>
+                                <option value="BSCS" <%= user.program === 'BSCS' ? 'selected' : '' %>>BS Computer Science</option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label for="yearLevel">Year Level</label>
-                            <select id="yearLevel" name="yearLevel" required>
-                                <option value="1" <%= user.year === 1 ? 'selected' : '' %>>1st Year</option>
-                                <option value="2" <%= user.year === 2 ? 'selected' : '' %>>2nd Year</option>
-                                <option value="3" <%= user.year === 3 ? 'selected' : '' %>>3rd Year</option>
-                                <option value="4" <%= user.year === 4 ? 'selected' : '' %>>4th Year</option>
+                            <label for="year">Year Level</label>
+                            <select id="year" name="year" required>
+                                <option value="1st" <%= user.year === '1st' ? 'selected' : '' %>>1st Year</option>
+                                <option value="2nd" <%= user.year === '2nd' ? 'selected' : '' %>>2nd Year</option>
+                                <option value="3rd" <%= user.year === '3rd' ? 'selected' : '' %>>3rd Year</option>
+                                <option value="4th" <%= user.year === '4th' ? 'selected' : '' %>>4th Year</option>
                             </select>
+                        </div>
+
+                        <div class="form-group" id="trackGroup">
+                            <label for="track">Track/Specialization</label>
+                            <select id="track" name="track">
+                                <option value="">Select Track</option>
+                                <!-- BSIT Tracks -->
+                                <option value="WMAD" <%= user.track === 'WMAD' ? 'selected' : '' %> data-program="BSIT">Web and Mobile Application Development (WMAD)</option>
+                                <option value="AMG" <%= user.track === 'AMG' ? 'selected' : '' %> data-program="BSIT">Animation and Motion Graphics (AMG)</option>
+                                <option value="SMP" <%= user.track === 'SMP' ? 'selected' : '' %> data-program="BSIT">Service Management Program (SMP)</option>
+                                <option value="NETAD" <%= user.track === 'NETAD' ? 'selected' : '' %> data-program="BSIT">Network Administration (NETAD)</option>
+                                <!-- BSCS Tracks -->
+                                <option value="IS" <%= user.track === 'IS' ? 'selected' : '' %> data-program="BSCS">Intelligent System (IS)</option>
+                                <option value="GV" <%= user.track === 'GV' ? 'selected' : '' %> data-program="BSCS">Graphics Visualisation (GV)</option>
+                            </select>
+                            <p class="form-help-text">Required for 3rd and 4th year students</p>
                         </div>
 
                         <!-- Contact Information -->
@@ -226,6 +242,8 @@
         avatarInput.addEventListener('change', (e) => {
             if (e.target.files.length > 0) {
                 const fileName = e.target.files[0].name;
+                console.log('✅ File selected:', fileName);
+                console.log('File object:', e.target.files[0]);
                 avatarArea.innerHTML = `
                     <svg class="file-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: hsl(var(--primary));">
                         <polyline points="20 6 9 17 4 12"></polyline>
@@ -236,6 +254,50 @@
             }
         });
 
+        // Track field visibility and validation
+        const programSelect = document.getElementById('program');
+        const yearSelect = document.getElementById('year');
+        const trackGroup = document.getElementById('trackGroup');
+        const trackSelect = document.getElementById('track');
+
+        function updateTrackField() {
+            const program = programSelect.value;
+            const year = yearSelect.value;
+            
+            // Show/hide track options based on program
+            const trackOptions = trackSelect.querySelectorAll('option[data-program]');
+            trackOptions.forEach(option => {
+                if (option.dataset.program === program) {
+                    option.style.display = 'block';
+                } else {
+                    option.style.display = 'none';
+                }
+            });
+
+            // BSIS students don't have tracks
+            if (program === 'BSIS') {
+                trackGroup.style.display = 'none';
+                trackSelect.removeAttribute('required');
+                trackSelect.value = '';
+            } 
+            // 3rd and 4th year students need tracks
+            else if (year === '3rd' || year === '4th') {
+                trackGroup.style.display = 'block';
+                trackSelect.setAttribute('required', 'required');
+            } 
+            // 1st and 2nd year students don't need tracks
+            else {
+                trackGroup.style.display = 'block';
+                trackSelect.removeAttribute('required');
+            }
+        }
+
+        programSelect.addEventListener('change', updateTrackField);
+        yearSelect.addEventListener('change', updateTrackField);
+        
+        // Initialize on page load
+        updateTrackField();
+
         // Form submission
         editForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -244,25 +306,41 @@
             successMsg.classList.remove('show');
 
             const formData = new FormData(editForm);
+            
+            // Debug: Check if file is included
+            console.log('📤 Submitting form data:');
+            console.log('Has avatar file:', avatarInput.files.length > 0);
+            if (avatarInput.files.length > 0) {
+                console.log('Avatar file:', avatarInput.files[0]);
+                // Ensure file is in FormData
+                formData.set('avatar', avatarInput.files[0]);
+            }
 
             try {
-                const response = await fetch('/api/profile/update', {
-                    method: 'PUT',
+                const response = await fetch('/api/editProfile', {
+                    method: 'POST',
                     body: formData
                 });
 
-                const result = await response.json();
+                // Check if response is JSON or redirect
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    const result = await response.json();
+                    
+                    if (!response.ok) {
+                        throw new Error(result.message || 'Update failed');
+                    }
 
-                if (!response.ok) {
-                    throw new Error(result.message || 'Update failed');
-                }
+                    successMsg.textContent = result.message || 'Profile updated successfully!';
+                    successMsg.classList.add('show');
 
-                successMsg.textContent = 'Profile updated successfully!';
-                successMsg.classList.add('show');
-
-                setTimeout(() => {
+                    setTimeout(() => {
+                        window.location.href = '/profile';
+                    }, 1500);
+                } else {
+                    // If it's a redirect, follow it
                     window.location.href = '/profile';
-                }, 1500);
+                }
             } catch (error) {
                 errorMsg.textContent = error.message || 'An error occurred';
                 errorMsg.classList.add('show');

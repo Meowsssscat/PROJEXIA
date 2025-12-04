@@ -24,6 +24,7 @@ exports.getNotifications = async (req, res) => {
     // Format notifications for frontend
     const formattedNotifications = notifications.map(n => ({
       _id: n._id,
+      senderId: n.senderId?._id,
       senderName: n.senderId?.fullName || 'Unknown User',
       projectName: n.projectId?.name || 'Unknown Project',
       projectId: n.projectId?._id,

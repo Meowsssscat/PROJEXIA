@@ -50,19 +50,17 @@
       <!-- Rating & Feedback Section -->
       <div class="footer-col">
         <div class="footer-feedback-section-compact">
-          <h4>Rate Your Experince with Projexia</h4>
-          
-          <% if (user) { %>
-            <!-- Average Rating Display -->
-            <div class="rating-display" id="ratingDisplay">
-              <div class="avg-rating">
-                <span class="avg-rating-value" id="avgRatingValue">-</span>
-                <span class="avg-rating-label">/ 5.0</span>
-              </div>
-              <p class="rating-count" id="ratingCount">No ratings yet</p>
+          <!-- Average Rating Display (Always visible) -->
+          <div class="rating-display" id="ratingDisplay">
+            <div class="avg-rating">
+              <span class="avg-rating-value" id="avgRatingValue">-</span>
+              <span class="avg-rating-label">/ 5.0</span>
             </div>
+            <p class="rating-count">User Experience Rating</p>
+          </div>
 
-            <!-- Rating Form -->
+          <% if (user) { %>
+            <!-- Rating Form (Only for logged-in users) -->
             <div class="rating-form-compact">
               <div id="ratingStarsCompact" class="rating-stars-compact" style="justify-content: center;">
                 <% for (let i = 1; i <= 5; i++) { %>
@@ -87,17 +85,6 @@
 
               <button id="feedbackSubmitCompact" class="btn btn-sm btn-primary" style="width: 100%; margin-top: 0.5rem;">Submit Rating</button>
               <div id="feedbackMessageCompact" class="feedback-message"></div>
-            </div>
-          <% } else { %>
-            <!-- Login Prompt for non-logged-in users -->
-            <div class="rating-signin-prompt">
-              <div class="avg-rating">
-                <span class="avg-rating-value" id="avgRatingValue">-</span>
-                <span class="avg-rating-label">/ 5.0</span>
-              </div>
-              <p class="rating-count" id="ratingCount">No ratings yet</p>
-              <p class="signin-message">Sign in to rate and share your feedback</p>
-              <a href="/signin" class="btn btn-sm btn-primary" style="width: 100%; margin-top: 0.75rem; text-decoration: none; display: inline-block; text-align: center;">Sign In</a>
             </div>
           <% } %>
         </div>
