@@ -4,6 +4,40 @@ const Like = require('../models/likes');
 const Comment = require('../models/comments');
 const View = require('../models/views');
 
+// Helper function to prepare projects data
+function prepareProjectsData(users, projects) {
+    let usersObject = {};
+    users.forEach(user => {
+        usersObject[user._id.toString()] = { 
+            program: user.program, 
+            year: user.year 
+        };
+    });
+
+    let data = {};
+    projects.forEach(project => {
+        const projectId = project._id.toString();
+        const userId = project.userId?._id?.toString() || project.userId?.toString();
+        const projectName = project.name;
+        const projectThumbnail = project.thumbnailUrl?.url || '';
+        const technologies = project.technologies;
+
+        data[projectId] = {
+            projectId,
+            projectThumbnail,
+            projectName,
+            technologies,
+            program: usersObject[userId]?.program || '',
+            year: usersObject[userId]?.year || '',
+            likeCount: project.likes || 0,
+            commentCount: project.comments || 0,
+            viewCount: project.viewCount || 0
+        };
+    });
+
+    return data;
+}
+
 // GET /auth - Auth page (signin/signup)
 exports.getAuthPage = async (req, res) => {
     try {
@@ -41,6 +75,12 @@ exports.getProfilePage = async (req, res) => {
             .populate('userId', 'fullName program year')
             .lean();
 
+        // Get liked projects by the user
+        const likedProjectIds = await Like.find({ userId: userId }).distinct('projectId');
+        const likedProjects = await Project.find({ _id: { $in: likedProjectIds } })
+            .populate('userId', 'fullName program year')
+            .lean();
+
         // Enrich projects with stats
         const enrichedProjects = await Promise.all(
             projects.map(async (project) => {
@@ -57,6 +97,26 @@ exports.getProfilePage = async (req, res) => {
             })
         );
 
+        // Enrich liked projects with stats
+        const enrichedLikedProjects = await Promise.all(
+            likedProjects.map(async (project) => {
+                const likeCount = await Like.countDocuments({ projectId: project._id });
+                const commentCount = await Comment.countDocuments({ projectId: project._id });
+                const viewCount = await View.countDocuments({ projectId: project._id });
+
+                return {
+                    ...project,
+                    likes: likeCount,
+                    comments: commentCount,
+                    viewCount
+                };
+            })
+        );
+
+        // Prepare liked projects data in the same format as profile.js
+        const users = await User.find();
+        const likedProjectsData = prepareProjectsData(users, enrichedLikedProjects);
+
         // Calculate stats
         const totalLikes = enrichedProjects.reduce((sum, p) => sum + (p.likes || 0), 0);
         const totalComments = enrichedProjects.reduce((sum, p) => sum + (p.comments || 0), 0);
@@ -64,9 +124,12 @@ exports.getProfilePage = async (req, res) => {
 
         const isOwnProfile = req.user && req.user._id.toString() === userId.toString();
 
+        console.log('Rendering profile with likedProjectsData:', Object.keys(likedProjectsData).length, 'projects');
+
         res.render('profile-modern', {
             userProfile,
             projects: enrichedProjects,
+            likedProjectsData: likedProjectsData || {},
             totalLikes,
             totalComments,
             totalViews,
@@ -75,6 +138,7 @@ exports.getProfilePage = async (req, res) => {
         });
     } catch (error) {
         console.error('Error loading profile page:', error);
+        console.error('Error stack:', error.stack);
         res.status(500).render('error', { error: 'Failed to load profile' });
     }
 };

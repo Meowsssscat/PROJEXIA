@@ -126,6 +126,15 @@
                                 <div class="stat-value"><%= Object.keys(data).length %></div>
                                 <div class="stat-label">Projects</div>
                             </div>
+                            <a href="#liked-projects-section" class="stat-card" style="text-decoration: none; color: inherit; cursor: pointer; transition: all 0.3s ease;">
+                                <div class="stat-value" style="color: hsl(var(--primary));">
+                                    <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20" style="display: inline-block; vertical-align: middle; margin-right: 0.25rem;">
+                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                    </svg>
+                                    <%= likedProjectsData ? Object.keys(likedProjectsData).length : 0 %>
+                                </div>
+                                <div class="stat-label">Liked Projects</div>
+                            </a>
                         </div>
                     </div>
                 </section>
@@ -196,6 +205,88 @@
                                 </div>
                             </a>
                             <% } %>
+                        </div>
+                        <% } %>
+                    </div>
+                </section>
+
+                <!-- Liked Projects Section -->
+                <section id="liked-projects-section" class="projects-section" style="margin-top: 3rem; scroll-margin-top: 5rem;">
+                    <div class="section-header">
+                        <h2>
+                            <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24" style="display: inline-block; vertical-align: middle; margin-right: 0.5rem; color: hsl(var(--primary));">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                            Liked Projects
+                        </h2>
+                    </div>
+
+                    <div class="projects-container">
+                        <% if (likedProjectsData && Object.keys(likedProjectsData).length > 0) { %>
+                        <div class="projects-grid">
+                            <% for (const id in likedProjectsData) { %>
+                            <a href="/project/<%= id %>" class="project-card">
+                                <div class="project-thumbnail">
+                                    <img src="<%= likedProjectsData[id].projectThumbnail || '/images/default-project.png' %>" alt="<%= likedProjectsData[id].projectName %>">
+                                </div>
+                                <div class="project-info">
+                                    <h3 class="project-title"><%= likedProjectsData[id].projectName %></h3>
+                                    
+                                    <% if (likedProjectsData[id].technologies && likedProjectsData[id].technologies.length > 0) { %>
+                                    <div class="tech-tags">
+                                        <% likedProjectsData[id].technologies.slice(0, 3).forEach(tech => { %>
+                                            <span class="tech-tag"><%= tech %></span>
+                                        <% }) %>
+                                        <% if (likedProjectsData[id].technologies.length > 3) { %>
+                                            <span class="tech-tag">+<%= likedProjectsData[id].technologies.length - 3 %></span>
+                                        <% } %>
+                                    </div>
+                                    <% } %>
+                                    
+                                    <div class="project-meta">
+                                        <span class="meta-item">
+                                            <svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                                                <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                                            </svg>
+                                            <%= likedProjectsData[id].program %> <%= likedProjectsData[id].year %>
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="project-stats">
+                                        <div class="stat">
+                                            <svg class="stat-icon" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                            </svg>
+                                            <span><%= likedProjectsData[id].likeCount %></span>
+                                        </div>
+                                        
+                                        <div class="stat">
+                                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                            </svg>
+                                            <span><%= likedProjectsData[id].commentCount %></span>
+                                        </div>
+                                        
+                                        <div class="stat">
+                                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
+                                            <span><%= likedProjectsData[id].viewCount %></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                            <% } %>
+                        </div>
+                        <% } else { %>
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="currentColor" width="48" height="48" style="color: hsl(var(--muted-foreground)); opacity: 0.5; margin-bottom: 1rem;">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                            <h3>No Liked Projects Yet</h3>
+                            <p>This user hasn't liked any projects yet.</p>
                         </div>
                         <% } %>
                     </div>

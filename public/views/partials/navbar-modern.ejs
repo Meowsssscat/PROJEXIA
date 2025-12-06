@@ -12,13 +12,6 @@
       <!-- Mobile Actions (visible on mobile) -->
       <div class="navbar-mobile-actions">
         <% if (user) { %>
-          <!-- Liked Projects Button -->
-          <button class="navbar-likes-btn-mobile-top" id="likedProjectsBtnMobileTop" type="button" aria-label="Liked Projects" title="View liked projects">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-            </svg>
-          </button>
-          
           <!-- Notifications Button -->
           <button class="navbar-notifications-btn-mobile-top" id="notificationBellBtnMobileTop" type="button" aria-label="Notifications" title="View notifications">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
@@ -53,17 +46,6 @@
         <% } %>
         
         <div class="navbar-auth">
-          <!-- Liked Projects Button (only for logged-in users) -->
-          <% if (user) { %>
-            <div class="navbar-likes-wrapper" style="position: relative;">
-              <button class="navbar-likes-btn" id="likedProjectsBtn" type="button" aria-label="Liked Projects" title="View liked projects">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                </svg>
-              </button>
-            </div>
-          <% } %>
-          
           <!-- Notifications Button (only for logged-in users) -->
           <% if (user) { %>
             <div class="navbar-notifications-wrapper" style="position: relative;">
@@ -185,19 +167,6 @@
       </div>
     </div>
   </div>
-  
-  <!-- Liked Projects Panel (shared by desktop and mobile) -->
-  <% if (user) { %>
-    <div class="navbar-likes-panel" id="likedProjectsPanel" style="display: none;">
-      <div class="navbar-likes-header">
-        <h3>Liked Projects <span id="likedProjectsCount" style="color: hsl(var(--muted-foreground)); font-weight: 400; font-size: 0.9rem;">(0)</span></h3>
-        <button class="navbar-likes-close" onclick="document.getElementById('likedProjectsPanel').style.display='none';">×</button>
-      </div>
-      <div class="navbar-likes-list" id="likedProjectsList">
-        <div style="padding: 1rem; text-align: center; color: hsl(var(--muted-foreground));">Loading liked projects...</div>
-      </div>
-    </div>
-  <% } %>
   
   <!-- Notification Panel (shared by desktop and mobile) -->
   <% if (user) { %>
