@@ -1,12 +1,13 @@
 /* Modern Authentication Pages Styles - MOBILE FIRST */
 
 .auth-page {
-    min-height: calc(100vh - 60px);
+    min-height: calc(100vh - 4rem);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1.5rem 1rem;
+    padding: 3rem 1rem 1.5rem 1rem;
     background: var(--color-base);
+    margin-top: 4rem;
 }
 
 .auth-container {

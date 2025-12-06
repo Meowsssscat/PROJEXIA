@@ -8,34 +8,61 @@ const cloudinary = require('../config/cloudinaryConfig');
 exports.getProject = async (req, res) => {
     try {
         const projectId = req.params.id;
+        console.log('🚀 GET PROJECT CALLED - ID:', projectId);
         
         // ========================================
         // GET PROJECT OBJECT
         // ========================================
-        const projectObject = await Project.findById(projectId);
+        const projectObject = await Project.findById(projectId).lean();
         
         if (!projectObject) {
             return res.status(404).json({ error: 'Project not found' });
         }
          
         // ========================================
-        // GET UPLOADER/USER OBJECT
+        // GET UPLOADER/USER OBJECT (Manual fetch to ensure track is included)
         // ========================================
-        const userId = projectObject.userId.toString();
-        const userObject = await User.findById(userId);
+        const userObject = await User.findById(projectObject.userId).lean();
+        const userId = userObject._id.toString();
+        
+        // DEBUG: Log uploader info
+        console.log('\n🔍 UPLOADER DEBUG:');
+        console.log('Full Name:', userObject?.fullName);
+        console.log('Program:', userObject?.program);
+        console.log('Year:', userObject?.year);
+        console.log('Track:', userObject?.track);
+        console.log('Track exists?:', 'track' in userObject);
+        console.log('Track value type:', typeof userObject?.track);
+        console.log('Full User Object:', JSON.stringify(userObject, null, 2));
+        console.log('================\n');
         
         // ========================================
         // 1. RETRIEVE ALL COMMENTS
         // ========================================
+        console.log('=================================');
+        console.log('📝 FETCHING COMMENTS FOR PROJECT:', projectId);
+        console.log('=================================');
         const allComments = await Comment.find({ projectId: projectId })
-            .populate('userId', 'fullName email program year')
+            .populate('userId')
+            .populate('replies.userId')
             .sort({ createdAt: -1 })
             .lean();
         
+        console.log('📊 FOUND', allComments.length, 'COMMENTS');
+        
+        // DEBUG: Check what's in the populated comment
+        if (allComments.length > 0) {
+            console.log('🔍 FIRST COMMENT DEBUG:');
+            console.log('Full userId object:', JSON.stringify(allComments[0].userId, null, 2));
+            console.log('Has profilePicture field?', 'profilePicture' in allComments[0].userId);
+        }
+        
         // ========================================
-        // 2. GET COMMENT COUNT
+        // 2. GET COMMENT COUNT (including replies)
         // ========================================
-        const commentCount = await Comment.countDocuments({ projectId: projectId });
+        const commentCount = allComments.reduce((total, comment) => {
+            return total + 1 + (comment.replies?.length || 0);
+        }, 0);
         
         // ========================================
         // 3. GET LIKE COUNT
@@ -111,9 +138,16 @@ exports.getProject = async (req, res) => {
         // LOG ALL DATA (for debugging)
         // ========================================
         console.log('=== PROJECT DATA ===');
-        console.log('Project:', projectObject);
-        // console.log('Project:', projectObject);
-        console.log('Uploader:', userObject);
+        console.log('Project ID:', projectObject._id);
+        console.log('Project Name:', projectObject.name);
+        console.log('Project Program:', projectObject.program);
+        console.log('Project Year Level:', projectObject.yearLevel);
+        console.log('\n=== UPLOADER INFO ===');
+        console.log('Uploader Full Name:', userObject?.fullName);
+        console.log('Uploader Program:', userObject?.program);
+        console.log('Uploader Year:', userObject?.year);
+        console.log('Uploader Track:', userObject?.track);
+        console.log('Full Uploader Object:', JSON.stringify(userObject, null, 2));
         console.log('Is Uploader:', isUploader);
         console.log('\n=== COMMENTS ===');
         console.log('All Comments:', allComments);
@@ -133,7 +167,7 @@ exports.getProject = async (req, res) => {
         // ========================================
         // PASS ALL DATA TO FRONTEND
         // ========================================
-        return res.render('projectDetails', {
+        return res.render('project-detail-modern', {
             userId,
             project: projectObject,
             uploader: userObject,
@@ -274,7 +308,7 @@ exports.addComment = async (req, res) => {
         
         // Populate user details
         const populatedComment = await Comment.findById(newComment._id)
-            .populate('userId', 'fullName email program year')
+            .populate('userId')
             .lean();
         
         const newCommentCount = await Comment.countDocuments({ projectId });
@@ -346,6 +380,87 @@ exports.deleteComment = async (req, res) => {
     } catch (error) {
         console.error('Error deleting comment:', error);
         return res.status(500).json({ error: 'Failed to delete comment' });
+    }
+}
+
+// ========================================
+// ADD REPLY TO COMMENT
+// ========================================
+exports.addReply = async (req, res) => {
+    try {
+        const { projectId, commentId } = req.params;
+        const userId = req.session.userId;
+        const { text } = req.body;
+        
+        if (!userId) {
+            return res.status(401).json({ error: 'User not logged in' });
+        }
+        
+        if (!text || text.trim().length === 0) {
+            return res.status(400).json({ error: 'Reply text is required' });
+        }
+        
+        // Get project, comment, and user info
+        const project = await Project.findById(projectId);
+        const comment = await Comment.findById(commentId);
+        const user = await User.findById(userId);
+        
+        if (!project) {
+            return res.status(404).json({ error: 'Project not found' });
+        }
+        
+        if (!comment) {
+            return res.status(404).json({ error: 'Comment not found' });
+        }
+        
+        // Add reply to comment's replies array
+        const reply = {
+            userId,
+            text: text.trim(),
+            createdAt: new Date()
+        };
+        
+        comment.replies.push(reply);
+        await comment.save();
+        
+        // Populate user details for response
+        const populatedComment = await Comment.findById(commentId)
+            .populate('replies.userId', 'fullName email program year profilePicture')
+            .lean();
+        
+        const addedReply = populatedComment.replies[populatedComment.replies.length - 1];
+        
+        // Send notification to comment author
+        const notifyUser = require('../utils/notifyUser');
+        
+        // Make sure we're using the ID, not the populated object
+        const commentAuthorId = comment.userId._id || comment.userId;
+        
+        console.log('=== REPLY NOTIFICATION DEBUG ===');
+        console.log('Comment Author ID:', commentAuthorId);
+        console.log('Reply Author ID:', userId);
+        console.log('Project ID:', projectId);
+        console.log('Reply Author Name:', user.fullName);
+        console.log('Project Name:', project.name);
+        
+        await notifyUser(
+            commentAuthorId,
+            userId,
+            projectId,
+            'reply',
+            `${user.fullName} replied to your comment on "${project.name}"`
+        );
+        
+        console.log('Reply notification sent successfully');
+        
+        return res.status(201).json({
+            success: true,
+            reply: addedReply
+        });
+        
+    } catch (error) {
+        console.error('Error adding reply:', error);
+        return res.status(500).json({ error: 'Failed to add reply' });
     }
 }
 
@@ -452,6 +567,7 @@ module.exports = {
     toggleLike: exports.toggleLike,
     addComment: exports.addComment,
     deleteComment: exports.deleteComment,
+    addReply: exports.addReply,
     updateProject: exports.updateProject,
     deleteProject: exports.deleteProject
 };

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings - Projexia</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="/css/projexia-design-system.css" />
+    <link rel="stylesheet" href="/css/navbar-modern.css" />
+    <link rel="stylesheet" href="/css/modal-modern.css" />
+    <link rel="stylesheet" href="/css/footer-modern.css" />
+    <link rel="stylesheet" href="/css/utility-pages-modern.css" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+    <script src="/js/theme.js"></script>
+</head>
+<body>
+    <div class="form-page-container">
+        <!-- Navbar -->
+        <%- include('partials/navbar-modern') %>
+        
+        <!-- Settings Content -->
+        <main class="form-page-content">
+            <div class="container" style="max-width: 700px;">
+                <div class="form-page-header">
+                    <h1>Settings</h1>
+                    <p>Manage your account preferences and privacy</p>
+                </div>
+
+                <!-- Account Settings -->
+                <div class="settings-grid">
+                    <!-- Email Settings -->
+                    <div class="settings-group">
+                        <h3 class="settings-group-title">Email & Account</h3>
+                        
+                        <div class="settings-item">
+                            <div class="settings-item-label">
+                                <h4>Email Address</h4>
+                                <p><%= user.email %></p>
+                            </div>
+                        </div>
+
+                        <div class="settings-item">
+                            <div class="settings-item-label">
+                                <h4>Change Password</h4>
+                                <p>Secure your account with a strong password</p>
+                            </div>
+                            <a href="/forgot-password" class="btn btn-secondary">Change</a>
+                        </div>
+                    </div>
+
+                    <!-- Danger Zone -->
+                    <div class="settings-group">
+                        <h3 class="settings-group-title">Danger Zone</h3>
+                        
+                        <div class="settings-item">
+                            <div class="settings-item-label">
+                                <h4>Delete Account</h4>
+                                <p>This feature is currently unavailable</p>
+                            </div>
+                            <button class="btn btn-secondary" onclick="showDeleteUnavailable()">Delete Account</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <%- include('partials/footer-modern') %>
+    </div>
+
+    <script>
+        const profileForm = document.getElementById('profileForm');
+        const errorMsg = document.getElementById('errorMessage');
+        const successMsg = document.getElementById('successMessage');
+
+        // No additional JavaScript needed for now
+
+        async function showDeleteUnavailable() {
+            await Modal.warning(
+                'Account deletion is currently unavailable. Please contact support if you need assistance with your account.',
+                'Feature Unavailable'
+            );
+        }
+    </script>
+    
+    <!-- Modal System -->
+    <script src="/js/modal.js"></script>
+    
+    <!-- Socket.IO Client -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Notifications System -->
+    <script src="/js/notifications.js"></script>
+    <!-- Liked Projects System -->
+    <script src="/js/liked-projects.js"></script>
+</body>
+</html>

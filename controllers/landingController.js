@@ -3,6 +3,11 @@ const Project = require('../models/uploadProject');
 // GET / - Landing page
 exports.getLandingPage = async (req, res) => {
     try {
+        // If user is logged in, redirect to browse page
+        if (req.session?.userId || req.user) {
+            return res.redirect('/browse');
+        }
+
         // Get top 6 projects by popularity (likes + views + comments)
         const projects = await Project.find()
             .populate('userId', 'fullName program year')
@@ -42,8 +47,9 @@ exports.getLandingPage = async (req, res) => {
             .sort((a, b) => b.popularity - a.popularity)
             .slice(0, 6);
 
-        res.render('landing', {
-            topProjects
+        res.render('landing-modern', {
+            topProjects,
+            user: req.user || null
         });
     } catch (error) {
         console.error('Error loading landing page:', error);

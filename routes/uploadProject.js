@@ -7,10 +7,8 @@ const checkUser = require('../middleware/checkUser');
 // Use temporary storage for Multer
 const upload = multer({ dest: 'temp/' }); // temp folder for Cloudinary upload
 
-// Page route
-router.get('/upload', checkUser, uploadController.getUploadPage);
-
 // API routes for projects
+// Note: GET /upload is handled in pageRoutes (pageController.getUploadPage)
 router.get('/api/projects', checkUser, uploadController.listProjects);
 router.post(
   '/api/projects',

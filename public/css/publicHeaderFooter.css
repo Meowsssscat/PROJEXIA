@@ -1,13 +1,29 @@
 /* Public Header Styles */
 
+:root {
+  --color-accent: hsl(var(--secondary));
+  --color-accent-strong: hsl(20 75% 45%);
+  --color-base: hsl(var(--muted));
+  --color-ink: hsl(var(--foreground));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-accent: hsl(var(--secondary));
+    --color-accent-strong: hsl(20 80% 55%);
+    --color-base: hsl(var(--muted));
+    --color-ink: hsl(var(--foreground));
+  }
+}
+
 .public-header {
-    background: white;
-    border-bottom: 1px solid rgba(141, 143, 140, 0.2);
+    background: hsl(var(--background));
+    border-bottom: 1px solid hsl(var(--border));
     padding: 1rem 2rem;
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .public-header__inner {
@@ -22,6 +38,18 @@
     text-decoration: none;
     display: flex;
     align-items: center;
+    font-family: 'Orbitron', monospace;
+    font-size: 1.5rem;
+    font-weight: 700;
+    gap: 0.25rem;
+}
+
+.public-header__logo .logo-span-primary {
+    color: hsl(var(--primary));
+}
+
+.public-header__logo .logo-span-secondary {
+    color: hsl(var(--secondary));
 }
 
 .logo-text {

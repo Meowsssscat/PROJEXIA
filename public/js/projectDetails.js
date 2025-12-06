@@ -245,8 +245,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const referrer = document.referrer;
             if (referrer.includes('/profile')) {
                 window.location.href = '/profile';
-            } else if (referrer.includes('/home')) {
-                window.location.href = '/home';
+            } else if (referrer.includes('/browse')) {
+                window.location.href = '/browse';
             } else {
                 window.location.href = '/home';
             }

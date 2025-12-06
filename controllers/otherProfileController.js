@@ -25,6 +25,10 @@ exports.getProfile = async (req, res) => {
     
     const projects = await Project.find({ userId: userId });
 
+    // Get liked projects by the visited user
+    const likedProjectIds = await Like.find({ userId: userId }).distinct('projectId');
+    const likedProjects = await Project.find({ _id: { $in: likedProjectIds } });
+
     // Fetch counts for user's projects
     const projectIds = projects.map(p => p._id);
     
@@ -63,15 +67,32 @@ exports.getProfile = async (req, res) => {
     });
 
     const data = this.prepareData(users, projects, projectStats);
+    
+    // Prepare liked projects data
+    const likedProjectsData = this.prepareData(users, likedProjects, projectStats);
+
+    // Get current logged-in user for navbar
+    let currentUser = null;
+    if (currentUserId) {
+      currentUser = await User.findById(currentUserId);
+    }
 
     console.log(data)
     console.log(userToVisit)
-    return res.render('otherProfile', { 
+    return res.render('otherProfile-modern', { 
     data,
+    likedProjectsData,
+    user: currentUser, // Pass current logged-in user for navbar
     userToVisit: {
         fullName: userToVisit.fullName,
         program: userToVisit.program,
         year: userToVisit.year,
+        track: userToVisit.track,
+        bio: userToVisit.bio,
+        profilePicture: userToVisit.profilePicture,
+        github: userToVisit.github,
+        portfolio: userToVisit.portfolio,
+        linkedin: userToVisit.linkedin,
         email: userToVisit.email,
         lastProfileEdit: userToVisit.lastProfileEdit  
     }

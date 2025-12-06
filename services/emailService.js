@@ -8,14 +8,15 @@ if (process.env.SENDGRID_API_KEY) {
   console.warn('⚠️ SENDGRID_API_KEY not found - emails will not work!');
 }
 
-// Generate 5-digit OTP
+// Generate 6-digit OTP
 const generateOTP = () => {
-  return Math.floor(10000 + Math.random() * 90000).toString();
+  return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
 // Send OTP Email via SendGrid
 const sendOTPEmail = async (email, otp) => {
   console.log('📧 Sending OTP via SendGrid:', otp, 'to:', email);
+  console.log(otp);
   
   const msg = {
     to: email,

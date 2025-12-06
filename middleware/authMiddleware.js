@@ -27,7 +27,7 @@ const isAuthenticated = (req, res, next) => {
  */
 const isNotAuthenticated = (req, res, next) => {
     if (req.session && req.session.userId) {
-        return res.redirect('/home');
+        return res.redirect('/browse');
     }
     return next();
 };
