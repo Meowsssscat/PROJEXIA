@@ -50,16 +50,17 @@
         }
 
         .profile-avatar {
-            width: 120px;
-            height: 120px;
+            width: 160px;
+            height: 160px;
             border-radius: 12px;
             background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 3rem;
+            font-size: 4rem;
             font-weight: bold;
+            flex-shrink: 0;
         }
 
         .profile-info h1 {
@@ -184,6 +185,58 @@
             margin-bottom: 3rem;
         }
 
+        /* Projects Toggle Buttons */
+        .projects-toggle {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid hsl(var(--border));
+            background: hsl(var(--muted) / 0.5);
+            padding: 0.5rem;
+            border-radius: 8px;
+            width: fit-content;
+        }
+
+        .toggle-btn {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: none;
+            color: hsl(var(--muted-foreground));
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.3s ease;
+            font-family: var(--font-inter);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toggle-btn:hover {
+            color: hsl(var(--foreground));
+        }
+
+        .toggle-btn.active {
+            color: hsl(var(--primary));
+        }
+
+        .toggle-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--secondary)));
+            border-radius: 1px;
+        }
+
+        .toggle-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
         .section-header {
             display: flex;
             align-items: center;
@@ -203,6 +256,15 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 2rem;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .projects-tab {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .projects-tab.active {
+            display: block !important;
         }
 
         .project-card {
@@ -327,16 +389,19 @@
             .profile-header {
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
-                padding: 1.5rem;
+                padding: 2rem 1.5rem;
             }
 
             .profile-avatar {
-                width: 100px;
-                height: 100px;
+                width: 140px;
+                height: 140px;
+                font-size: 3.5rem;
+                margin: 0 auto;
             }
 
             .profile-actions {
                 flex-direction: column;
+                width: 100%;
             }
 
             .btn {
@@ -352,6 +417,44 @@
             .section-header {
                 flex-direction: column;
                 align-items: flex-start;
+            }
+
+            .projects-toggle {
+                width: 100%;
+                margin-bottom: 1.5rem;
+            }
+
+            .toggle-btn {
+                flex: 1;
+                justify-content: center;
+                padding: 0.625rem 1rem;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .profile-avatar {
+                width: 120px;
+                height: 120px;
+                font-size: 3rem;
+            }
+
+            .profile-info h1 {
+                font-size: 1.5rem;
+            }
+
+            .toggle-btn {
+                font-size: 0.85rem;
+                padding: 0.5rem 0.75rem;
+            }
+
+            .toggle-btn svg {
+                width: 16px;
+                height: 16px;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
             }
         }
     </style>
@@ -487,67 +590,156 @@
                 <!-- Projects Section -->
                 <div class="projects-section">
                     <div class="section-header">
-                        <h2 class="section-title">Projects</h2>
+                        <h2 class="section-title">My Projects</h2>
                     </div>
 
-                    <% if (projects && projects.length > 0) { %>
-                        <div class="projects-grid">
-                            <% projects.forEach((project, index) => { %>
-                                <a href="/project/<%= project._id %>" class="project-card">
-                                    <img 
-                                        src="<%= project.thumbnailUrl?.url || '/images/default-project.png' %>" 
-                                        alt="<%= project.name %>"
-                                        class="project-image"
-                                    />
-                                    <div class="project-content">
-                                        <h3 class="project-title"><%= project.name %></h3>
-                                        
-                                        <% if (project.technologies && project.technologies.length > 0) { %>
-                                            <div class="tech-tags">
-                                                <% project.technologies.slice(0, 4).forEach(tech => { %>
-                                                    <span class="tech-tag"><%= tech %></span>
-                                                <% }) %>
-                                                <% if (project.technologies.length > 4) { %>
-                                                    <span class="tech-tag">+<%= project.technologies.length - 4 %></span>
-                                                <% } %>
-                                            </div>
-                                        <% } %>
+                    <!-- Toggle Buttons (TikTok style) -->
+                    <% if (isOwnProfile) { %>
+                        <div class="projects-toggle">
+                            <button class="toggle-btn active" data-tab="posted" onclick="switchTab('posted')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                                    <polyline points="13 2 13 9 20 9"></polyline>
+                                </svg>
+                                Posted (<%= projects.length %>)
+                            </button>
+                            <button class="toggle-btn" data-tab="liked" onclick="switchTab('liked')">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                </svg>
+                                Liked (<%= likedProjectsData ? Object.keys(likedProjectsData).length : 0 %>)
+                            </button>
+                        </div>
+                    <% } %>
 
-                                        <div class="project-stats">
-                                            <div class="project-stat">
-                                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                                                </svg>
-                                                <span><%= project.likes || 0 %></span>
-                                            </div>
-                                            <div class="project-stat">
-                                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                                                </svg>
-                                                <span><%= project.comments || 0 %></span>
-                                            </div>
-                                            <div class="project-stat">
-                                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                                    <circle cx="12" cy="12" r="3"></circle>
-                                                </svg>
-                                                <span><%= project.viewCount || 0 %></span>
+                    <!-- Posted Projects Tab -->
+                    <div id="posted-tab" class="projects-tab active">
+                        <% if (projects && projects.length > 0) { %>
+                            <div class="projects-grid">
+                                <% projects.forEach((project, index) => { %>
+                                    <a href="/project/<%= project._id %>" class="project-card">
+                                        <img 
+                                            src="<%= project.thumbnailUrl?.url || '/images/default-project.png' %>" 
+                                            alt="<%= project.name %>"
+                                            class="project-image"
+                                        />
+                                        <div class="project-content">
+                                            <h3 class="project-title"><%= project.name %></h3>
+                                            
+                                            <% if (project.technologies && project.technologies.length > 0) { %>
+                                                <div class="tech-tags">
+                                                    <% project.technologies.slice(0, 4).forEach(tech => { %>
+                                                        <span class="tech-tag"><%= tech %></span>
+                                                    <% }) %>
+                                                    <% if (project.technologies.length > 4) { %>
+                                                        <span class="tech-tag">+<%= project.technologies.length - 4 %></span>
+                                                    <% } %>
+                                                </div>
+                                            <% } %>
+
+                                            <div class="project-stats">
+                                                <div class="project-stat">
+                                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                                    </svg>
+                                                    <span><%= project.likes || 0 %></span>
+                                                </div>
+                                                <div class="project-stat">
+                                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                                    </svg>
+                                                    <span><%= project.comments || 0 %></span>
+                                                </div>
+                                                <div class="project-stat">
+                                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                        <circle cx="12" cy="12" r="3"></circle>
+                                                    </svg>
+                                                    <span><%= project.viewCount || 0 %></span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </a>
-                            <% }) %>
-                        </div>
-                    <% } else { %>
-                        <div class="empty-state">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                                <polyline points="21 15 16 10 5 21"></polyline>
-                            </svg>
-                            <h3>No Projects Yet</h3>
-                            <p>This user hasn't uploaded any projects yet.</p>
-                            <% if (isOwnProfile) { %>
+                                    </a>
+                                <% }) %>
+                            </div>
+                        <% } else { %>
+                            <div class="empty-state">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                    <polyline points="21 15 16 10 5 21"></polyline>
+                                </svg>
+                                <h3>No Projects Yet</h3>
+                                <p>This user hasn't uploaded any projects yet.</p>
+                                <% if (isOwnProfile) { %>
+                                    <a href="/upload" class="btn btn-primary">Upload Your First Project</a>
+                                <% } %>
+                            </div>
+                        <% } %>
+                    </div>
+
+                    <!-- Liked Projects Tab -->
+                    <div id="liked-tab" class="projects-tab" style="display: none;">
+                        <% if (likedProjectsData && Object.keys(likedProjectsData).length > 0) { %>
+                            <div class="projects-grid">
+                                <% for (const projectId in likedProjectsData) { %>
+                                    <% const project = likedProjectsData[projectId]; %>
+                                    <a href="/project/<%= project._id %>" class="project-card">
+                                        <img 
+                                            src="<%= project.thumbnailUrl?.url || '/images/default-project.png' %>" 
+                                            alt="<%= project.name %>"
+                                            class="project-image"
+                                        />
+                                        <div class="project-content">
+                                            <h3 class="project-title"><%= project.name %></h3>
+                                            
+                                            <% if (project.technologies && project.technologies.length > 0) { %>
+                                                <div class="tech-tags">
+                                                    <% project.technologies.slice(0, 4).forEach(tech => { %>
+                                                        <span class="tech-tag"><%= tech %></span>
+                                                    <% }) %>
+                                                    <% if (project.technologies.length > 4) { %>
+                                                        <span class="tech-tag">+<%= project.technologies.length - 4 %></span>
+                                                    <% } %>
+                                                </div>
+                                            <% } %>
+
+                                            <div class="project-stats">
+                                                <div class="project-stat">
+                                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                                    </svg>
+                                                    <span><%= project.likes || 0 %></span>
+                                                </div>
+                                                <div class="project-stat">
+                                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                                    </svg>
+                                                    <span><%= project.comments || 0 %></span>
+                                                </div>
+                                                <div class="project-stat">
+                                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                        <circle cx="12" cy="12" r="3"></circle>
+                                                    </svg>
+                                                    <span><%= project.viewCount || 0 %></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                <% } %>
+                            </div>
+                        <% } else { %>
+                            <div class="empty-state">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                </svg>
+                                <h3>No Liked Projects</h3>
+                                <p>You haven't liked any projects yet. <a href="/browse" style="color: hsl(var(--primary)); text-decoration: none;">Browse projects</a> to find ones you like!</p>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
                                 <a href="/upload" class="btn btn-primary">Upload Your First Project</a>
                             <% } %>
                         </div>
@@ -675,6 +867,30 @@
         function closeImageZoom() {
             const modal = document.getElementById('imageZoomModal');
             if (modal) modal.style.display = 'none';
+        }
+
+        // Tab Switching for Posted/Liked Projects
+        function switchTab(tabName) {
+            // Hide all tabs
+            const postedTab = document.getElementById('posted-tab');
+            const likedTab = document.getElementById('liked-tab');
+            
+            if (postedTab) postedTab.style.display = 'none';
+            if (likedTab) likedTab.style.display = 'none';
+
+            // Remove active class from all buttons
+            const toggleBtns = document.querySelectorAll('.toggle-btn');
+            toggleBtns.forEach(btn => btn.classList.remove('active'));
+
+            // Show selected tab
+            if (tabName === 'posted') {
+                if (postedTab) postedTab.style.display = '';
+            } else if (tabName === 'liked') {
+                if (likedTab) likedTab.style.display = '';
+            }
+
+            // Add active class to clicked button
+            event.target.closest('.toggle-btn').classList.add('active');
         }
     </script>
     <!-- Liked Projects System -->

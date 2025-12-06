@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FAQs - Frequently Asked Questions | Projexia</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="/css/projexia-design-system.css" />
+    <link rel="stylesheet" href="/css/navbar-modern.css" />
+    <link rel="stylesheet" href="/css/modal-modern.css" />
+    <link rel="stylesheet" href="/css/footer-modern.css" />
+    <link rel="stylesheet" href="/css/dropdown-modern.css" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+    
+    <!-- SVG Icons -->
+    <script src="/js/svgIcons.js"></script>
+    
+    <style>
+        /* FAQs Page Styles */
+        .faqs-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: hsl(var(--muted));
+        }
+
+        .faqs-content {
+            flex: 1;
+            padding: 4rem 2rem;
+        }
+
+        .faqs-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .faqs-header h1 {
+            font-family: var(--font-orbitron);
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 900;
+            color: hsl(var(--foreground));
+            margin-bottom: 1rem;
+        }
+
+        .faqs-header p {
+            font-size: 1.125rem;
+            color: hsl(var(--muted-foreground));
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .faqs-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Category Filter */
+        .faqs-filter {
+            margin-bottom: 3rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .faqs-filter label {
+            font-weight: 600;
+            color: hsl(var(--foreground));
+        }
+
+        .faqs-filter select {
+            padding: 0.75rem 2.5rem 0.75rem 1rem;
+            border: 1px solid hsl(var(--border));
+            border-radius: 8px;
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            font-family: var(--font-inter);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 200px;
+        }
+
+        .faqs-filter select:hover,
+        .faqs-filter select:focus {
+            border-color: hsl(var(--primary));
+            box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
+            outline: none;
+        }
+
+        /* FAQ Items */
+        .faq-item {
+            background: hsl(var(--background));
+            border: 1px solid hsl(var(--border));
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            animation: slideUp 0.3s ease-out forwards;
+            opacity: 0;
+        }
+
+        .faq-item:nth-child(1) { animation-delay: 0.1s; }
+        .faq-item:nth-child(2) { animation-delay: 0.15s; }
+        .faq-item:nth-child(3) { animation-delay: 0.2s; }
+        .faq-item:nth-child(n+4) { animation-delay: 0.25s; }
+
+        .faq-item:hover {
+            box-shadow: 0 8px 24px hsl(0 0% 0% / 0.08);
+            border-color: hsl(var(--primary) / 0.3);
+        }
+
+        .faq-question {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            transition: background-color 0.3s ease;
+            user-select: none;
+        }
+
+        .faq-question:hover {
+            background-color: hsl(var(--muted) / 0.5);
+        }
+
+        .faq-question-text {
+            flex: 1;
+        }
+
+        .faq-question-text h3 {
+            font-size: 1.0625rem;
+            font-weight: 600;
+            color: hsl(var(--foreground));
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .faq-category {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            background: hsl(var(--primary) / 0.1);
+            color: hsl(var(--primary));
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .faq-toggle {
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            background: hsl(var(--primary) / 0.1);
+            color: hsl(var(--primary));
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.active .faq-toggle {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+        }
+
+        .faq-answer-text {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            color: hsl(var(--muted-foreground));
+            line-height: 1.8;
+            font-size: 0.95rem;
+        }
+
+        .faq-answer-text p {
+            margin: 0;
+        }
+
+        .faq-answer-text a {
+            color: hsl(var(--primary));
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s ease;
+        }
+
+        .faq-answer-text a:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        /* Search Section */
+        .faqs-search {
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .faqs-search input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 1px solid hsl(var(--border));
+            border-radius: 12px;
+            font-size: 1rem;
+            background: hsl(var(--background));
+            color: hsl(var(--foreground));
+            transition: all 0.3s ease;
+        }
+
+        .faqs-search input:focus {
+            outline: none;
+            border-color: hsl(var(--primary));
+            box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1));
+        }
+
+        .faqs-search input::placeholder {
+            color: hsl(var(--muted-foreground));
+        }
+
+        /* Empty State */
+        .faqs-empty {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .faqs-empty svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1.5rem;
+            opacity: 0.5;
+        }
+
+        /* Animations */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .faqs-content {
+                padding: 2rem 1rem;
+            }
+
+            .faqs-header {
+                margin-bottom: 2rem;
+            }
+
+            .faqs-header h1 {
+                font-size: clamp(1.5rem, 4vw, 2rem);
+            }
+
+            .faq-question {
+                padding: 1.25rem;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .faq-toggle {
+                align-self: flex-end;
+                margin-top: -2rem;
+            }
+
+            .faqs-filter {
+                flex-direction: column;
+            }
+
+            .faqs-filter label {
+                width: 100%;
+            }
+
+            .faqs-filter select {
+                width: 100%;
+                min-width: unset;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="faqs-container">
+        <!-- Navbar -->
+        <%- include('partials/navbar-modern') %>
+
+        <!-- Main Content -->
+        <main class="faqs-content">
+            <div class="container">
+                <!-- Header -->
+                <div class="faqs-header">
+                    <h1>Frequently Asked Questions</h1>
+                    <p>Find answers to common questions about Projexia. Can't find what you're looking for? <a href="/report" style="color: hsl(var(--primary)); text-decoration: none;">Contact us</a></p>
+                </div>
+
+                <!-- Search & Filter -->
+                <div class="faqs-wrapper">
+                    <div class="faqs-search">
+                        <input 
+                            type="text" 
+                            id="faqSearch" 
+                            placeholder="Search FAQs... (type a keyword)"
+                            aria-label="Search FAQs"
+                        >
+                    </div>
+
+                    <div class="faqs-filter">
+                        <label for="categoryFilter">Filter by Category:</label>
+                        <select id="categoryFilter" aria-label="Filter FAQs by category">
+                            <option value="">All Categories</option>
+                            <option value="Getting Started">Getting Started</option>
+                            <option value="Projects">Projects</option>
+                            <option value="Browsing & Discovery">Browsing & Discovery</option>
+                            <option value="Interactions">Interactions</option>
+                            <option value="Profile">Profile</option>
+                            <option value="Features">Features</option>
+                            <option value="Support">Support</option>
+                            <option value="Account">Account</option>
+                            <option value="Technical">Technical</option>
+                        </select>
+                    </div>
+
+                    <!-- FAQ Items -->
+                    <div id="faqsContainer">
+                        <% faqs.forEach((faq) => { %>
+                            <div class="faq-item" data-category="<%= faq.category %>" data-question="<%= faq.question.toLowerCase() %>">
+                                <div class="faq-question" onclick="toggleFAQ(this)">
+                                    <div class="faq-question-text">
+                                        <div class="faq-category"><%= faq.category %></div>
+                                        <h3><%= faq.question %></h3>
+                                    </div>
+                                    <div class="faq-toggle">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="6 9 12 15 18 9"></polyline>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="faq-answer">
+                                    <div class="faq-answer-text">
+                                        <p><%= faq.answer %></p>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="faqsEmpty" class="faqs-empty" style="display: none;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        <h3>No FAQs found</h3>
+                        <p>Try adjusting your search or filter</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <%- include('partials/footer-modern') %>
+    </div>
+
+    <script>
+        // Toggle FAQ Answer
+        function toggleFAQ(element) {
+            const faqItem = element.parentElement;
+            faqItem.classList.toggle('active');
+        }
+
+        // Search & Filter Functionality
+        const searchInput = document.getElementById('faqSearch');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const faqItems = document.querySelectorAll('.faq-item');
+        const faqsContainer = document.getElementById('faqsContainer');
+        const faqsEmpty = document.getElementById('faqsEmpty');
+
+        function filterFAQs() {
+            const searchText = searchInput.value.toLowerCase().trim();
+            const selectedCategory = categoryFilter.value;
+            let visibleCount = 0;
+
+            faqItems.forEach((item) => {
+                const itemCategory = item.getAttribute('data-category');
+                const itemQuestion = item.getAttribute('data-question');
+                const matches = (
+                    (!selectedCategory || itemCategory === selectedCategory) &&
+                    (!searchText || itemQuestion.includes(searchText))
+                );
+
+                item.style.display = matches ? '' : 'none';
+                if (matches) visibleCount++;
+            });
+
+            // Show empty state if no results
+            faqsEmpty.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+
+        searchInput.addEventListener('input', filterFAQs);
+        categoryFilter.addEventListener('change', filterFAQs);
+
+        // Close all FAQs on page load
+        window.addEventListener('load', () => {
+            faqItems.forEach((item) => {
+                item.classList.remove('active');
+            });
+        });
+    </script>
+
+    <!-- Modal System -->
+    <script src="/js/modal.js"></script>
+    <!-- Socket.IO Client -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Notifications System -->
+    <script src="/js/notification.js"></script>
+</body>
+</html>

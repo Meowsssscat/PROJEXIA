@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pageController = require('../controllers/pageController');
+const faqsController = require('../controllers/faqsController');
 const checkUser = require('../middleware/checkUser');
 
 // Auth pages
@@ -20,6 +21,7 @@ router.get('/settings', checkUser, pageController.getSettingsPage);
 // Support pages
 router.get('/donate', pageController.getDonatePage);
 router.get('/report', checkUser, pageController.getReportPage);
+router.get('/faqs', faqsController.getFAQsPage);
 
 // Forgot password page
 router.get('/forgot-password', pageController.getForgotPasswordPage);
