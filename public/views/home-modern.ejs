@@ -26,8 +26,9 @@
         <!-- Main Content -->
         <main class="home-content">
             <div class="home-wrapper">
-                <!-- Filter Container -->
-                <div class="filter-container">
+                <!-- Search Bar and Filter Toggle -->
+                <div style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                    <!-- Search Bar (Always Visible) -->
                     <input 
                         type="text" 
                         id="searchProject" 
@@ -35,27 +36,36 @@
                         placeholder="Search projects..." 
                         autocomplete="off"
                         value="<%= searchTerm || '' %>"
+                        style="flex: 1; min-width: 250px;"
                     />
-
+                    
+                    <!-- Filter Toggle Button -->
+                    <button id="toggleFiltersBtn" class="btn btn-outline" style="display: flex; align-items: center; justify-content: center; padding: 0.75rem;" title="Hide Filters">
+                        <svg id="filterIcon" style="width: 1.25rem; height: 1.25rem;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Collapsible Filter Container -->
+                <div class="filter-container" id="filtersContainer">
                     <select class="filter-select" id="filterProgram" name="filterProgram">
-                        <option value="">All Programs</option>
+                        <option value="">Program</option>
                         <option value="BSIT" <%= selectedProgram === 'BSIT' ? 'selected' : '' %>>BSIT</option>
                         <option value="BSIS" <%= selectedProgram === 'BSIS' ? 'selected' : '' %>>BSIS</option>
                         <option value="BSCS" <%= selectedProgram === 'BSCS' ? 'selected' : '' %>>BSCS</option>
                     </select>
 
                     <select class="filter-select" id="filterYear" name="filterYear">
-                        <option value="">All Years</option>
+                        <option value="">Year Level</option>
                         <option value="1" <%= selectedYear === '1' ? 'selected' : '' %>>1st Year</option>
                         <option value="2" <%= selectedYear === '2' ? 'selected' : '' %>>2nd Year</option>
                         <option value="3" <%= selectedYear === '3' ? 'selected' : '' %>>3rd Year</option>
                         <option value="4" <%= selectedYear === '4' ? 'selected' : '' %>>4th Year</option>
                     </select>
 
-                    <!-- Track Filter (only show for 3rd and 4th year with BSIT or BSCS) -->
                     <select class="filter-select" id="filterTrack" name="filterTrack" style="display: none;">
-                        <option value="">All Tracks</option>
-                        <!-- BSIT Tracks -->
+                        <option value="">Track</option>
                         <option value="WMAD" data-program="BSIT" <%= selectedTrack === 'WMAD' ? 'selected' : '' %>>WMAD</option>
                         <option value="AMG" data-program="BSIT" <%= selectedTrack === 'AMG' ? 'selected' : '' %>>AMG</option>
                         <option value="SMP" data-program="BSIT" <%= selectedTrack === 'SMP' ? 'selected' : '' %>>SMP</option>
@@ -68,17 +78,13 @@
                     <!-- Technology Filter (Multi-select) -->
                     <div class="tech-filter-wrapper" style="position: relative; display: inline-block;">
                         <button type="button" class="filter-select tech-filter-button" id="techFilterButton" style="text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 200px;">
-                            <span id="techFilterLabel">All Technologies</span>
+                            <span id="techFilterLabel">Technologies</span>
                             <svg style="width: 1rem; height: 1rem;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="6 9 12 15 18 9"></polyline>
                             </svg>
                         </button>
-                        <div class="tech-filter-dropdown" id="techFilterDropdown" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: 0.5rem; margin-top: 0.25rem; max-height: 300px; overflow-y: auto; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                            <div style="padding: 0.5rem;">
-                                <label style="display: flex; align-items: center; padding: 0.5rem; cursor: pointer; border-radius: 0.25rem;" onmouseover="this.style.background='hsl(var(--accent))'" onmouseout="this.style.background=''">
-                                    <input type="checkbox" value="" id="techAll" style="margin-right: 0.5rem;" checked>
-                                    <span>All Technologies</span>
-                                </label>
+                        <div class="tech-filter-dropdown" id="techFilterDropdown" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: 0.5rem; margin-top: 0.25rem; max-height: 350px; overflow: hidden; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <div style="padding: 0.5rem; max-height: 280px; overflow-y: auto;">
                                 <% if (availableTechnologies && availableTechnologies.length > 0) { %>
                                     <% availableTechnologies.forEach(tech => { %>
                                         <label style="display: flex; align-items: center; padding: 0.5rem; cursor: pointer; border-radius: 0.25rem;" onmouseover="this.style.background='hsl(var(--accent))'" onmouseout="this.style.background=''">
@@ -87,6 +93,10 @@
                                         </label>
                                     <% }); %>
                                 <% } %>
+                            </div>
+                            <div style="padding: 0.5rem; border-top: 1px solid hsl(var(--border)); display: flex; gap: 0.5rem;">
+                                <button id="applyTechFilter" class="btn btn-primary" style="flex: 1; padding: 0.5rem; font-size: 0.875rem;">Apply</button>
+                                <button id="clearTechFilter" class="btn btn-outline" style="flex: 1; padding: 0.5rem; font-size: 0.875rem;">Clear</button>
                             </div>
                         </div>
                     </div>
@@ -110,7 +120,6 @@
                 <section class="section section-trending" style="background: linear-gradient(135deg, hsl(var(--primary) / 0.05) 0%, hsl(var(--secondary) / 0.05) 100%); padding: 3rem 0; border-radius: 1rem; margin-bottom: 3rem;">
                     <div class="section-header">
                         <h2 class="section-title">Top 10 Trending Projects</h2>
-                        <p class="section-subtitle">Most popular projects based on likes and views</p>
                     </div>
 
                     <div class="projects-grid top3-grid">
@@ -180,7 +189,7 @@
                 <% if (currentUser && batchmateProjects && batchmateProjects.length > 0) { %>
                 <section class="section section-batchmates">
                     <div class="section-header">
-                        <h2 class="section-title">Your Batchmates</h2>
+                        <h2 class="section-title">Batchmates</h2>
                         <p class="section-subtitle"><%= currentUser.program %> • <%= currentUser.year %> Year</p>
                     </div>
 
@@ -242,8 +251,7 @@
                 <% if (remainingProjects && remainingProjects.length > 0) { %>
                 <section class="section section-all">
                     <div class="section-header">
-                        <h2 class="section-title">All Projects</h2>
-                        <p class="section-subtitle">Explore more from the CCS community</p>
+                        <h2 class="section-title">Explore more</h2>
                     </div>
 
                     <div class="projects-grid">
@@ -321,6 +329,25 @@
     </div>
 
     <script>
+        // Toggle filters functionality (icon only, no text)
+        const toggleFiltersBtn = document.getElementById('toggleFiltersBtn');
+        const filtersContainer = document.getElementById('filtersContainer');
+        const filterIcon = document.getElementById('filterIcon');
+        let filtersVisible = true;
+
+        if (toggleFiltersBtn) {
+            toggleFiltersBtn.addEventListener('click', () => {
+                filtersVisible = !filtersVisible;
+                if (filtersVisible) {
+                    filtersContainer.style.display = 'flex';
+                    toggleFiltersBtn.setAttribute('title', 'Hide Filters');
+                } else {
+                    filtersContainer.style.display = 'none';
+                    toggleFiltersBtn.setAttribute('title', 'Show Filters');
+                }
+            });
+        }
+
         // Filter functionality - server-side filtering
         const searchInput = document.getElementById('searchProject');
         const programFilter = document.getElementById('filterProgram');
@@ -329,8 +356,14 @@
         const techFilterButton = document.getElementById('techFilterButton');
         const techFilterDropdown = document.getElementById('techFilterDropdown');
         const techFilterLabel = document.getElementById('techFilterLabel');
-        const techAllCheckbox = document.getElementById('techAll');
         const techCheckboxes = document.querySelectorAll('.tech-checkbox');
+
+        // Initialize filter values from URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        searchInput.value = urlParams.get('search') || '';
+        programFilter.value = urlParams.get('program') || '';
+        yearFilter.value = urlParams.get('yearLevel') || '';
+        trackFilter.value = urlParams.get('track') || '';
 
         // Set initial values for selected technologies
         const selectedTechs = <%- JSON.stringify(selectedLanguages || []) %>;
@@ -340,7 +373,6 @@
                     checkbox.checked = true;
                 }
             });
-            techAllCheckbox.checked = false;
             updateTechFilterLabel();
         }
 
@@ -352,46 +384,47 @@
             });
         }
 
-        // Close dropdown when clicking outside
+        // Close dropdown when clicking outside (without applying)
         document.addEventListener('click', (e) => {
             if (techFilterButton && !techFilterButton.contains(e.target) && !techFilterDropdown.contains(e.target)) {
                 techFilterDropdown.style.display = 'none';
             }
         });
 
-        // Handle "All Technologies" checkbox
-        if (techAllCheckbox) {
-            techAllCheckbox.addEventListener('change', () => {
-                if (techAllCheckbox.checked) {
-                    techCheckboxes.forEach(cb => cb.checked = false);
-                    updateTechFilterLabel();
-                    applyFilters();
-                }
-            });
-        }
-
-        // Handle individual technology checkboxes
+        // Handle individual technology checkboxes - just update label
         techCheckboxes.forEach(checkbox => {
             checkbox.addEventListener('change', () => {
-                if (checkbox.checked) {
-                    techAllCheckbox.checked = false;
-                }
-                
-                const anyChecked = Array.from(techCheckboxes).some(cb => cb.checked);
-                if (!anyChecked) {
-                    techAllCheckbox.checked = true;
-                }
-                
                 updateTechFilterLabel();
-                applyFilters();
             });
         });
+        
+        // Apply button - apply filters and close dropdown
+        const applyTechFilterBtn = document.getElementById('applyTechFilter');
+        if (applyTechFilterBtn) {
+            applyTechFilterBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                techFilterDropdown.style.display = 'none';
+                applyFilters();
+            });
+        }
+        
+        // Clear button - uncheck all and update label
+        const clearTechFilterBtn = document.getElementById('clearTechFilter');
+        if (clearTechFilterBtn) {
+            clearTechFilterBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                techCheckboxes.forEach(cb => cb.checked = false);
+                updateTechFilterLabel();
+                techFilterDropdown.style.display = 'none';
+                applyFilters();
+            });
+        }
 
         // Update the label to show selected technologies
         function updateTechFilterLabel() {
             const selected = Array.from(techCheckboxes).filter(cb => cb.checked);
             if (selected.length === 0) {
-                techFilterLabel.textContent = 'All Technologies';
+                techFilterLabel.textContent = 'Technologies';
             } else if (selected.length === 1) {
                 techFilterLabel.textContent = selected[0].value;
             } else {
@@ -404,8 +437,8 @@
             const year = yearFilter.value;
             const program = programFilter.value;
             
-            // Show track filter for BSIT or BSCS programs (regardless of year)
-            const shouldShowTrack = (program === 'BSIT' || program === 'BSCS');
+            // Show track filter only for 3rd or 4th year BSIT/BSCS students
+            const shouldShowTrack = (program === 'BSIT' || program === 'BSCS') && (year === '3' || year === '4');
             
             if (shouldShowTrack) {
                 trackFilter.style.display = '';
@@ -467,16 +500,9 @@
         });
         trackFilter.addEventListener('change', applyFilters);
 
-        // Apply search on Enter key or after typing stops
-        let searchTimeout;
-        searchInput.addEventListener('input', () => {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(applyFilters, 500);
-        });
-
+        // Search only on Enter key press
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                clearTimeout(searchTimeout);
                 applyFilters();
             }
         });
@@ -501,5 +527,7 @@
     
     <!-- Real-time Notifications System -->
     <script src="/js/notifications.js"></script>
+    <!-- Liked Projects System -->
+    <script src="/js/liked-projects.js"></script>
 </body>
 </html>

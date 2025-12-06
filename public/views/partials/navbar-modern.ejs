@@ -9,18 +9,39 @@
         </h1>
       </a>
 
-      <!-- Mobile Menu Button -->
-      <button class="navbar-menu-button" id="mobileMenuBtn" type="button" aria-label="Toggle menu">
-        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
-        <svg class="close-icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
+      <!-- Mobile Actions (visible on mobile) -->
+      <div class="navbar-mobile-actions">
+        <% if (user) { %>
+          <!-- Liked Projects Button -->
+          <button class="navbar-likes-btn-mobile-top" id="likedProjectsBtnMobileTop" type="button" aria-label="Liked Projects" title="View liked projects">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+          </button>
+          
+          <!-- Notifications Button -->
+          <button class="navbar-notifications-btn-mobile-top" id="notificationBellBtnMobileTop" type="button" aria-label="Notifications" title="View notifications">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            <span class="navbar-notifications-badge-mobile-top" id="notificationBadgeMobileTop" style="display: none;">0</span>
+          </button>
+        <% } %>
+        
+        <!-- Mobile Menu Button -->
+        <button class="navbar-menu-button" id="mobileMenuBtn" type="button" aria-label="Toggle menu">
+          <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+          <svg class="close-icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
 
       <!-- Desktop Navigation -->
       <div class="navbar-nav hidden-sm">
@@ -32,6 +53,17 @@
         <% } %>
         
         <div class="navbar-auth">
+          <!-- Liked Projects Button (only for logged-in users) -->
+          <% if (user) { %>
+            <div class="navbar-likes-wrapper" style="position: relative;">
+              <button class="navbar-likes-btn" id="likedProjectsBtn" type="button" aria-label="Liked Projects" title="View liked projects">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </button>
+            </div>
+          <% } %>
+          
           <!-- Notifications Button (only for logged-in users) -->
           <% if (user) { %>
             <div class="navbar-notifications-wrapper" style="position: relative;">
@@ -42,18 +74,6 @@
                 </svg>
                 <span class="navbar-notifications-badge" id="notificationBadge" style="display: none;">0</span>
               </button>
-              <div class="navbar-notifications-panel" id="notificationPanel">
-                <div class="navbar-notifications-header">
-                  <h3>Notifications</h3>
-                  <button class="navbar-notifications-close" onclick="document.getElementById('notificationPanel').style.display='none';">×</button>
-                </div>
-                <div class="navbar-notifications-list" id="notificationsList">
-                  <div style="padding: 1rem; text-align: center; color: hsl(var(--muted-foreground));">Loading notifications...</div>
-                </div>
-                <div class="navbar-notifications-footer">
-                  <button class="navbar-notifications-clear-btn" id="clearNotificationsBtn">Clear all</button>
-                </div>
-              </div>
             </div>
           <% } %>
           
@@ -78,9 +98,13 @@
           <% if (user) { %>
             <div class="navbar-avatar-button-wrapper" style="position: relative;">
               <button class="navbar-avatar-button" id="avatarBtn" type="button" aria-label="User menu">
-                <div class="navbar-avatar">
-                  <%= user.name ? user.name.charAt(0).toUpperCase() : (user.email ? user.email.charAt(0).toUpperCase() : '?') %>
-                </div>
+                <% if (user.profilePicture && user.profilePicture.url) { %>
+                  <img src="<%= user.profilePicture.url %>" alt="Profile" class="navbar-avatar-img">
+                <% } else { %>
+                  <div class="navbar-avatar">
+                    <%= user.fullName ? user.fullName.charAt(0).toUpperCase() : (user.email ? user.email.charAt(0).toUpperCase() : '?') %>
+                  </div>
+                <% } %>
               </button>
               <div class="navbar-dropdown" id="navDropdown">
                 <a href="/settings" class="navbar-dropdown-item">
@@ -98,7 +122,7 @@
                   Profile
                 </a>
                 <div class="navbar-dropdown-separator"></div>
-                <a href="/auth/logout" class="navbar-dropdown-item">
+                <a href="#" onclick="confirmLogout(event)" class="navbar-dropdown-item">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                     <polyline points="16 17 21 12 16 7"></polyline>
@@ -116,51 +140,35 @@
       </div>
     </div>
 
-    <!-- Mobile Navigation -->
+
+
+    <!-- Mobile Dropdown Menu -->
     <div class="navbar-mobile-nav" id="mobileNav">
       <div class="navbar-mobile-nav-content">
-        <!-- Mobile Theme Toggle and Notifications -->
-        <div class="navbar-mobile-controls">
-          <!-- Theme Toggle Button -->
-          <button class="navbar-theme-toggle-mobile" id="themeToggleMobile" type="button" aria-label="Toggle dark mode" title="Toggle theme">
-            <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-              <circle cx="12" cy="12" r="5"></circle>
-              <line x1="12" y1="1" x2="12" y2="3"></line>
-              <line x1="12" y1="21" x2="12" y2="23"></line>
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-              <line x1="1" y1="12" x2="3" y2="12"></line>
-              <line x1="21" y1="12" x2="23" y2="12"></line>
-              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-            </svg>
-            <svg class="moon-icon hidden" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-            </svg>
-            <span>Dark Mode</span>
-          </button>
-          
-          <% if (user) { %>
-            <!-- Notifications Button -->
-            <button class="navbar-notifications-btn-mobile" id="notificationBellBtnMobile" type="button" aria-label="Notifications" title="View notifications">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-              </svg>
-              <span>Notifications</span>
-              <span class="navbar-notifications-badge-mobile" id="notificationBadgeMobile" style="display: none;">0</span>
-            </button>
-          <% } %>
-        </div>
+        <!-- Mobile Theme Toggle -->
+        <button class="navbar-theme-toggle-mobile" id="themeToggleMobile" type="button" aria-label="Toggle dark mode" title="Toggle theme">
+          <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="moon-icon hidden" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+          <span>Dark Mode</span>
+        </button>
         
         <div class="navbar-mobile-nav-divider"></div>
         
-        <a href="<%= user ? '/home' : '/browse' %>" class="navbar-mobile-nav-link">Browse Projects</a>
         <a href="/about" class="navbar-mobile-nav-link">About</a>
         
         <% if (user) { %>
-          <a href="/upload" class="navbar-mobile-nav-link">Upload Project</a>
-          <a href="/profile" class="navbar-mobile-nav-link">Profile</a>
           <a href="/settings" class="navbar-mobile-nav-link">Settings</a>
         <% } %>
         
@@ -168,7 +176,7 @@
         
         <div class="navbar-mobile-nav-buttons">
           <% if (user) { %>
-            <a href="/auth/logout" class="btn btn-outline" style="width:100%; display:flex; justify-content:center; text-align: center;">Sign Out</a>
+            <a href="#" onclick="confirmLogout(event)" class="btn btn-outline" style="width:100%; display:flex; justify-content:center; text-align: center;">Sign Out</a>
           <% } else { %>
             <a href="/signin" class="btn btn-outline" style="width:100%; display:flex; justify-content:center;">Sign In</a>
             <a href="/signup" class="btn btn-primary" style="width:100%; display:flex; justify-content:center;">Get Started</a>
@@ -177,6 +185,35 @@
       </div>
     </div>
   </div>
+  
+  <!-- Liked Projects Panel (shared by desktop and mobile) -->
+  <% if (user) { %>
+    <div class="navbar-likes-panel" id="likedProjectsPanel" style="display: none;">
+      <div class="navbar-likes-header">
+        <h3>Liked Projects <span id="likedProjectsCount" style="color: hsl(var(--muted-foreground)); font-weight: 400; font-size: 0.9rem;">(0)</span></h3>
+        <button class="navbar-likes-close" onclick="document.getElementById('likedProjectsPanel').style.display='none';">×</button>
+      </div>
+      <div class="navbar-likes-list" id="likedProjectsList">
+        <div style="padding: 1rem; text-align: center; color: hsl(var(--muted-foreground));">Loading liked projects...</div>
+      </div>
+    </div>
+  <% } %>
+  
+  <!-- Notification Panel (shared by desktop and mobile) -->
+  <% if (user) { %>
+    <div class="navbar-notifications-panel" id="notificationPanel" style="display: none;">
+      <div class="navbar-notifications-header">
+        <h3>Notifications</h3>
+        <button class="navbar-notifications-close" onclick="document.getElementById('notificationPanel').style.display='none';">×</button>
+      </div>
+      <div class="navbar-notifications-list" id="notificationsList">
+        <div style="padding: 1rem; text-align: center; color: hsl(var(--muted-foreground));">Loading notifications...</div>
+      </div>
+      <div class="navbar-notifications-footer">
+        <button class="navbar-notifications-clear-btn" id="clearNotificationsBtn">Clear all</button>
+      </div>
+    </div>
+  <% } %>
 </nav>
 
 <script>
@@ -211,5 +248,53 @@
     });
   }
 
+  // Logout confirmation
+  async function confirmLogout(event) {
+    event.preventDefault();
+    
+    const confirmed = await Modal.confirm(
+      'Are you sure you want to sign out?',
+      'Confirm Sign Out',
+      'Sign Out',
+      'Cancel'
+    );
+    
+    if (confirmed) {
+      window.location.href = '/auth/logout';
+    }
+  }
+
+  // Make confirmLogout globally available
+  window.confirmLogout = confirmLogout;
 
 </script>
+
+<!-- Mobile Bottom Navigation Bar (Facebook style) -->
+<% if (typeof user !== 'undefined' && user) { %>
+  <nav class="navbar-mobile-bottom">
+    <a href="/home" class="navbar-mobile-bottom-link">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="26" height="26">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+      </svg>
+    </a>
+    
+    <a href="/upload" class="navbar-mobile-bottom-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="26" height="26">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="17 8 12 3 7 8"></polyline>
+        <line x1="12" y1="3" x2="12" y2="15"></line>
+      </svg>
+    </a>
+    
+    <a href="/profile" class="navbar-mobile-bottom-link">
+      <% if (user.profilePicture && user.profilePicture.url) { %>
+        <img src="<%= user.profilePicture.url %>" alt="Profile" class="navbar-mobile-profile-img">
+      <% } else { %>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="26" height="26">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+      <% } %>
+    </a>
+  </nav>
+<% } %>

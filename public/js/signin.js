@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Client-side validation
         const validationError = validateForm(formData);
         if (validationError) {
-            Utils.showError('errorMessage', validationError);
+            Toast.error(validationError, 'Validation Error');
             return;
         }
 
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Handle response
         if (result.success) {
-            Utils.showSuccess('successMessage', result.data.message);
+            Toast.success(result.data.message || 'Signed in successfully!', 'Welcome Back');
 
             // Store user data
             Utils.setLocalStorage('user', result.data.user);
@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.href = result.data.redirect || '/home';
             }, 1000);
         } else {
-            Utils.showError('errorMessage', result.data.message);
+            Toast.error(result.data.message || 'Sign in failed', 'Sign In Error');
         }
     });
 
@@ -100,7 +100,7 @@ function checkForSuccessMessage() {
     const success = urlParams.get('success');
     
     if (success === 'verified') {
-        Utils.showSuccess('successMessage', 'Account verified successfully! Please sign in.');
+        Toast.success('Account verified successfully! Please sign in.', 'Email Verified');
         
         // Clean URL (remove query parameters)
         if (window.history.replaceState) {

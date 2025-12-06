@@ -45,12 +45,19 @@
 
                     <div class="project-author-section">
                       <div class="author-card">
-                        <div class="author-avatar-large">
-                          <%= uploader?.fullName?.charAt(0) || project.userId?.fullName?.charAt(0) || '?' %>
-                        </div>
+                        <% 
+                          const uploaderInfo = uploader || project.userId;
+                          const hasProfilePic = uploaderInfo?.profilePicture?.url;
+                        %>
+                        <% if (hasProfilePic) { %>
+                          <img src="<%= uploaderInfo.profilePicture.url %>" alt="Profile" class="author-avatar-large-img">
+                        <% } else { %>
+                          <div class="author-avatar-large">
+                            <%= uploaderInfo?.fullName?.charAt(0) || '?' %>
+                          </div>
+                        <% } %>
                         <div>
                           <% 
-                            const uploaderInfo = uploader || project.userId;
                             const uploaderId = uploaderInfo?._id?.toString() || userId;
                             const currentUserId = user?._id?.toString();
                             const isOwnProject = currentUserId && currentUserId === uploaderId;
@@ -135,12 +142,31 @@
                     </div>
 
                     <div class="project-actions">
-                      <button class="btn btn-primary btn-lg" id="likeBtn">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                        </svg>
-                        Like This Project
-                      </button>
+                      <% if (isUploader) { %>
+                        <button class="btn btn-primary btn-lg" id="editProjectBtn" onclick="openEditModal()">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                          </svg>
+                          Edit Project
+                        </button>
+                        <button class="btn btn-danger btn-lg" id="deleteProjectBtn" onclick="deleteProject('<%= project._id %>')">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                          </svg>
+                          Delete Project
+                        </button>
+                      <% } else { %>
+                        <button class="btn btn-primary btn-lg" id="likeBtn">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                          </svg>
+                          Like This Project
+                        </button>
+                      <% } %>
                       <% if (project.sourceCode) { %>
                         <a href="<%= project.sourceCode %>" target="_blank" class="btn btn-outline btn-lg">
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -251,9 +277,13 @@
                   <!-- Add Comment Form -->
                   <% if (user) { %>
                     <div class="comment-form">
-                      <div class="comment-avatar">
-                        <%= user.name?.charAt(0) || '?' %>
-                      </div>
+                      <% if (user.profilePicture && user.profilePicture.url) { %>
+                        <img src="<%= user.profilePicture.url %>" alt="Profile" class="comment-avatar-img">
+                      <% } else { %>
+                        <div class="comment-avatar">
+                          <%= user.fullName?.charAt(0) || '?' %>
+                        </div>
+                      <% } %>
                       <div style="flex: 1;">
                         <textarea 
                           class="input" 
@@ -274,11 +304,21 @@
                   <!-- Comments List -->
                   <div class="comments-list" id="commentsList">
                     <% if (comments && comments.length > 0) { %>
-                      <% comments.forEach(comment => { %>
-                        <div class="comment-item" data-comment-id="<%= comment._id %>">
-                          <div class="comment-avatar">
-                            <%= comment.userId?.fullName?.charAt(0) || '?' %>
-                          </div>
+                      <% comments.forEach((comment, index) => { %>
+                        <% 
+                          // Debug: Log comment data
+                          console.log('Comment userId:', comment.userId);
+                          console.log('Has profilePicture?', !!comment.userId?.profilePicture);
+                          console.log('Profile URL:', comment.userId?.profilePicture?.url);
+                        %>
+                        <div class="comment-item" data-comment-id="<%= comment._id %>" data-comment-index="<%= index %>" style="<%= index >= 3 ? 'display: none;' : '' %>">
+                          <% if (comment.userId?.profilePicture?.url) { %>
+                            <img src="<%= comment.userId.profilePicture.url %>" alt="Profile" class="comment-avatar-img">
+                          <% } else { %>
+                            <div class="comment-avatar">
+                              <%= comment.userId?.fullName?.charAt(0) || '?' %>
+                            </div>
+                          <% } %>
                           <div class="comment-content">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
                               <div>
@@ -296,9 +336,13 @@
                               <div class="replies-section">
                                 <% comment.replies.forEach(reply => { %>
                                   <div class="reply-item">
-                                    <div class="reply-avatar">
-                                      <%= reply.userId?.fullName?.charAt(0) || '?' %>
-                                    </div>
+                                    <% if (reply.userId?.profilePicture?.url) { %>
+                                      <img src="<%= reply.userId.profilePicture.url %>" alt="Profile" class="reply-avatar-img">
+                                    <% } else { %>
+                                      <div class="reply-avatar">
+                                        <%= reply.userId?.fullName?.charAt(0) || '?' %>
+                                      </div>
+                                    <% } %>
                                     <div class="reply-content">
                                       <p class="reply-author"><%= reply.userId?.fullName || 'Anonymous' %></p>
                                       <p class="reply-date"><%= new Date(reply.createdAt).toLocaleDateString() %></p>
@@ -332,6 +376,15 @@
                           </div>
                         </div>
                       <% }); %>
+                      
+                      <!-- View More/Less Button -->
+                      <% if (comments.length > 3) { %>
+                        <div style="text-align: center; margin-top: 1.5rem;">
+                          <button class="btn btn-outline" id="viewMoreCommentsBtn" onclick="toggleComments()">
+                            View More Comments (<%= comments.length - 3 %>)
+                          </button>
+                        </div>
+                      <% } %>
                     <% } else { %>
                       <p style="text-align: center; color: hsl(var(--muted-foreground)); padding: 2rem;">
                         No comments yet. Be the first to share your thoughts!
@@ -465,10 +518,15 @@
         const commentDiv = document.createElement('div');
         commentDiv.className = 'comment-item';
         commentDiv.setAttribute('data-comment-id', comment._id);
+        commentDiv.setAttribute('data-comment-index', '0');
+        
+        // Check if user has profile picture
+        const avatarHTML = comment.userId?.profilePicture?.url 
+          ? `<img src="${comment.userId.profilePicture.url}" alt="Profile" class="comment-avatar-img">`
+          : `<div class="comment-avatar">${comment.userId?.fullName?.charAt(0) || '?'}</div>`;
+        
         commentDiv.innerHTML = `
-          <div class="comment-avatar">
-            ${comment.userId?.fullName?.charAt(0) || '?'}
-          </div>
+          ${avatarHTML}
           <div class="comment-content">
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <div>
@@ -481,7 +539,50 @@
           </div>
         `;
         
-        commentsList.prepend(commentDiv);
+        // Insert at the beginning
+        const firstComment = commentsList.querySelector('.comment-item');
+        if (firstComment) {
+          commentsList.insertBefore(commentDiv, firstComment);
+          
+          // Update indices of all comments
+          const allComments = commentsList.querySelectorAll('.comment-item');
+          allComments.forEach((item, index) => {
+            item.setAttribute('data-comment-index', index);
+            if (index >= 3 && !commentsExpanded) {
+              item.style.display = 'none';
+            }
+          });
+          
+          // Update or add view more button
+          updateViewMoreButton(allComments.length);
+        } else {
+          commentsList.appendChild(commentDiv);
+        }
+      }
+      
+      function updateViewMoreButton(totalComments) {
+        const commentsList = document.getElementById('commentsList');
+        let viewMoreBtn = document.getElementById('viewMoreCommentsBtn');
+        
+        if (totalComments > 3) {
+          if (!viewMoreBtn) {
+            const btnContainer = document.createElement('div');
+            btnContainer.style.textAlign = 'center';
+            btnContainer.style.marginTop = '1.5rem';
+            btnContainer.innerHTML = `
+              <button class="btn btn-outline" id="viewMoreCommentsBtn" onclick="toggleComments()">
+                View More Comments (${totalComments - 3})
+              </button>
+            `;
+            commentsList.appendChild(btnContainer);
+          } else {
+            viewMoreBtn.textContent = commentsExpanded 
+              ? 'View Less Comments' 
+              : `View More Comments (${totalComments - 3})`;
+          }
+        } else if (viewMoreBtn) {
+          viewMoreBtn.parentElement.remove();
+        }
       }
 
       function updateCommentCount(count) {
@@ -517,6 +618,157 @@
         } catch (error) {
           console.error('Error deleting comment:', error);
           await Modal.error('Failed to delete comment', 'Error');
+        }
+      }
+
+      // ========================================
+      // EDIT PROJECT
+      // ========================================
+      async function openEditModal() {
+        const customContent = `
+          <div style="text-align: left; width: 100%;">
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: hsl(var(--foreground));">Description</label>
+              <textarea 
+                id="editDescription" 
+                style="width: 100%; min-height: 120px; padding: 0.75rem; border: 1px solid hsl(var(--border)); border-radius: 0.5rem; background: hsl(var(--background)); color: hsl(var(--foreground)); font-family: inherit; resize: vertical;"
+                placeholder="Project description..."
+              ><%= project.description %></textarea>
+            </div>
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: hsl(var(--foreground));">GitHub Link</label>
+              <input 
+                type="url" 
+                id="editGithubLink" 
+                value="<%= project.sourceCode || '' %>"
+                style="width: 100%; padding: 0.75rem; border: 1px solid hsl(var(--border)); border-radius: 0.5rem; background: hsl(var(--background)); color: hsl(var(--foreground)); font-family: inherit;"
+                placeholder="https://github.com/username/repo"
+              />
+            </div>
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: hsl(var(--foreground));">Website Link</label>
+              <input 
+                type="url" 
+                id="editWebsiteLink" 
+                value="<%= project.websiteLink || '' %>"
+                style="width: 100%; padding: 0.75rem; border: 1px solid hsl(var(--border)); border-radius: 0.5rem; background: hsl(var(--background)); color: hsl(var(--foreground)); font-family: inherit;"
+                placeholder="https://myproject.com"
+              />
+            </div>
+          </div>
+        `;
+
+        const result = await Modal.show({
+          type: 'custom',
+          title: 'Edit Project',
+          customContent: customContent,
+          buttons: [
+            { label: 'Cancel', type: 'secondary' },
+            { label: 'Save Changes', type: 'primary' }
+          ],
+          size: 'lg'
+        });
+
+        if (result && result.action === 1) {
+          await saveProjectChanges();
+        }
+      }
+
+      async function saveProjectChanges() {
+        const description = document.getElementById('editDescription').value.trim();
+        const githubLink = document.getElementById('editGithubLink').value.trim();
+        const websiteLink = document.getElementById('editWebsiteLink').value.trim();
+
+        if (!description) {
+          await Modal.error('Description is required', 'Validation Error');
+          return;
+        }
+
+        try {
+          const response = await fetch('/api/projects/<%= project._id %>', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              description,
+              githubLink,
+              websiteLink
+            })
+          });
+
+          if (response.ok) {
+            Toast.success('Project updated successfully!', 'Success');
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+          } else if (response.status === 403) {
+            await Modal.error('You are not authorized to edit this project', 'Error');
+          } else {
+            const error = await response.json();
+            await Modal.error(error.error || 'Failed to update project', 'Error');
+          }
+        } catch (error) {
+          console.error('Error updating project:', error);
+          await Modal.error('Failed to update project', 'Error');
+        }
+      }
+
+      // ========================================
+      // DELETE PROJECT
+      // ========================================
+      async function deleteProject(projectId) {
+        const confirmed = await Modal.confirm(
+          'Are you sure you want to delete this project? This action cannot be undone.',
+          'Delete Project',
+          'Delete',
+          'Cancel'
+        );
+        
+        if (!confirmed) return;
+
+        try {
+          const response = await fetch(`/api/projects/${projectId}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' }
+          });
+          
+          if (response.ok) {
+            Toast.success('Project deleted successfully', 'Deleted');
+            setTimeout(() => {
+              window.location.href = '/profile';
+            }, 1500);
+          } else if (response.status === 403) {
+            await Modal.error('You are not authorized to delete this project', 'Error');
+          } else {
+            await Modal.error('Failed to delete project', 'Error');
+          }
+        } catch (error) {
+          console.error('Error deleting project:', error);
+          await Modal.error('Failed to delete project', 'Error');
+        }
+      }
+
+      // ========================================
+      // TOGGLE COMMENTS VIEW MORE/LESS
+      // ========================================
+      let commentsExpanded = false;
+      
+      function toggleComments() {
+        const commentItems = document.querySelectorAll('.comment-item');
+        const btn = document.getElementById('viewMoreCommentsBtn');
+        const totalComments = commentItems.length;
+        
+        commentsExpanded = !commentsExpanded;
+        
+        commentItems.forEach((item, index) => {
+          if (index >= 3) {
+            item.style.display = commentsExpanded ? 'flex' : 'none';
+          }
+        });
+        
+        if (btn) {
+          btn.textContent = commentsExpanded 
+            ? 'View Less Comments' 
+            : `View More Comments (${totalComments - 3})`;
         }
       }
 
@@ -619,10 +871,14 @@
 
         const replyDiv = document.createElement('div');
         replyDiv.className = 'reply-item';
+        
+        // Check if user has profile picture
+        const avatarHTML = reply.userId?.profilePicture?.url 
+          ? `<img src="${reply.userId.profilePicture.url}" alt="Profile" class="reply-avatar-img">`
+          : `<div class="reply-avatar">${reply.userId?.fullName?.charAt(0) || '?'}</div>`;
+        
         replyDiv.innerHTML = `
-          <div class="reply-avatar">
-            ${reply.userId?.fullName?.charAt(0) || '?'}
-          </div>
+          ${avatarHTML}
           <div class="reply-content">
             <p class="reply-author">${reply.userId?.fullName || 'Anonymous'}</p>
             <p class="reply-date">${new Date(reply.createdAt).toLocaleDateString()}</p>
@@ -641,5 +897,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <!-- Notifications System -->
     <script src="/js/notifications.js"></script>
+    <!-- Liked Projects System -->
+    <script src="/js/liked-projects.js"></script>
 </body>
 </html>

@@ -58,9 +58,7 @@ yearSelect.addEventListener('change', updateTrackField);
 signupForm.addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  // Clear messages
-  errorMessage.textContent = '';
-  successMessage.textContent = '';
+  // Messages will be shown via Toast
 
   // Get form data
   const formData = {
@@ -78,7 +76,7 @@ signupForm.addEventListener('submit', async (e) => {
 
   // Validate track for 3rd and 4th year
   if ((formData.year === '3rd' || formData.year === '4th') && !formData.track) {
-    errorMessage.textContent = 'Please select a specialization track';
+    Toast.error('Please select a specialization track', 'Validation Error');
     return;
   }
 
@@ -98,7 +96,7 @@ signupForm.addEventListener('submit', async (e) => {
     const result = await response.json();
 
     if (response.ok) {
-      successMessage.textContent = result.message;
+      Toast.success(result.message || 'Account created successfully! Please check your email to verify your account.', 'Sign Up Successful');
       signupForm.reset();
       trackGroup.style.display = 'none';
       
@@ -107,11 +105,11 @@ signupForm.addEventListener('submit', async (e) => {
         window.location.href = `/auth?type=verify&email=${encodeURIComponent(formData.email)}`;
       }, 2000);
     } else {
-      errorMessage.textContent = result.message || 'Signup failed. Please try again.';
+      Toast.error(result.message || 'Signup failed. Please try again.', 'Sign Up Failed');
     }
   } catch (error) {
     console.error('Signup error:', error);
-    errorMessage.textContent = 'Network error. Please try again.';
+    Toast.error('Network error. Please try again.', 'Connection Error');
   } finally {
     submitBtn.style.display = 'block';
     loading.style.display = 'none';

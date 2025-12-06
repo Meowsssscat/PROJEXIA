@@ -12,8 +12,8 @@ router.get('/average-rating', footerController.getAverageRating);
 // Get user's rating (requires auth)
 router.get('/rating/user', checkUser, footerController.getUserRating);
 
-// Submit rating with comments (requires auth)
-router.post('/submit-rating', checkUser, footerController.submitRatingWithComments);
+// Submit rating (requires auth)
+router.post('/submit-rating', checkUser, footerController.submitRating);
 
 // Submit issue report (requires auth)
 router.post('/report-issue', checkUser, footerController.submitIssueReport);

@@ -32,9 +32,6 @@
                 </div>
 
                 <div class="form-card">
-                    <div id="successMessage" class="form-message form-success"></div>
-                    <div id="errorMessage" class="form-message form-error"></div>
-
                     <form id="uploadForm" class="form-section" enctype="multipart/form-data" novalidate>
                         <!-- Hidden User ID -->
                         <input type="hidden" name="userId" value="<%= user._id %>" />
@@ -177,8 +174,6 @@
         const thumbnailInput = document.getElementById('thumbnail');
         const imagesArea = document.getElementById('imagesArea');
         const imagesInput = document.getElementById('images');
-        const errorMsg = document.getElementById('errorMessage');
-        const successMsg = document.getElementById('successMessage');
         const submitBtn = document.getElementById('submitBtn');
 
         // File upload drag and drop for thumbnail
@@ -229,23 +224,53 @@
             imagesArea.classList.remove('drag-over');
         });
 
-        imagesArea.addEventListener('drop', (e) => {
+        imagesArea.addEventListener('drop', async (e) => {
             e.preventDefault();
             imagesArea.classList.remove('drag-over');
             
             const files = e.dataTransfer.files;
             if (files.length > 0) {
-                // Limit to 5 files
-                const limitedFiles = Array.from(files).slice(0, 5);
+                // Check if more than 5 images
+                if (files.length > 5) {
+                    await Modal.warning(
+                        'You can only upload a maximum of 5 project images. Please select 5 or fewer images.',
+                        'Too Many Images'
+                    );
+                    return;
+                }
+                
                 const dataTransfer = new DataTransfer();
-                limitedFiles.forEach(file => dataTransfer.items.add(file));
+                Array.from(files).forEach(file => dataTransfer.items.add(file));
                 imagesInput.files = dataTransfer.files;
                 imagesInput.dispatchEvent(new Event('change'));
             }
         });
 
-        imagesInput.addEventListener('change', (e) => {
+        imagesInput.addEventListener('change', async (e) => {
             if (e.target.files.length > 0) {
+                // Check if more than 5 images
+                if (e.target.files.length > 5) {
+                    await Modal.warning(
+                        'You can only upload a maximum of 5 project images. Please select 5 or fewer images.',
+                        'Too Many Images'
+                    );
+                    
+                    // Clear the input
+                    imagesInput.value = '';
+                    
+                    // Reset the area display
+                    imagesArea.innerHTML = `
+                        <svg class="file-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                        <p class="file-upload-text">Click to upload or drag and drop</p>
+                        <p class="file-upload-hint">PNG, JPG, GIF up to 5MB (maximum 5 images)</p>
+                    `;
+                    return;
+                }
+                
                 const fileCount = e.target.files.length;
                 const fileNames = Array.from(e.target.files).map(f => f.name).join(', ');
                 imagesArea.innerHTML = `
@@ -262,19 +287,16 @@
         uploadForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            errorMsg.classList.remove('show');
-            successMsg.classList.remove('show');
             submitBtn.disabled = true;
+            submitBtn.textContent = 'Uploading...';
 
             // Validate files before submission
             if (!thumbnailInput.files || thumbnailInput.files.length === 0) {
-                errorMsg.textContent = 'Please select a thumbnail image';
-                errorMsg.classList.add('show');
+                Toast.error('Please select a thumbnail image', 'Validation Error');
                 submitBtn.disabled = false;
+                submitBtn.textContent = 'Upload Project';
                 return;
             }
-
-            // Project images are now optional (removed validation)
 
             // Create FormData and explicitly add files
             const formData = new FormData(uploadForm);
@@ -288,6 +310,14 @@
             }
             
             if (imagesInput.files.length > 0) {
+                // Double-check the limit before submission
+                if (imagesInput.files.length > 5) {
+                    Toast.error('Maximum 5 project images allowed', 'Too Many Images');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Upload Project';
+                    return;
+                }
+                
                 for (let i = 0; i < imagesInput.files.length; i++) {
                     formData.append('images', imagesInput.files[i]);
                 }
@@ -310,17 +340,16 @@
                     throw new Error(errorMessage);
                 }
 
-                successMsg.textContent = 'Project uploaded successfully!';
-                successMsg.classList.add('show');
+                Toast.success('Your project has been uploaded successfully!', 'Upload Complete');
 
                 setTimeout(() => {
                     window.location.href = '/profile';
                 }, 1500);
             } catch (error) {
                 console.error('Upload error:', error);
-                errorMsg.textContent = error.message || 'An error occurred';
-                errorMsg.classList.add('show');
+                Toast.error(error.message || 'An error occurred while uploading your project', 'Upload Failed');
                 submitBtn.disabled = false;
+                submitBtn.textContent = 'Upload Project';
             }
         });
     </script>
@@ -332,5 +361,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <!-- Notifications System -->
     <script src="/js/notifications.js"></script>
+    <!-- Liked Projects System -->
+    <script src="/js/liked-projects.js"></script>
 </body>
 </html>

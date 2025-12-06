@@ -191,7 +191,7 @@
   // Update badge with unread count (both desktop and mobile)
   function updateUnreadCountBadge(count) {
     const badge = document.getElementById('notificationBadge');
-    const badgeMobile = document.getElementById('notificationBadgeMobile');
+    const badgeMobileTop = document.getElementById('notificationBadgeMobileTop');
 
     // Update desktop badge
     if (badge) {
@@ -203,13 +203,13 @@
       }
     }
     
-    // Update mobile badge
-    if (badgeMobile) {
+    // Update mobile badge (top bar)
+    if (badgeMobileTop) {
       if (count > 0) {
-        badgeMobile.textContent = count > 99 ? '99+' : count;
-        badgeMobile.style.display = 'flex';
+        badgeMobileTop.textContent = count > 99 ? '99+' : count;
+        badgeMobileTop.style.display = 'flex';
       } else {
-        badgeMobile.style.display = 'none';
+        badgeMobileTop.style.display = 'none';
       }
     }
   }
@@ -314,45 +314,54 @@
 
   // Setup notification panel toggle (both desktop and mobile)
   function setupNotificationPanel() {
-    const bellBtn = document.getElementById('notificationBellBtn');
-    const bellBtnMobile = document.getElementById('notificationBellBtnMobile');
-    const panel = document.getElementById('notificationPanel');
-    const clearBtn = document.getElementById('clearNotificationsBtn');
+    // Wait a bit to ensure DOM is ready
+    setTimeout(() => {
+      const bellBtn = document.getElementById('notificationBellBtn');
+      const bellBtnMobileTop = document.getElementById('notificationBellBtnMobileTop');
+      const panel = document.getElementById('notificationPanel');
+      const clearBtn = document.getElementById('clearNotificationsBtn');
 
-    // Desktop notification button
-    if (bellBtn && panel) {
-      bellBtn.addEventListener('click', (e) => {
+      // Function to toggle panel
+      function togglePanel(e) {
         e.stopPropagation();
-        const isHidden = panel.style.display === 'none';
+        e.preventDefault();
+        
+        const panel = document.getElementById('notificationPanel');
+        if (!panel) return;
+        
+        const isHidden = panel.style.display === 'none' || !panel.style.display;
         panel.style.display = isHidden ? 'flex' : 'none';
+        
         if (isHidden) {
           loadNotifications();
         }
-      });
+      }
+
+      // Desktop notification button
+      if (bellBtn) {
+        bellBtn.onclick = togglePanel;
+      }
+      
+      // Mobile notification button (top bar)
+      if (bellBtnMobileTop) {
+        bellBtnMobileTop.onclick = togglePanel;
+      }
 
       // Close panel when clicking outside
       document.addEventListener('click', (e) => {
-        if (!e.target.closest('.navbar-notifications-wrapper')) {
+        const panel = document.getElementById('notificationPanel');
+        if (panel && 
+            !e.target.closest('.navbar-notifications-wrapper') && 
+            !e.target.closest('.navbar-notifications-btn-mobile-top') &&
+            !e.target.closest('.navbar-notifications-panel')) {
           panel.style.display = 'none';
         }
       });
-    }
-    
-    // Mobile notification button
-    if (bellBtnMobile && panel) {
-      bellBtnMobile.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isHidden = panel.style.display === 'none';
-        panel.style.display = isHidden ? 'flex' : 'none';
-        if (isHidden) {
-          loadNotifications();
-        }
-      });
-    }
 
-    if (clearBtn) {
-      clearBtn.addEventListener('click', clearAllNotifications);
-    }
+      if (clearBtn) {
+        clearBtn.addEventListener('click', clearAllNotifications);
+      }
+    }, 100);
   }
 
   // Add CSS animation styles
@@ -387,21 +396,27 @@
   // Make functions globally available
   window.deleteNotification = deleteNotification;
   window.clearAllNotifications = clearAllNotifications;
+  window.setupNotificationPanel = setupNotificationPanel; // Allow manual re-initialization
 
   // Initialize when DOM is ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      addAnimationStyles();
-      setupNotificationPanel();
-      initializeSocket();
-      loadNotifications();
-    });
-  } else {
+  function initialize() {
     addAnimationStyles();
     setupNotificationPanel();
     initializeSocket();
     loadNotifications();
   }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initialize);
+  } else {
+    initialize();
+  }
+
+  // Re-setup on page show (handles back/forward navigation)
+  window.addEventListener('pageshow', function(event) {
+    console.log('Page show event, re-initializing notifications');
+    setupNotificationPanel();
+  });
 
   // Refresh notifications periodically
   setInterval(updateUnreadCount, 60000); // Every minute

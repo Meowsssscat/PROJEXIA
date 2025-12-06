@@ -192,7 +192,7 @@ exports.handleNotificationClick = async (req, res) => {
     // Determine redirect route based on notification type
     let redirectUrl = '/';
     
-    if (notification.type === 'like' || notification.type === 'comment') {
+    if (notification.type === 'like' || notification.type === 'comment' || notification.type === 'reply') {
       if (notification.projectId?._id) {
         redirectUrl = `/project/${notification.projectId._id}`;
       }

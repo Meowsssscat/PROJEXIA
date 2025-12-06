@@ -31,42 +31,8 @@
                     <p>Manage your account preferences and privacy</p>
                 </div>
 
-                <div id="successMessage" class="form-message form-success"></div>
-                <div id="errorMessage" class="form-message form-error"></div>
-
                 <!-- Account Settings -->
                 <div class="settings-grid">
-                    <!-- Profile Settings -->
-                    <div class="settings-group">
-                        <h3 class="settings-group-title">Profile Settings</h3>
-                        
-                        <form id="profileForm" class="form-section">
-                            <div class="form-group">
-                                <label for="fullName">Full Name</label>
-                                <input 
-                                    type="text" 
-                                    id="fullName" 
-                                    name="fullName" 
-                                    value="<%= user.fullName %>"
-                                />
-                            </div>
-
-                            <div class="form-group">
-                                <label for="bio">Bio</label>
-                                <textarea 
-                                    id="bio" 
-                                    name="bio" 
-                                    placeholder="Tell us about yourself..."
-                                ><%= user.bio || '' %></textarea>
-                                <p class="form-help-text">Maximum 160 characters</p>
-                            </div>
-
-                            <div class="form-actions">
-                                <button type="submit" class="btn btn-primary">Save Changes</button>
-                            </div>
-                        </form>
-                    </div>
-
                     <!-- Email Settings -->
                     <div class="settings-group">
                         <h3 class="settings-group-title">Email & Account</h3>
@@ -87,35 +53,6 @@
                         </div>
                     </div>
 
-                    <!-- Privacy & Notifications -->
-                    <div class="settings-group">
-                        <h3 class="settings-group-title">Privacy & Notifications</h3>
-                        
-                        <div class="settings-item">
-                            <div class="settings-item-label">
-                                <h4>Public Profile</h4>
-                                <p>Let others see your profile and projects</p>
-                            </div>
-                            <div class="toggle-switch active" data-setting="publicProfile"></div>
-                        </div>
-
-                        <div class="settings-item">
-                            <div class="settings-item-label">
-                                <h4>Email Notifications</h4>
-                                <p>Receive notifications about likes and comments</p>
-                            </div>
-                            <div class="toggle-switch active" data-setting="emailNotifications"></div>
-                        </div>
-
-                        <div class="settings-item">
-                            <div class="settings-item-label">
-                                <h4>Allow Comments</h4>
-                                <p>Enable comments on your projects</p>
-                            </div>
-                            <div class="toggle-switch active" data-setting="allowComments"></div>
-                        </div>
-                    </div>
-
                     <!-- Danger Zone -->
                     <div class="settings-group">
                         <h3 class="settings-group-title">Danger Zone</h3>
@@ -123,9 +60,9 @@
                         <div class="settings-item">
                             <div class="settings-item-label">
                                 <h4>Delete Account</h4>
-                                <p>Permanently delete your account and all data</p>
+                                <p>This feature is currently unavailable</p>
                             </div>
-                            <button class="btn btn-secondary" onclick="confirmDeleteAccount()">Delete Account</button>
+                            <button class="btn btn-secondary" onclick="showDeleteUnavailable()">Delete Account</button>
                         </div>
                     </div>
                 </div>
@@ -141,100 +78,13 @@
         const errorMsg = document.getElementById('errorMessage');
         const successMsg = document.getElementById('successMessage');
 
-        // Toggle switches
-        document.querySelectorAll('.toggle-switch').forEach(toggle => {
-            toggle.addEventListener('click', async function() {
-                const setting = this.dataset.setting;
-                this.classList.toggle('active');
-                
-                // Save setting to backend
-                try {
-                    const response = await fetch(`/api/settings/${setting}`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ enabled: this.classList.contains('active') })
-                    });
+        // No additional JavaScript needed for now
 
-                    if (!response.ok) {
-                        throw new Error('Failed to update setting');
-                    }
-                } catch (error) {
-                    showMessage(error.message, 'error');
-                    this.classList.toggle('active');
-                }
-            });
-        });
-
-        // Profile form submission
-        profileForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            errorMsg.classList.remove('show');
-            successMsg.classList.remove('show');
-
-            const formData = new FormData(profileForm);
-            const data = Object.fromEntries(formData);
-
-            try {
-                const response = await fetch('/api/profile/update', {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-
-                const result = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(result.message || 'Update failed');
-                }
-
-                showMessage('Profile updated successfully!', 'success');
-            } catch (error) {
-                showMessage(error.message, 'error');
-            }
-        });
-
-        function showMessage(message, type = 'error') {
-            const msgElement = type === 'error' ? errorMsg : successMsg;
-            msgElement.textContent = message;
-            msgElement.classList.add('show');
-            
-            if (type === 'success') {
-                setTimeout(() => msgElement.classList.remove('show'), 3000);
-            }
-        }
-
-        async function confirmDeleteAccount() {
-            const confirmed = await Modal.confirm('Are you sure you want to delete your account? This action cannot be undone.', 'Delete Account', 'Delete', 'Cancel');
-            if (!confirmed) return;
-            
-            // Ask for password
-            const password = await Modal.prompt('Enter your password to confirm:', 'Confirm Password', '', 'password');
-            if (!password) return;
-            
-            // Final confirmation
-            const deleteConfirm = await Modal.prompt('Type "DELETE" to confirm account deletion:', 'Final Confirmation', '', 'text');
-            if (deleteConfirm !== 'DELETE') return;
-            
-            try {
-                const response = await fetch('/settings/delete-account', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password })
-                });
-                
-                const result = await response.json();
-                
-                if (response.ok) {
-                    await Modal.alert('Your account has been deleted successfully.', 'success');
-                    window.location.href = '/';
-                } else {
-                    showMessage(result.error || 'Failed to delete account', 'error');
-                }
-            } catch (error) {
-                console.error('Delete account error:', error);
-                showMessage('Network error. Please try again.', 'error');
-            }
+        async function showDeleteUnavailable() {
+            await Modal.warning(
+                'Account deletion is currently unavailable. Please contact support if you need assistance with your account.',
+                'Feature Unavailable'
+            );
         }
     </script>
     
@@ -245,5 +95,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <!-- Notifications System -->
     <script src="/js/notifications.js"></script>
+    <!-- Liked Projects System -->
+    <script src="/js/liked-projects.js"></script>
 </body>
 </html>

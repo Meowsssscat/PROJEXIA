@@ -16,6 +16,7 @@ const generateOTP = () => {
 // Send OTP Email via SendGrid
 const sendOTPEmail = async (email, otp) => {
   console.log('📧 Sending OTP via SendGrid:', otp, 'to:', email);
+  console.log(otp);
   
   const msg = {
     to: email,

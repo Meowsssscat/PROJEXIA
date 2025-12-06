@@ -306,14 +306,181 @@
     }
   };
 
+  // ========================================
+  // TOAST NOTIFICATION SYSTEM
+  // ========================================
+  let toastContainer = null;
+
+  // Initialize toast container
+  function initToastContainer() {
+    if (toastContainer) return;
+
+    toastContainer = document.createElement('div');
+    toastContainer.id = 'toastContainer';
+    toastContainer.style.cssText = `
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 60000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      pointer-events: none;
+    `;
+    document.body.appendChild(toastContainer);
+  }
+
+  // Create toast element
+  function createToast(options) {
+    const {
+      type = 'info',
+      message = '',
+      duration = 4000,
+      title = ''
+    } = options;
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.style.cssText = `
+      background: hsl(var(--card));
+      border: 1px solid hsl(var(--border));
+      border-left: 4px solid ${ICON_COLORS[type] || ICON_COLORS.info};
+      border-radius: 0.5rem;
+      padding: 1rem;
+      min-width: 300px;
+      max-width: 400px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      pointer-events: auto;
+      transform: translateX(400px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    `;
+
+    const iconColor = ICON_COLORS[type] || ICON_COLORS.info;
+    const icon = ICON_TYPES[type] || ICON_TYPES.info;
+
+    toast.innerHTML = `
+      <div style="
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        background: ${iconColor}15;
+        color: ${iconColor};
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        font-weight: bold;
+        flex-shrink: 0;
+      ">
+        ${icon}
+      </div>
+      <div style="flex: 1; min-width: 0;">
+        ${title ? `<div style="font-weight: 600; color: hsl(var(--foreground)); margin-bottom: 0.25rem;">${escapeHtml(title)}</div>` : ''}
+        <div style="color: hsl(var(--muted-foreground)); font-size: 0.875rem; word-wrap: break-word;">
+          ${escapeHtml(message)}
+        </div>
+      </div>
+      <button style="
+        background: none;
+        border: none;
+        color: hsl(var(--muted-foreground));
+        cursor: pointer;
+        font-size: 1.25rem;
+        line-height: 1;
+        padding: 0;
+        width: 1.5rem;
+        height: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: color 0.2s;
+      " class="toast-close">×</button>
+    `;
+
+    return { toast, duration };
+  }
+
+  // Show toast notification
+  function showToast(options) {
+    initToastContainer();
+
+    const { toast, duration } = createToast(options);
+    toastContainer.appendChild(toast);
+
+    // Trigger animation
+    requestAnimationFrame(() => {
+      toast.style.transform = 'translateX(0)';
+      toast.style.opacity = '1';
+    });
+
+    // Close button
+    const closeBtn = toast.querySelector('.toast-close');
+    closeBtn.addEventListener('click', () => {
+      removeToast(toast);
+    });
+
+    // Auto remove after duration
+    if (duration > 0) {
+      setTimeout(() => {
+        removeToast(toast);
+      }, duration);
+    }
+
+    return toast;
+  }
+
+  // Remove toast
+  function removeToast(toast) {
+    toast.style.transform = 'translateX(400px)';
+    toast.style.opacity = '0';
+    setTimeout(() => {
+      if (toast.parentNode) {
+        toast.parentNode.removeChild(toast);
+      }
+    }, 300);
+  }
+
+  // Toast API
+  const Toast = {
+    success: (message, title = 'Success', duration = 4000) => {
+      return showToast({ type: 'success', message, title, duration });
+    },
+
+    error: (message, title = 'Error', duration = 5000) => {
+      return showToast({ type: 'error', message, title, duration });
+    },
+
+    warning: (message, title = 'Warning', duration = 4000) => {
+      return showToast({ type: 'warning', message, title, duration });
+    },
+
+    info: (message, title = 'Info', duration = 4000) => {
+      return showToast({ type: 'info', message, title, duration });
+    },
+
+    show: (options) => {
+      return showToast(options);
+    }
+  };
+
   // Make globally available
   window.Modal = Modal;
   window.showModal = showModal;
+  window.Toast = Toast;
 
   // Auto-init on load
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initModalContainer);
+    document.addEventListener('DOMContentLoaded', () => {
+      initModalContainer();
+      initToastContainer();
+    });
   } else {
     initModalContainer();
+    initToastContainer();
   }
 })();

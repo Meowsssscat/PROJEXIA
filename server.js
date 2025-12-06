@@ -70,12 +70,15 @@ app.use(async (req, res, next) => {
       const User = require('./models/User');
       const currentUser = await User.findById(userId).select('-password');
       req.user = currentUser || null;
+      res.locals.user = currentUser || null; // Make user available in all views
     } else {
       req.user = null;
+      res.locals.user = null;
     }
   } catch (err) {
     console.error('Error in optional user middleware:', err);
     req.user = null;
+    res.locals.user = null;
   }
   next();
 });
@@ -83,6 +86,7 @@ app.use(async (req, res, next) => {
 // Serve static files
 app.use('/css', express.static(path.join(__dirname, 'public/css')));
 app.use('/js', express.static(path.join(__dirname, 'public/js')));
+app.use('/images', express.static(path.join(__dirname, 'public/images')));
 
 // Uploads folder
 const uploadsPath = path.join(__dirname, 'uploads');
@@ -119,6 +123,8 @@ const footerRoutes = require('./routes/footer');
 app.use('/api/footer', footerRoutes);
 const aboutRoutes = require('./routes/about');
 app.use('/about', aboutRoutes);
+const likedProjectsRoutes = require('./routes/likedProjects');
+app.use('/', likedProjectsRoutes);
 
 // API: Get current user ID (for notifications)
 app.get('/api/user-id', (req, res) => {

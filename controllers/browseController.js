@@ -70,6 +70,7 @@ exports.getBrowseProjects = async (req, res) => {
                     selectedYear: yearLevel,
                     selectedLanguages: languages || [],
                     selectedTrack: track,
+                    selectedSort: sort,
                     availableTechnologies: []
                 });
             }
@@ -177,7 +178,7 @@ exports.getProjectDetail = async (req, res) => {
 
         // Fetch project
         const project = await Project.findById(id)
-            .populate('userId', 'fullName program year track')
+            .populate('userId')
             .lean();
 
         if (!project) {
@@ -187,8 +188,8 @@ exports.getProjectDetail = async (req, res) => {
         // Fetch stats
         const likeCount = await Like.countDocuments({ projectId: id });
         const comments = await Comment.find({ projectId: id })
-            .populate('userId', 'fullName email program year')
-            .populate('replies.userId', 'fullName email program year')
+            .populate('userId')
+            .populate('replies.userId')
             .sort({ createdAt: -1 })
             .lean();
         

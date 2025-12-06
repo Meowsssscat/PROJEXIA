@@ -39,11 +39,23 @@ exports.getProject = async (req, res) => {
         // ========================================
         // 1. RETRIEVE ALL COMMENTS
         // ========================================
+        console.log('=================================');
+        console.log('📝 FETCHING COMMENTS FOR PROJECT:', projectId);
+        console.log('=================================');
         const allComments = await Comment.find({ projectId: projectId })
-            .populate('userId', 'fullName email program year')
-            .populate('replies.userId', 'fullName email program year')
+            .populate('userId')
+            .populate('replies.userId')
             .sort({ createdAt: -1 })
             .lean();
+        
+        console.log('📊 FOUND', allComments.length, 'COMMENTS');
+        
+        // DEBUG: Check what's in the populated comment
+        if (allComments.length > 0) {
+            console.log('🔍 FIRST COMMENT DEBUG:');
+            console.log('Full userId object:', JSON.stringify(allComments[0].userId, null, 2));
+            console.log('Has profilePicture field?', 'profilePicture' in allComments[0].userId);
+        }
         
         // ========================================
         // 2. GET COMMENT COUNT (including replies)
@@ -296,7 +308,7 @@ exports.addComment = async (req, res) => {
         
         // Populate user details
         const populatedComment = await Comment.findById(newComment._id)
-            .populate('userId', 'fullName email program year')
+            .populate('userId')
             .lean();
         
         const newCommentCount = await Comment.countDocuments({ projectId });
@@ -413,20 +425,33 @@ exports.addReply = async (req, res) => {
         
         // Populate user details for response
         const populatedComment = await Comment.findById(commentId)
-            .populate('replies.userId', 'fullName email program year')
+            .populate('replies.userId', 'fullName email program year profilePicture')
             .lean();
         
         const addedReply = populatedComment.replies[populatedComment.replies.length - 1];
         
         // Send notification to comment author
         const notifyUser = require('../utils/notifyUser');
+        
+        // Make sure we're using the ID, not the populated object
+        const commentAuthorId = comment.userId._id || comment.userId;
+        
+        console.log('=== REPLY NOTIFICATION DEBUG ===');
+        console.log('Comment Author ID:', commentAuthorId);
+        console.log('Reply Author ID:', userId);
+        console.log('Project ID:', projectId);
+        console.log('Reply Author Name:', user.fullName);
+        console.log('Project Name:', project.name);
+        
         await notifyUser(
-            comment.userId,
+            commentAuthorId,
             userId,
             projectId,
             'reply',
             `${user.fullName} replied to your comment on "${project.name}"`
         );
+        
+        console.log('Reply notification sent successfully');
         
         return res.status(201).json({
             success: true,

@@ -174,6 +174,90 @@
             margin-top: 2rem;
         }
 
+        /* Academic Information Section */
+        .about-academic {
+            padding: 4rem 2rem;
+            background: hsl(var(--muted));
+            border-top: 1px solid hsl(var(--border));
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        .academic-title {
+            font-family: var(--font-orbitron);
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            color: hsl(var(--foreground));
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .academic-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--secondary)));
+        }
+
+        .academic-grid {
+            max-width: 1200px;
+            margin: 3rem auto 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .academic-card {
+            padding: 2rem;
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .academic-card:hover {
+            border-color: hsl(var(--primary));
+            box-shadow: 0 4px 12px hsl(var(--primary) / 0.1);
+            transform: translateY(-4px);
+        }
+
+        .academic-icon {
+            width: 3.5rem;
+            height: 3.5rem;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--secondary) / 0.1));
+            border-radius: var(--radius);
+            color: hsl(var(--primary));
+        }
+
+        .academic-icon svg {
+            width: 1.75rem;
+            height: 1.75rem;
+        }
+
+        .academic-card h4 {
+            font-size: 1.1rem;
+            color: hsl(var(--foreground));
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .academic-card p {
+            color: hsl(var(--muted-foreground));
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
         /* Team Section */
         .about-team {
             padding: 4rem 2rem;
@@ -238,6 +322,70 @@
             border-radius: 50%;
             font-size: 1.25rem;
             font-weight: 700;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .member-avatar:hover {
+            transform: scale(1.1);
+        }
+
+        .member-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Image Modal Styles */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .image-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            animation: zoomIn 0.3s ease;
+        }
+
+        .image-modal-close {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .image-modal-close:hover {
+            transform: scale(1.2);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.5); }
+            to { transform: scale(1); }
         }
 
         .team-member h3 {
@@ -345,6 +493,7 @@
             .about-features,
             .about-mission,
             .about-vision,
+            .about-academic,
             .about-team,
             .about-tech {
                 padding: 2.5rem 1.5rem;
@@ -355,6 +504,7 @@
             }
 
             .features-grid,
+            .academic-grid,
             .team-grid,
             .tech-grid {
                 gap: 1.5rem;
@@ -447,12 +597,90 @@
                 </div>
             </section>
 
+            <!-- Academic Information Section -->
+            <section class="about-academic">
+                <h2 class="academic-title">Academic Information</h2>
+                <div class="academic-grid">
+                    <div class="academic-card">
+                        <div class="academic-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <h4>Professor</h4>
+                        <p>Sir Joshua C. Leones</p>
+                    </div>
+
+                    <div class="academic-card">
+                        <div class="academic-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                            </svg>
+                        </div>
+                        <h4>Course</h4>
+                        <p>Client-Server Technologies</p>
+                    </div>
+
+                    <div class="academic-card">
+                        <div class="academic-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                                <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                            </svg>
+                        </div>
+                        <h4>Program</h4>
+                        <p>Bachelor of Science in Information Technology</p>
+                    </div>
+
+                    <div class="academic-card">
+                        <div class="academic-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                        </div>
+                        <h4>Year Level</h4>
+                        <p>3rd Year</p>
+                    </div>
+
+                    <div class="academic-card">
+                        <div class="academic-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="16 18 22 12 16 6"></polyline>
+                                <polyline points="8 6 2 12 8 18"></polyline>
+                            </svg>
+                        </div>
+                        <h4>Major/Track</h4>
+                        <p>Web and Mobile Application Development</p>
+                    </div>
+
+                    <div class="academic-card">
+                        <div class="academic-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </div>
+                        <h4>Year of Development</h4>
+                        <p>2024-2025</p>
+                    </div>
+                </div>
+            </section>
+
             <!-- Team Section -->
             <section class="about-team">
                 <h2 class="team-title">Development Team</h2>
                 <div class="team-grid">
                     <div class="team-member">
-                        <div class="member-avatar">AF</div>
+                        <div class="member-avatar" onclick="openImageModal('/images/ALPHI.png')" title="Click to view full image">
+                            <img src="/images/ALPHI.png" alt="Alphi Fidelino" />
+                        </div>
                         <h3>ALPHI FIDELINO</h3>
                         <p class="member-role">Full-stack Developer</p>
                         <p class="member-description">Architecting the backbone of Projexia with seamless full-stack solutions.</p>
@@ -514,13 +742,45 @@
         <!-- Footer -->
         <%- include('partials/footer-modern') %>
     </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+        <span class="image-modal-close">&times;</span>
+        <img class="image-modal-content" id="modalImage" alt="Full size image">
+    </div>
     
     <!-- Modal System -->
     <script src="/js/modal.js"></script>
+    
+    <!-- Image Modal Script -->
+    <script>
+        function openImageModal(imageSrc) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modal.classList.add('active');
+            modalImg.src = imageSrc;
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeImageModal();
+            }
+        });
+    </script>
     
     <!-- Socket.IO Client -->
     <script src="/socket.io/socket.io.js"></script>
     <!-- Notifications System -->
     <script src="/js/notifications.js"></script>
+    <!-- Liked Projects System -->
+    <script src="/js/liked-projects.js"></script>
 </body>
 </html>
