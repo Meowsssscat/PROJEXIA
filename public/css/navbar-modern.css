@@ -28,6 +28,29 @@ body {
   }
 }
 
+/* Remove extra padding from main content sections */
+main {
+  flex: 1;
+  padding-top: 0 !important;
+}
+
+/* Fix excess whitespace in content sections */
+.about-content,
+.profile-container,
+.browse-projects,
+.faqs-content {
+  padding-top: 0 !important;
+}
+
+/* Add proper section spacing */
+.browse-header,
+.about-hero,
+.faqs-header {
+  margin-top: 0;
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
 .navbar-container {
   max-width: 1400px;
   margin: 0 auto;

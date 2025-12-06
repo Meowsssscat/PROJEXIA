@@ -8,12 +8,12 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    padding-top: 60px; /* Account for fixed navbar */
+    padding-top: 0;
 }
 
 .form-page-content {
     flex: 1;
-    padding: 4rem 2rem;
+    padding: 3rem 2rem;
 }
 
 .form-page-header {
@@ -33,6 +33,13 @@
 .form-page-header p {
     font-size: 1.05rem;
     color: hsl(var(--muted-foreground));
+}
+
+/* Container */
+.form-page-content .container {
+    max-width: 700px;
+    margin: 0 auto;
+    width: 100%;
 }
 
 /* Form Container */
