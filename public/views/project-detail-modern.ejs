@@ -26,18 +26,54 @@
       <%- include('partials/navbar-modern') %>
       
       <!-- Main Content -->
-      <main style="flex: 1; padding-top: 0;">
-        <div class="project-detail-container">
-          <div class="container">
-            
-
-            <div class="project-detail-grid">
+      <main style="flex: 1; padding-top: 4rem; background: hsl(var(--background));">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; width: 100%; box-sizing: border-box;">
+          <div class="project-detail-grid">
               <!-- Main Content -->
               <div class="project-detail-main">
                 <!-- Project Header -->
                 <div class="project-detail-header">
-                  <div class="project-detail-image" onclick="openImageZoom(this.querySelector('img').src)">
-                    <img src="<%= project.thumbnailUrl?.url || '/images/default-project.png' %>" alt="<%= project.name %>" style="cursor: pointer;">
+                  <div class="project-detail-column-left">
+                    <div class="project-detail-image" onclick="openImageZoom(this.querySelector('img').src)">
+                      <img src="<%= project.thumbnailUrl?.url || '/images/default-project.png' %>" alt="<%= project.name %>" style="cursor: pointer;">
+                    </div>
+
+                    <div class="project-stats-section">
+                      <div class="stat-item">
+                        <div class="stat-icon">
+                          <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                          </svg>
+                        </div>
+                        <div>
+                          <p class="stat-value"><%= likeCount || 0 %></p>
+                          <p class="stat-label">Likes</p>
+                        </div>
+                      </div>
+                      <div class="stat-item">
+                        <div class="stat-icon">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                          </svg>
+                        </div>
+                        <div>
+                          <p class="stat-value"><%= commentCount || 0 %></p>
+                          <p class="stat-label">Comments</p>
+                        </div>
+                      </div>
+                      <div class="stat-item">
+                        <div class="stat-icon">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                          </svg>
+                        </div>
+                        <div>
+                          <p class="stat-value"><%= viewCount || 0 %></p>
+                          <p class="stat-label">Views</p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   <div class="project-detail-info">
@@ -106,79 +142,55 @@
                       </div>
                     </div>
 
-                    <div class="project-stats-section">
-                      <div class="stat-item">
-                        <div class="stat-icon">
-                          <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                          </svg>
-                        </div>
-                        <div>
-                          <p class="stat-value"><%= likeCount || 0 %></p>
-                          <p class="stat-label">Likes</p>
-                        </div>
-                      </div>
-                      <div class="stat-item">
-                        <div class="stat-icon">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                          </svg>
-                        </div>
-                        <div>
-                          <p class="stat-value"><%= commentCount || 0 %></p>
-                          <p class="stat-label">Comments</p>
-                        </div>
-                      </div>
-                      <div class="stat-item">
-                        <div class="stat-icon">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                            <circle cx="12" cy="12" r="3"></circle>
-                          </svg>
-                        </div>
-                        <div>
-                          <p class="stat-value"><%= viewCount || 0 %></p>
-                          <p class="stat-label">Views</p>
-                        </div>
-                      </div>
-                    </div>
-
                     <div class="project-actions">
                       <% if (isUploader) { %>
-                        <button class="btn btn-primary btn-lg" id="editProjectBtn" onclick="openEditModal()">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                          </svg>
-                          Edit Project
-                        </button>
-                        <button class="btn btn-danger btn-lg" id="deleteProjectBtn" onclick="deleteProject('<%= project._id %>')">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="3 6 5 6 21 6"></polyline>
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                            <line x1="10" y1="11" x2="10" y2="17"></line>
-                            <line x1="14" y1="11" x2="14" y2="17"></line>
-                          </svg>
-                          Delete Project
-                        </button>
+                        <div class="project-actions-group">
+                          <button class="btn btn-primary btn-sm" id="editProjectBtn" onclick="openEditModal()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                            Edit
+                          </button>
+                          <button class="btn btn-danger btn-sm" id="deleteProjectBtn" onclick="deleteProject('<%= project._id %>')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <polyline points="3 6 5 6 21 6"></polyline>
+                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                              <line x1="10" y1="11" x2="10" y2="17"></line>
+                              <line x1="14" y1="11" x2="14" y2="17"></line>
+                            </svg>
+                            Delete
+                          </button>
+                        </div>
+                        <% if (project.sourceCode) { %>
+                          <a href="<%= project.sourceCode %>" target="_blank" class="btn btn-outline btn-sm">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <polyline points="12 3 20 7.5 20 16.5 12 21 4 16.5 4 7.5 12 3"></polyline>
+                              <line x1="12" y1="12" x2="20" y2="7.5"></line>
+                              <line x1="12" y1="12" x2="12" y2="21"></line>
+                              <line x1="12" y1="12" x2="4" y2="7.5"></line>
+                            </svg>
+                            Source Code
+                          </a>
+                        <% } %>
                       <% } else { %>
-                        <button class="btn btn-primary btn-lg" id="likeBtn">
+                        <button class="btn btn-primary" id="likeBtn">
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                           </svg>
                           Like This Project
                         </button>
-                      <% } %>
-                      <% if (project.sourceCode) { %>
-                        <a href="<%= project.sourceCode %>" target="_blank" class="btn btn-outline btn-lg">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="12 3 20 7.5 20 16.5 12 21 4 16.5 4 7.5 12 3"></polyline>
-                            <line x1="12" y1="12" x2="20" y2="7.5"></line>
-                            <line x1="12" y1="12" x2="12" y2="21"></line>
-                            <line x1="12" y1="12" x2="4" y2="7.5"></line>
-                          </svg>
-                          View Source Code
-                        </a>
+                        <% if (project.sourceCode) { %>
+                          <a href="<%= project.sourceCode %>" target="_blank" class="btn btn-outline">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <polyline points="12 3 20 7.5 20 16.5 12 21 4 16.5 4 7.5 12 3"></polyline>
+                              <line x1="12" y1="12" x2="20" y2="7.5"></line>
+                              <line x1="12" y1="12" x2="12" y2="21"></line>
+                              <line x1="12" y1="12" x2="4" y2="7.5"></line>
+                            </svg>
+                            Source Code
+                          </a>
+                        <% } %>
                       <% } %>
                     </div>
                   </div>
@@ -192,32 +204,8 @@
                   </div>
                 </div>
 
-                <!-- Technologies -->
-                <% if (project.technologies && project.technologies.length > 0) { %>
-                  <div class="project-section">
-                    <h2 class="section-title">Technologies Used</h2>
-                    <div class="tech-list">
-                      <% project.technologies.forEach(tech => { %>
-                        <span class="tech-badge"><%= tech %></span>
-                      <% }); %>
-                    </div>
-                  </div>
-                <% } %>
-
-                <!-- Developers/Team Members -->
-                <% if (project.developers && project.developers.length > 0) { %>
-                  <div class="project-section">
-                    <h2 class="section-title">Team Members</h2>
-                    <div class="developers-list">
-                      <% project.developers.forEach(dev => { %>
-                        <div class="developer-item">
-                          <div class="developer-avatar"><%= dev.charAt(0).toUpperCase() %></div>
-                          <span><%= dev %></span>
-                        </div>
-                      <% }); %>
-                    </div>
-                  </div>
-                <% } %>
+                <!-- Technologies moved to sidebar -->
+                <!-- Developers/Team Members moved to sidebar -->
 
                 <!-- Project Links -->
                 <% if (project.githubLink || project.websiteLink) { %>
@@ -398,7 +386,32 @@
 
               <!-- Sidebar -->
               <aside class="project-sidebar">
-                <!-- Sidebar removed - all info now in header -->
+                <!-- Technologies -->
+                <% if (project.technologies && project.technologies.length > 0) { %>
+                  <div class="info-card">
+                    <h3>Technologies Used</h3>
+                    <div class="tech-list-sidebar">
+                      <% project.technologies.forEach(tech => { %>
+                        <span class="tech-badge-sidebar"><%= tech %></span>
+                      <% }); %>
+                    </div>
+                  </div>
+                <% } %>
+
+                <!-- Team Members -->
+                <% if (project.developers && project.developers.length > 0) { %>
+                  <div class="info-card">
+                    <h3>Team Members</h3>
+                    <div class="developers-list-sidebar">
+                      <% project.developers.forEach(dev => { %>
+                        <div class="developer-item-sidebar">
+                          <div class="developer-avatar"><%= dev.charAt(0).toUpperCase() %></div>
+                          <span><%= dev %></span>
+                        </div>
+                      <% }); %>
+                    </div>
+                  </div>
+                <% } %>
               </aside>
             </div>
           </div>

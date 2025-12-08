@@ -20,6 +20,9 @@
     <!-- SVG Icons -->
     <script src="/js/svgIcons.js"></script>
     
+    <!-- Theme System -->
+    <script src="/js/theme.js"></script>
+    
     <style>
         /* FAQs Page Styles */
         .faqs-container {
@@ -31,16 +34,16 @@
 
         .faqs-content {
             flex: 1;
-            padding: 0 2rem 4rem 2rem;
+            padding: 3rem 2rem;
         }
 
         .faqs-header {
             text-align: center;
-            margin-bottom: 4rem;
+            margin-bottom: 3rem;
             animation: slideDown 0.3s ease-out;
             padding: 3rem 2rem;
             background: hsl(var(--muted));
-            margin: 0 -2rem 4rem -2rem;
+            margin: 0 -2rem 3rem -2rem;
         }
 
         .faqs-header h1 {
@@ -87,6 +90,36 @@
             cursor: pointer;
             transition: all 0.3s ease;
             min-width: 200px;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1.25rem;
+            padding-right: 2.5rem;
+        }
+
+        .faqs-filter select option {
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            padding: 0.75rem;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .faqs-filter select {
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e0e0e0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            }
+        }
+
+        /* Dark mode support for manual theme toggle */
+        html.dark .faqs-filter select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e0e0e0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        }
+
+        html.dark .faqs-filter select option {
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
         }
 
         .faqs-filter select:hover,
@@ -230,7 +263,7 @@
         .faqs-search input:focus {
             outline: none;
             border-color: hsl(var(--primary));
-            box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1));
+            box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
         }
 
         .faqs-search input::placeholder {
@@ -440,6 +473,25 @@
                 item.classList.remove('active');
             });
         });
+
+        // Listen for theme changes and update select styling
+        const html = document.documentElement;
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.attributeName === 'class') {
+                    // Force repaint of select element
+                    const selectElement = document.getElementById('categoryFilter');
+                    if (selectElement) {
+                        selectElement.style.opacity = '0.99';
+                        setTimeout(() => {
+                            selectElement.style.opacity = '1';
+                        }, 10);
+                    }
+                }
+            });
+        });
+
+        observer.observe(html, { attributes: true });
     </script>
 
     <!-- Modal System -->

@@ -102,12 +102,13 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  box-shadow: 0 2px 8px hsl(var(--primary) / 0.05);
 }
 
 .project-card:hover {
-  border-color: hsl(var(--primary));
-  transform: translateY(-4px);
-  box-shadow: 0 12px 30px hsl(var(--primary) / 0.2);
+  border-color: hsl(var(--primary) / 0.6);
+  transform: translateY(-6px);
+  box-shadow: 0 12px 32px hsl(var(--primary) / 0.15);
 }
 
 /* Project Card Link Wrapper */
@@ -121,11 +122,10 @@
 
 .project-image {
   width: 100%;
-  height: 180px;
+  height: 200px;
   overflow: hidden;
-  background: hsl(var(--muted) / 0.5);
+  background: hsl(var(--muted) / 0.3);
   flex-shrink: 0;
-  aspect-ratio: 16 / 9;
 }
 
 .project-image img {
@@ -133,6 +133,11 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform 0.3s ease;
+}
+
+.project-card:hover .project-image img {
+  transform: scale(1.05);
 }
 
 @media (max-width: 768px) {
@@ -157,9 +162,9 @@
 
 .project-title {
   font-weight: 600;
-  font-size: 1.05rem;
+  font-size: 1rem;
   color: hsl(var(--foreground));
-  margin-bottom: 0.75rem;
+  margin: 0 0 0.5rem 0;
   line-height: 1.4;
 }
 
@@ -441,6 +446,51 @@
     padding: 0.5rem 0.75rem;
     font-size: 0.8rem;
   }
+}
+
+/* Tech Filter Button Styling */
+.tech-filter-button {
+  position: relative;
+  padding: 0.75rem 1rem !important;
+  background-color: hsl(var(--background)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: 8px !important;
+  color: hsl(var(--foreground)) !important;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.tech-filter-button:hover {
+  border-color: hsl(var(--primary) / 0.5);
+  box-shadow: 0 2px 8px hsl(0 0% 0% / 0.08);
+}
+
+.tech-filter-button:hover svg {
+  color: hsl(var(--primary));
+  stroke: hsl(var(--primary));
+}
+
+.tech-filter-button:focus {
+  outline: none;
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
+}
+
+.tech-filter-button:focus svg {
+  color: hsl(var(--primary));
+  stroke: hsl(var(--primary));
+}
+
+/* Dark mode support for tech filter */
+html.dark .tech-filter-button:hover svg {
+  color: hsl(var(--secondary));
+  stroke: hsl(var(--secondary));
+}
+
+html.dark .tech-filter-button:focus svg {
+  color: hsl(var(--secondary));
+  stroke: hsl(var(--secondary));
 }
 
 @keyframes fadeIn {

@@ -34,12 +34,17 @@ main {
   padding-top: 0 !important;
 }
 
-/* Fix excess whitespace in content sections */
+/* Fix excess whitespace in content sections - but NOT for auth pages */
 .about-content,
 .profile-container,
 .browse-projects,
 .faqs-content {
   padding-top: 0 !important;
+}
+
+/* Keep padding for auth pages (signin/signup) */
+.form-page-content {
+  padding-top: 4rem !important;
 }
 
 /* Add proper section spacing */

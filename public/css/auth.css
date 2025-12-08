@@ -1,13 +1,15 @@
 /* Modern Authentication Pages Styles - MOBILE FIRST */
 
 .auth-page {
-    min-height: calc(100vh - 4rem);
+    min-height: 100vh;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    padding: 3rem 1rem 1.5rem 1rem;
-    background: var(--color-base);
-    margin-top: 4rem;
+    padding-top: 15rem !important;
+    padding-bottom: 3rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    background: hsl(var(--background));
 }
 
 .auth-container {
@@ -17,6 +19,7 @@
     grid-template-columns: 1fr;
     gap: 2rem;
     align-items: center;
+    margin-top: 0 !important;
 }
 
 /* Left Side - Info (Hidden on mobile by default) */
@@ -99,9 +102,10 @@
 
 /* Right Side - Form (Mobile First) */
 .auth-form-container {
-    background: white;
+    background: hsl(var(--background));
+    border: 1px solid hsl(var(--border));
     border-radius: 16px;
-    padding: 2rem 1.5rem;
+    padding: 3rem 1.5rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
@@ -112,12 +116,12 @@
 
 .auth-form__header h2 {
     font-size: 1.5rem;
-    color: var(--color-ink);
+    color: hsl(var(--foreground));
     margin: 0 0 0.5rem 0;
 }
 
 .auth-form__header p {
-    color: var(--color-neutral);
+    color: hsl(var(--muted-foreground));
     margin: 0;
     font-size: 0.9rem;
 }
@@ -136,7 +140,7 @@
 
 .form-group label {
     font-weight: 600;
-    color: var(--color-ink);
+    color: hsl(var(--foreground));
     font-size: 0.9rem;
 }
 
@@ -144,19 +148,22 @@
 .form-group select {
     width: 100%;
     padding: 0.75rem 0.875rem;
-    border: 2px solid rgba(141, 143, 140, 0.2);
+    border: 1px solid hsl(var(--border));
     border-radius: 10px;
     font-size: 0.95rem;
     transition: all 0.3s ease;
-    background: var(--color-base);
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
     box-sizing: border-box;
+    font-family: var(--font-inter);
 }
 
 .form-group input:focus,
 .form-group select:focus {
     outline: none;
-    border-color: var(--color-accent);
-    background: white;
+    border-color: hsl(var(--primary));
+    background: hsl(var(--background));
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
 }
 
 .form-group input::placeholder {
@@ -394,7 +401,10 @@
 /* Tablet and Up */
 @media (min-width: 640px) {
     .auth-page {
-        padding: 2rem 1.5rem;
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
     }
 
     .auth-container {
@@ -402,7 +412,7 @@
     }
 
     .auth-form-container {
-        padding: 2.5rem 2rem;
+        padding: 3rem 2rem;
     }
 
     .auth-form__header h2 {
@@ -423,8 +433,12 @@
 /* Desktop */
 @media (min-width: 1024px) {
     .auth-page {
-        padding: 3rem 2rem;
-        min-height: calc(100vh - 80px - 400px);
+        padding-top: 4rem;
+        padding-bottom: 3rem;
+        padding-left: 2rem;
+        padding-right: 2rem;
+        min-height: 100vh;
+        align-items: center;
     }
 
     .auth-container {
