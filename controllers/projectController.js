@@ -384,6 +384,59 @@ exports.deleteComment = async (req, res) => {
 }
 
 // ========================================
+// DELETE REPLY
+// ========================================
+exports.deleteReply = async (req, res) => {
+    try {
+        const { projectId, commentId, replyId } = req.params;
+        const userId = req.session?.userId;
+        
+        if (!userId) {
+            return res.status(401).json({ error: 'User not logged in' });
+        }
+        
+        // Find project and comment
+        const project = await Project.findById(projectId);
+        if (!project) {
+            return res.status(404).json({ error: 'Project not found' });
+        }
+        
+        const comment = await Comment.findById(commentId);
+        if (!comment) {
+            return res.status(404).json({ error: 'Comment not found' });
+        }
+        
+        // Find the reply index
+        const replyIndex = comment.replies.findIndex(r => r._id.toString() === replyId);
+        if (replyIndex === -1) {
+            return res.status(404).json({ error: 'Reply not found' });
+        }
+        
+        const reply = comment.replies[replyIndex];
+        
+        // RULE: Only allow deletion if:
+        // 1. User is the project owner OR
+        // 2. User is the reply author
+        if (project.userId.toString() !== userId.toString() && reply.userId.toString() !== userId.toString()) {
+            return res.status(403).json({ error: 'You are not authorized to delete this reply' });
+        }
+        
+        // Remove reply from comment using splice
+        comment.replies.splice(replyIndex, 1);
+        await comment.save();
+        
+        return res.status(200).json({ 
+            success: true, 
+            replyId 
+        });
+        
+    } catch (error) {
+        console.error('Error deleting reply:', error);
+        return res.status(500).json({ error: 'Failed to delete reply' });
+    }
+}
+
+// ========================================
 // ADD REPLY TO COMMENT
 // ========================================
 exports.addReply = async (req, res) => {
@@ -567,6 +620,7 @@ module.exports = {
     toggleLike: exports.toggleLike,
     addComment: exports.addComment,
     deleteComment: exports.deleteComment,
+    deleteReply: exports.deleteReply,
     addReply: exports.addReply,
     updateProject: exports.updateProject,
     deleteProject: exports.deleteProject

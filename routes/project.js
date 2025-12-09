@@ -16,6 +16,8 @@ router.delete('/api/projects/:projectId/comment/:commentId', checkUser, projectC
 
 router.post('/api/projects/:projectId/comment/:commentId/reply', checkUser, projectController.addReply);
 
+router.delete('/api/projects/:projectId/comment/:commentId/reply/:replyId', checkUser, projectController.deleteReply);
+
 router.put('/api/projects/:id', checkUser, projectController.updateProject);
 
 router.delete('/api/projects/:id', checkUser, projectController.deleteProject);

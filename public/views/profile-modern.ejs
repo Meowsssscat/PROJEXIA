@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= userProfile.fullName %> - Projexia</title>
+    <link rel="icon" type="image/jpeg" href="/images/favicon.jpg" />
     
     <!-- CSS Files -->
     <link rel="stylesheet" href="/css/projexia-design-system.css" />
@@ -29,7 +30,13 @@
 
         .profile-content {
             flex: 1;
-            padding: 4rem 2rem;
+            padding: 8rem 2rem 4rem 2rem;
+        }
+        
+        @media (min-width: 769px) {
+            .profile-content {
+                padding-top: 8rem;
+            }
         }
 
         .container {
@@ -42,27 +49,35 @@
             background: linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--secondary) / 0.05));
             border: 1px solid hsl(var(--border));
             border-radius: 16px;
-            padding: 3rem 2rem;
-            margin-bottom: 3rem;
+            padding: 2.5rem 2rem;
+            margin-top: 2rem;
+            margin-bottom: 2.5rem;
             display: grid;
-            grid-template-columns: auto 1fr auto;
+            grid-template-columns: auto 1fr;
             gap: 2rem;
-            align-items: center;
+            align-items: start;
             animation: slideDown 0.3s ease-out;
         }
 
         .profile-avatar {
-            width: 160px;
-            height: 160px;
-            border-radius: 12px;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
             background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 4rem;
+            font-size: 3.5rem;
             font-weight: bold;
             flex-shrink: 0;
+            overflow: hidden;
+        }
+        
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
 
         .profile-info h1 {
@@ -112,6 +127,12 @@
             gap: 1rem;
             flex-wrap: wrap;
         }
+        
+        @media (min-width: 769px) {
+            .profile-actions {
+                margin-top: 0.5rem;
+            }
+        }
 
         .btn {
             padding: 0.75rem 1.5rem;
@@ -148,19 +169,36 @@
 
         /* Stats Section */
         .profile-stats {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .stats-actions-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+            gap: 2rem;
+        }
+        
+        .profile-stats-desktop {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(5, 1fr);
             gap: 1.5rem;
-            margin-bottom: 3rem;
+            margin-bottom: 2.5rem;
         }
 
         .stat-card {
             background: hsl(var(--card));
             border: 1px solid hsl(var(--border));
             border-radius: 12px;
-            padding: 1.5rem;
+            padding: 1.25rem;
             text-align: center;
             transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .stat-card:hover {
@@ -170,15 +208,15 @@
 
         .stat-value {
             font-family: var(--font-orbitron);
-            font-size: 1.75rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: hsl(var(--primary));
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
         }
 
         .stat-label {
             color: hsl(var(--muted-foreground));
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             font-weight: 500;
         }
 
@@ -186,7 +224,51 @@
         .projects-section {
             margin-bottom: 3rem;
         }
+        
+        @media (max-width: 500px) {
+            .projects-section {
+                padding: 0 1rem;
+            }
+        }
 
+        /* Stats and Actions Container */
+        .stats-actions-container {
+            margin-top: 1.5rem;
+        }
+        
+        @media (min-width: 769px) {
+            .stats-actions-container {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 1rem;
+            }
+            
+            .stats-actions-container .profile-stats {
+                margin-top: 0 !important;
+                gap: 1rem;
+            }
+            
+            .stats-actions-container .stat-card {
+                min-width: 100px;
+                max-width: 120px;
+                padding: 0.875rem;
+            }
+            
+            .stats-actions-container .stat-value {
+                font-size: 1.25rem;
+            }
+            
+            .stats-actions-container .stat-label {
+                font-size: 0.75rem;
+            }
+            
+            .stats-actions-container .profile-actions {
+                margin-top: 0;
+                margin-left: auto;
+            }
+        }
+        
         /* Projects Toggle Buttons */
         .projects-toggle {
             display: flex;
@@ -258,10 +340,13 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 2rem;
+            max-width: 100%;
+            grid-auto-rows: 1fr;
             animation: fadeIn 0.3s ease-out;
         }
 
         .projects-tab {
+            display: none;
             animation: fadeIn 0.3s ease-out;
         }
 
@@ -279,31 +364,60 @@
             color: inherit;
             cursor: pointer;
             animation: fadeIn 0.6s ease-out;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            box-shadow: 0 2px 8px hsl(var(--primary) / 0.05);
         }
 
         .project-card:hover {
-            border-color: hsl(var(--primary));
-            transform: translateY(-4px);
-            box-shadow: 0 12px 30px hsl(var(--primary) / 0.2);
+            border-color: hsl(var(--primary) / 0.6);
+            transform: translateY(-6px);
+            box-shadow: 0 12px 32px hsl(var(--primary) / 0.15);
         }
 
         .project-image {
+            position: relative;
             width: 100%;
-            height: 180px;
+            height: 200px;
+            overflow: hidden;
+            background: hsl(var(--muted) / 0.3);
+            flex-shrink: 0;
+        }
+        
+        .project-image img {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
-            background: hsl(var(--muted) / 0.5);
+            display: block;
+            transition: transform 0.3s ease;
+        }
+        
+        .project-card:hover .project-image img {
+            transform: scale(1.05);
         }
 
         .project-content {
             padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            gap: 0.75rem;
+            min-height: 0;
         }
 
         .project-title {
             font-weight: 600;
-            font-size: 1.05rem;
+            font-size: 1rem;
             color: hsl(var(--foreground));
-            margin-bottom: 0.75rem;
+            margin: 0 0 0.5rem 0;
             line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 2.8em;
         }
 
         .project-description {
@@ -339,6 +453,7 @@
             gap: 1.5rem;
             padding-top: 1rem;
             border-top: 1px solid hsl(var(--border));
+            margin-top: auto;
         }
 
         .project-stat {
@@ -397,6 +512,8 @@
             .profile-avatar {
                 width: 140px;
                 height: 140px;
+                border-radius: 50%;
+                overflow: hidden;
                 font-size: 3.5rem;
                 margin: 0 auto;
             }
@@ -412,8 +529,8 @@
             }
 
             .projects-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 1rem;
             }
 
             .section-header {
@@ -434,29 +551,189 @@
         }
 
         @media (max-width: 500px) {
+            .profile-content {
+                padding: 1.5rem 0;
+            }
+            
+            .container {
+                padding: 0;
+            }
+            
+            .profile-header {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 0.75rem;
+                padding: 1.25rem 0.875rem;
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+                margin-top: 0;
+                margin-bottom: 1.5rem;
+            }
+            
             .profile-avatar {
-                width: 120px;
-                height: 120px;
-                font-size: 3rem;
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                overflow: hidden;
+                font-size: 2rem;
+                margin: 0 auto;
             }
 
             .profile-info h1 {
-                font-size: 1.5rem;
+                font-size: 1.05rem;
+                margin-bottom: 0.375rem;
+            }
+            
+            .profile-info {
+                gap: 0.5rem;
+            }
+            
+            .profile-meta {
+                justify-content: center;
+                gap: 0.625rem;
+                font-size: 0.7rem;
+                margin-top: 0.25rem;
+            }
+            
+            .profile-meta svg {
+                width: 0.8rem;
+                height: 0.8rem;
+            }
+            
+            .social-links {
+                justify-content: center !important;
+                gap: 0.5rem !important;
+                margin-top: 0.75rem !important;
+            }
+            
+            .social-links .btn {
+                padding: 0.4rem 0.75rem !important;
+            }
+            
+            .social-links svg {
+                width: 16px !important;
+                height: 16px !important;
+            }
+            
+            .profile-stats-desktop {
+                display: none !important;
+            }
+            
+            .profile-stats {
+                display: flex;
+                justify-content: center;
+                gap: 0.75rem;
+                margin-top: 0.75rem !important;
+            }
+            
+            .profile-stats .stat-card {
+                padding: 0.4rem 0.625rem;
+                flex: 1;
+                min-width: 0;
+            }
+            
+            .profile-stats .stat-value {
+                font-size: 1.1rem;
+            }
+            
+            .profile-stats .stat-label {
+                font-size: 0.6rem;
+            }
+            
+            .profile-actions {
+                flex-direction: row;
+                justify-content: center;
+                gap: 0.5rem;
+                width: 100%;
+                margin: 0 auto;
+                margin-top: 0.75rem;
+            }
+            
+            .btn {
+                width: auto;
+                padding: 0.45rem 0.75rem;
+                font-size: 0.7rem;
             }
 
             .toggle-btn {
-                font-size: 0.85rem;
-                padding: 0.5rem 0.75rem;
+                font-size: 0.7rem;
+                padding: 0.45rem 0.65rem;
             }
 
             .toggle-btn svg {
-                width: 16px;
-                height: 16px;
+                width: 13px;
+                height: 13px;
+            }
+            
+            .stats-grid {
+                gap: 0.625rem;
+            }
+            
+            .stat-card {
+                padding: 0.625rem;
+            }
+            
+            .stat-value {
+                font-size: 1.35rem;
+            }
+            
+            .stat-label {
+                font-size: 0.65rem;
             }
 
             .projects-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
+                padding: 0;
+            }
+            
+            .project-image {
+                height: 140px;
+            }
+            
+            .project-content {
+                padding: 0.625rem;
+                display: grid;
+                grid-template-rows: auto auto 1fr auto;
+                gap: 0.3rem;
+            }
+            
+            .project-title {
+                font-size: 0.85rem;
+                line-height: 1.25;
+                height: 2.5em;
+                margin-bottom: 0;
+            }
+            
+            .project-stats {
+                flex-wrap: wrap;
+                font-size: 0.75rem;
+                gap: 0.75rem;
+            }
+            
+            .project-stat {
+                font-size: 0.75rem;
+            }
+            
+            .project-stat svg {
+                width: 0.875rem;
+                height: 0.875rem;
+            }
+            
+            .tech-tags {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.3rem;
+                height: 1.5em;
+                overflow: hidden;
+                margin: 0;
+            }
+            
+            .tech-tag {
+                font-size: 0.6rem;
+                padding: 0.15rem 0.4rem;
+                white-space: nowrap;
             }
         }
     </style>
@@ -474,7 +751,7 @@
                 <div class="profile-header">
                     <div class="profile-avatar" <% if (userProfile.profilePicture && userProfile.profilePicture.url) { %>onclick="openImageZoom('<%= userProfile.profilePicture.url %>')" style="cursor: pointer;"<% } %>>
                         <% if (userProfile.profilePicture && userProfile.profilePicture.url) { %>
-                            <img src="<%= userProfile.profilePicture.url %>" alt="<%= userProfile.fullName %>" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">
+                            <img src="<%= userProfile.profilePicture.url %>" alt="<%= userProfile.fullName %>" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
                         <% } else { %>
                             <%= userProfile.fullName.charAt(0) %>
                         <% } %>
@@ -522,7 +799,7 @@
 
                     <!-- Social Links -->
                     <% if (userProfile.github || userProfile.portfolio || userProfile.linkedin) { %>
-                    <div style="display: flex; gap: 0.75rem; margin-top: 1rem;">
+                    <div class="social-links" style="display: flex; gap: 0.75rem; margin-top: 1rem;">
                         <% if (userProfile.github) { %>
                         <a href="<%= userProfile.github %>" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="padding: 0.5rem 1rem;">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -548,53 +825,40 @@
                         <% } %>
                     </div>
                     <% } %>
-
-                    <div class="profile-actions">
-                        <% if (isOwnProfile) { %>
-                            <a href="/editProfile" class="btn btn-secondary">Edit Profile</a>
-                            <a href="/upload" class="btn btn-primary">Upload Project</a>
-                        <% } else { %>
-                            <button class="btn btn-primary" onclick="followUser()">Follow</button>
-                        <% } %>
-                    </div>
-                </div>
-
-                <!-- Stats -->
-                <div class="profile-stats">
-                    <div class="stat-card">
-                        <div class="stat-value"><%= projects.length %></div>
-                        <div class="stat-label">Projects</div>
-                    </div>
-                    <a href="#liked-projects-section" class="stat-card" style="text-decoration: none; color: inherit; cursor: pointer; transition: all 0.3s ease;">
-                        <div class="stat-value" style="color: hsl(var(--primary));">
-                            <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24" style="display: inline-block; vertical-align: middle; margin-right: 0.25rem;">
-                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                            </svg>
-                            <%= likedProjectsData ? Object.keys(likedProjectsData).length : 0 %>
+                    
+                    <!-- Stats and Actions Container -->
+                    <div class="stats-actions-container">
+                        <!-- Stats -->
+                        <div class="profile-stats" style="margin-top: 1.5rem;">
+                            <div class="stat-card">
+                                <div class="stat-value"><%= projects.length %></div>
+                                <div class="stat-label">Projects</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value"><%= likedProjectsData ? Object.keys(likedProjectsData).length : 0 %></div>
+                                <div class="stat-label">Liked Projects</div>
+                            </div>
                         </div>
-                        <div class="stat-label">Liked Projects</div>
-                    </a>
-                    <div class="stat-card">
-                        <div class="stat-value"><%= totalLikes || 0 %></div>
-                        <div class="stat-label">Total Likes</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value"><%= totalComments || 0 %></div>
-                        <div class="stat-label">Comments</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value"><%= totalViews || 0 %></div>
-                        <div class="stat-label">Views</div>
+
+                        <!-- Actions -->
+                        <div class="profile-actions">
+                            <% if (isOwnProfile) { %>
+                                <a href="/editProfile" class="btn btn-secondary">Edit Profile</a>
+                                <a href="/upload" class="btn btn-primary">Upload Project</a>
+                            <% } else { %>
+                                <button class="btn btn-primary" onclick="followUser()">Follow</button>
+                            <% } %>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Projects Section -->
                 <div class="projects-section">
                     <div class="section-header">
-                        <h2 class="section-title">My Projects</h2>
+                        <h2 class="section-title" id="projects-section-title">My Projects</h2>
                     </div>
 
-                    <!-- Toggle Buttons (TikTok style) -->
+                    <!-- Toggle Buttons -->
                     <% if (isOwnProfile) { %>
                         <div class="projects-toggle">
                             <button class="toggle-btn active" data-tab="posted" onclick="switchTab('posted')">
@@ -602,16 +866,17 @@
                                     <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
                                     <polyline points="13 2 13 9 20 9"></polyline>
                                 </svg>
-                                Posted (<%= projects.length %>)
+                                My Projects (<%= projects.length %>)
                             </button>
                             <button class="toggle-btn" data-tab="liked" onclick="switchTab('liked')">
                                 <svg viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                                 </svg>
-                                Liked (<%= likedProjectsData ? Object.keys(likedProjectsData).length : 0 %>)
+                                Liked Projects (<%= likedProjectsData ? Object.keys(likedProjectsData).length : 0 %>)
                             </button>
                         </div>
                     <% } %>
+                    
 
                     <!-- Posted Projects Tab -->
                     <div id="posted-tab" class="projects-tab active">
@@ -619,11 +884,12 @@
                             <div class="projects-grid">
                                 <% projects.forEach((project, index) => { %>
                                     <a href="/project/<%= project._id %>" class="project-card">
-                                        <img 
-                                            src="<%= project.thumbnailUrl?.url || '/images/default-project.png' %>" 
-                                            alt="<%= project.name %>"
-                                            class="project-image"
-                                        />
+                                        <div class="project-image">
+                                            <img 
+                                                src="<%= project.thumbnailUrl?.url || '/images/default-project.png' %>" 
+                                                alt="<%= project.name %>"
+                                            />
+                                        </div>
                                         <div class="project-content">
                                             <h3 class="project-title"><%= project.name %></h3>
                                             
@@ -685,14 +951,15 @@
                             <div class="projects-grid">
                                 <% for (const projectId in likedProjectsData) { %>
                                     <% const project = likedProjectsData[projectId]; %>
-                                    <a href="/project/<%= project._id %>" class="project-card">
-                                        <img 
-                                            src="<%= project.thumbnailUrl?.url || '/images/default-project.png' %>" 
-                                            alt="<%= project.name %>"
-                                            class="project-image"
-                                        />
+                                    <a href="/project/<%= project.projectId %>" class="project-card">
+                                        <div class="project-image">
+                                            <img 
+                                                src="<%= project.projectThumbnail || '/images/default-project.png' %>" 
+                                                alt="<%= project.projectName %>"
+                                            />
+                                        </div>
                                         <div class="project-content">
-                                            <h3 class="project-title"><%= project.name %></h3>
+                                            <h3 class="project-title"><%= project.projectName %></h3>
                                             
                                             <% if (project.technologies && project.technologies.length > 0) { %>
                                                 <div class="tech-tags">
@@ -710,13 +977,13 @@
                                                     <svg viewBox="0 0 24 24" fill="currentColor">
                                                         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                                                     </svg>
-                                                    <span><%= project.likes || 0 %></span>
+                                                    <span><%= project.likeCount || 0 %></span>
                                                 </div>
                                                 <div class="project-stat">
                                                     <svg viewBox="0 0 24 24" fill="currentColor">
                                                         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                                                     </svg>
-                                                    <span><%= project.comments || 0 %></span>
+                                                    <span><%= project.commentCount || 0 %></span>
                                                 </div>
                                                 <div class="project-stat">
                                                     <svg viewBox="0 0 24 24" fill="currentColor">
@@ -742,75 +1009,7 @@
                     </div>
                 </div>
 
-                <!-- Liked Projects Section -->
-                <div id="liked-projects-section" class="projects-section" style="margin-top: 3rem; scroll-margin-top: 5rem;">
-                    <div class="section-header">
-                        <h2 class="section-title">
-                            <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24" style="display: inline-block; vertical-align: middle; margin-right: 0.5rem; color: hsl(var(--primary));">
-                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                            </svg>
-                            Liked Projects
-                        </h2>
-                    </div>
 
-                    <% if (likedProjectsData && Object.keys(likedProjectsData).length > 0) { %>
-                        <div class="projects-grid">
-                            <% Object.values(likedProjectsData).forEach(project => { %>
-                                <a href="/project/<%= project.projectId %>" class="project-card">
-                                    <img 
-                                        src="<%= project.projectThumbnail || '/images/default-project.png' %>" 
-                                        alt="<%= project.projectName %>"
-                                        class="project-image"
-                                    />
-                                    <div class="project-content">
-                                        <h3 class="project-title"><%= project.projectName %></h3>
-                                        
-                                        <% if (project.technologies && project.technologies.length > 0) { %>
-                                            <div class="tech-tags">
-                                                <% project.technologies.slice(0, 4).forEach(tech => { %>
-                                                    <span class="tech-tag"><%= tech %></span>
-                                                <% }) %>
-                                                <% if (project.technologies.length > 4) { %>
-                                                    <span class="tech-tag">+<%= project.technologies.length - 4 %></span>
-                                                <% } %>
-                                            </div>
-                                        <% } %>
-
-                                        <div class="project-stats">
-                                            <div class="project-stat">
-                                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                                                </svg>
-                                                <span><%= project.likeCount || 0 %></span>
-                                            </div>
-                                            <div class="project-stat">
-                                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                                                </svg>
-                                                <span><%= project.commentCount || 0 %></span>
-                                            </div>
-                                            <div class="project-stat">
-                                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                                    <circle cx="12" cy="12" r="3"></circle>
-                                                </svg>
-                                                <span><%= project.viewCount || 0 %></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            <% }) %>
-                        </div>
-                    <% } else { %>
-                        <div class="empty-state">
-                            <svg viewBox="0 0 24 24" fill="currentColor" width="48" height="48">
-                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                            </svg>
-                            <h3>No Liked Projects Yet</h3>
-                            <p>Projects you like will appear here.</p>
-                        </div>
-                    <% } %>
-                </div>
             </div>
         </main>
 
@@ -867,26 +1066,45 @@
 
         // Tab Switching for Posted/Liked Projects
         function switchTab(tabName) {
-            // Hide all tabs
+            // Get all tabs
             const postedTab = document.getElementById('posted-tab');
             const likedTab = document.getElementById('liked-tab');
+            const sectionTitle = document.getElementById('projects-section-title');
             
-            if (postedTab) postedTab.style.display = 'none';
-            if (likedTab) likedTab.style.display = 'none';
+            // Remove active class from all tabs
+            if (postedTab) postedTab.classList.remove('active');
+            if (likedTab) likedTab.classList.remove('active');
 
             // Remove active class from all buttons
             const toggleBtns = document.querySelectorAll('.toggle-btn');
             toggleBtns.forEach(btn => btn.classList.remove('active'));
 
-            // Show selected tab
+            // Show selected tab and update title
             if (tabName === 'posted') {
-                if (postedTab) postedTab.style.display = '';
+                if (postedTab) postedTab.classList.add('active');
+                if (sectionTitle) sectionTitle.textContent = 'My Projects';
+                // Add active class to posted button
+                document.querySelector('[data-tab="posted"]').classList.add('active');
             } else if (tabName === 'liked') {
-                if (likedTab) likedTab.style.display = '';
+                if (likedTab) likedTab.classList.add('active');
+                if (sectionTitle) sectionTitle.textContent = 'Liked Projects';
+                // Add active class to liked button
+                document.querySelector('[data-tab="liked"]').classList.add('active');
             }
-
-            // Add active class to clicked button
-            event.target.closest('.toggle-btn').classList.add('active');
+            
+            // Scroll to section title on mobile (smooth scroll with offset)
+            if (window.innerWidth <= 768 && sectionTitle) {
+                setTimeout(() => {
+                    const yOffset = -100; // Offset for navbar and spacing
+                    const element = sectionTitle;
+                    const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                    
+                    window.scrollTo({
+                        top: y,
+                        behavior: 'smooth'
+                    });
+                }, 100);
+            }
         }
     </script>
     <!-- Liked Projects System -->

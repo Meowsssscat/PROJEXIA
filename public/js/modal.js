@@ -307,11 +307,11 @@
   };
 
   // ========================================
-  // TOAST NOTIFICATION SYSTEM
+  // TOAST NOTIFICATION SYSTEM - MINIMALIST & PROFESSIONAL
   // ========================================
   let toastContainer = null;
 
-  // Initialize toast container
+  // Initialize toast container - Top Center
   function initToastContainer() {
     if (toastContainer) return;
 
@@ -319,102 +319,112 @@
     toastContainer.id = 'toastContainer';
     toastContainer.style.cssText = `
       position: fixed;
-      top: 1rem;
-      right: 1rem;
+      top: 5rem;
+      left: 50%;
+      transform: translateX(-50%);
       z-index: 60000;
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 0.5rem;
       pointer-events: none;
+      width: auto;
+      max-width: 90vw;
     `;
     document.body.appendChild(toastContainer);
   }
 
-  // Create toast element
+  // Create toast element - Minimalist Design
   function createToast(options) {
     const {
       type = 'info',
       message = '',
-      duration = 4000,
+      duration = 3000,
       title = ''
     } = options;
 
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
+    
+    const iconColor = ICON_COLORS[type] || ICON_COLORS.info;
+    const icon = ICON_TYPES[type] || ICON_TYPES.info;
+    
+    // Minimalist styling
     toast.style.cssText = `
       background: hsl(var(--card));
       border: 1px solid hsl(var(--border));
-      border-left: 4px solid ${ICON_COLORS[type] || ICON_COLORS.info};
-      border-radius: 0.5rem;
-      padding: 1rem;
-      min-width: 300px;
-      max-width: 400px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      min-width: 280px;
+      max-width: 420px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
       pointer-events: auto;
-      transform: translateX(400px);
+      transform: translateY(-20px);
       opacity: 0;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       gap: 0.75rem;
+      backdrop-filter: blur(8px);
     `;
 
-    const iconColor = ICON_COLORS[type] || ICON_COLORS.info;
-    const icon = ICON_TYPES[type] || ICON_TYPES.info;
+    // Compact content
+    const content = title 
+      ? `<div style="flex: 1; min-width: 0;">
+          <div style="font-weight: 600; color: hsl(var(--foreground)); font-size: 0.875rem; margin-bottom: 0.125rem;">${escapeHtml(title)}</div>
+          <div style="color: hsl(var(--muted-foreground)); font-size: 0.8rem; line-height: 1.4;">${escapeHtml(message)}</div>
+        </div>`
+      : `<div style="flex: 1; min-width: 0; color: hsl(var(--foreground)); font-size: 0.875rem; line-height: 1.4;">${escapeHtml(message)}</div>`;
 
     toast.innerHTML = `
       <div style="
-        width: 2rem;
-        height: 2rem;
+        width: 1.5rem;
+        height: 1.5rem;
         border-radius: 50%;
-        background: ${iconColor}15;
+        background: ${iconColor}20;
         color: ${iconColor};
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.25rem;
-        font-weight: bold;
+        font-size: 0.875rem;
+        font-weight: 600;
         flex-shrink: 0;
       ">
         ${icon}
       </div>
-      <div style="flex: 1; min-width: 0;">
-        ${title ? `<div style="font-weight: 600; color: hsl(var(--foreground)); margin-bottom: 0.25rem;">${escapeHtml(title)}</div>` : ''}
-        <div style="color: hsl(var(--muted-foreground)); font-size: 0.875rem; word-wrap: break-word;">
-          ${escapeHtml(message)}
-        </div>
-      </div>
+      ${content}
       <button style="
         background: none;
         border: none;
         color: hsl(var(--muted-foreground));
         cursor: pointer;
-        font-size: 1.25rem;
+        font-size: 1.125rem;
         line-height: 1;
-        padding: 0;
-        width: 1.5rem;
-        height: 1.5rem;
+        padding: 0.25rem;
+        width: 1.25rem;
+        height: 1.25rem;
         display: flex;
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
-        transition: color 0.2s;
-      " class="toast-close">×</button>
+        transition: all 0.2s;
+        border-radius: 4px;
+        opacity: 0.6;
+      " class="toast-close" onmouseover="this.style.opacity='1'; this.style.background='hsl(var(--muted) / 0.3)'" onmouseout="this.style.opacity='0.6'; this.style.background='none'">×</button>
     `;
 
     return { toast, duration };
   }
 
-  // Show toast notification
+  // Show toast notification - Slide down from top
   function showToast(options) {
     initToastContainer();
 
     const { toast, duration } = createToast(options);
     toastContainer.appendChild(toast);
 
-    // Trigger animation
+    // Trigger slide down animation
     requestAnimationFrame(() => {
-      toast.style.transform = 'translateX(0)';
+      toast.style.transform = 'translateY(0)';
       toast.style.opacity = '1';
     });
 
@@ -434,9 +444,9 @@
     return toast;
   }
 
-  // Remove toast
+  // Remove toast - Slide up
   function removeToast(toast) {
-    toast.style.transform = 'translateX(400px)';
+    toast.style.transform = 'translateY(-20px)';
     toast.style.opacity = '0';
     setTimeout(() => {
       if (toast.parentNode) {

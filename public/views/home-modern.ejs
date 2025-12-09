@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Explore Projects - Projexia</title>
+    <link rel="icon" type="image/jpeg" href="/images/favicon.jpg" />
     
     <!-- CSS Files -->
     <link rel="stylesheet" href="/css/projexia-design-system.css" />
@@ -120,7 +121,7 @@
                 <!-- Section 1: Top 10 Trending Projects (Carousel) -->
                 <% if (top10Trending && top10Trending.length > 0) { %>
                 <section class="section section-trending" style="padding: 0 0 3rem 0; margin-bottom: 3rem;">
-                    <div class="section-header" style="padding: 3rem 0 2rem 0;">
+                    <div class="section-header section-header-trending">
                         <h2 class="section-title">Top 10 Trending Projects</h2>
                     </div>
 
@@ -340,13 +341,8 @@
         if (toggleFiltersBtn) {
             toggleFiltersBtn.addEventListener('click', () => {
                 filtersVisible = !filtersVisible;
-                if (filtersVisible) {
-                    filtersContainer.style.display = 'flex';
-                    toggleFiltersBtn.setAttribute('title', 'Hide Filters');
-                } else {
-                    filtersContainer.style.display = 'none';
-                    toggleFiltersBtn.setAttribute('title', 'Show Filters');
-                }
+                filtersContainer.classList.toggle('hidden', !filtersVisible);
+                toggleFiltersBtn.setAttribute('title', filtersVisible ? 'Hide Filters' : 'Show Filters');
             });
         }
 

@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Browse Projects - Projexia</title>
+    <link rel="icon" type="image/jpeg" href="/images/favicon.jpg" />
     
 
     <link rel="stylesheet" href="/css/projexia-design-system.css" />
@@ -147,7 +148,7 @@
         <section class="browse-projects">
           <div class="container">
             <!-- Results Count -->
-            <div style="margin-bottom: 1.5rem; color: hsl(var(--muted-foreground)); font-size: 0.95rem;">
+            <div class="results-count" style="color: hsl(var(--muted-foreground));">
               <% if (projects && projects.length > 0) { %>
                 Showing <strong style="color: hsl(var(--foreground));"><%= projects.length %></strong> project<%= projects.length !== 1 ? 's' : '' %>
                 <% if (searchTerm || selectedProgram || selectedYear || selectedTrack || (selectedLanguages && selectedLanguages.length > 0)) { %>
@@ -242,10 +243,10 @@
         toggleFiltersBtn.addEventListener('click', () => {
           filtersVisible = !filtersVisible;
           if (filtersVisible) {
-            filtersContainer.style.display = 'grid';
+            filtersContainer.classList.remove('hidden');
             toggleFiltersBtn.setAttribute('title', 'Hide Filters');
           } else {
-            filtersContainer.style.display = 'none';
+            filtersContainer.classList.add('hidden');
             toggleFiltersBtn.setAttribute('title', 'Show Filters');
           }
         });

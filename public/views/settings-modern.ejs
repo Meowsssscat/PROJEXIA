@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Settings - Projexia</title>
+    <link rel="icon" type="image/jpeg" href="/images/favicon.jpg" />
     
     <!-- CSS Files -->
     <link rel="stylesheet" href="/css/projexia-design-system.css" />
@@ -15,6 +16,7 @@
     
     <!-- SVG Icons -->
     <script src="/js/svgIcons.js"></script>
+    <script src="/js/toast.js"></script>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -53,7 +55,7 @@
                                 <h4>Change Password</h4>
                                 <p>Secure your account with a strong password</p>
                             </div>
-                            <a href="/forgot-password" class="btn btn-secondary">Change</a>
+                            <button class="btn btn-secondary" onclick="openChangePasswordModal()">Change</button>
                         </div>
                     </div>
 
@@ -77,12 +79,283 @@
         <%- include('partials/footer-modern') %>
     </div>
 
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal" class="custom-modal" style="display: none;">
+        <div class="custom-modal-overlay" onclick="closeChangePasswordModal()"></div>
+        <div class="custom-modal-content" style="max-width: 450px;">
+            <div class="custom-modal-header">
+                <h3>Change Password</h3>
+                <button class="custom-modal-close" onclick="closeChangePasswordModal()">&times;</button>
+            </div>
+            <div class="custom-modal-body">
+                <div id="passwordError" class="form-error" style="display: none; margin-bottom: 1rem;"></div>
+                <div id="passwordSuccess" class="form-success" style="display: none; margin-bottom: 1rem;"></div>
+                
+                <form id="changePasswordForm">
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <div style="position: relative;">
+                            <input 
+                                type="password" 
+                                id="currentPassword" 
+                                name="currentPassword" 
+                                placeholder="Enter current password"
+                                required
+                                style="padding-right: 45px;"
+                            />
+                            <button 
+                                type="button" 
+                                onclick="togglePasswordVisibility('currentPassword')" 
+                                style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 5px; display: flex; align-items: center; justify-content: center;"
+                                aria-label="Toggle password visibility"
+                            >
+                                <svg id="currentPassword-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: hsl(var(--muted-foreground));">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <div style="position: relative;">
+                            <input 
+                                type="password" 
+                                id="newPassword" 
+                                name="newPassword" 
+                                placeholder="Enter new password"
+                                required
+                                style="padding-right: 45px;"
+                            />
+                            <button 
+                                type="button" 
+                                onclick="togglePasswordVisibility('newPassword')" 
+                                style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 5px; display: flex; align-items: center; justify-content: center;"
+                                aria-label="Toggle password visibility"
+                            >
+                                <svg id="newPassword-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: hsl(var(--muted-foreground));">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <div style="position: relative;">
+                            <input 
+                                type="password" 
+                                id="confirmPassword" 
+                                name="confirmPassword" 
+                                placeholder="Confirm new password"
+                                required
+                                style="padding-right: 45px;"
+                            />
+                            <button 
+                                type="button" 
+                                onclick="togglePasswordVisibility('confirmPassword')" 
+                                style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 5px; display: flex; align-items: center; justify-content: center;"
+                                aria-label="Toggle password visibility"
+                            >
+                                <svg id="confirmPassword-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: hsl(var(--muted-foreground));">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions" style="margin-top: 1.5rem; padding-top: 0; border-top: none;">
+                        <button type="button" class="btn btn-secondary" onclick="closeChangePasswordModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="changePasswordBtn">Change Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .custom-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        
+        .custom-modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+        
+        .custom-modal-content {
+            position: relative;
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: 12px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .custom-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid hsl(var(--border));
+        }
+        
+        .custom-modal-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: hsl(var(--foreground));
+            margin: 0;
+        }
+        
+        .custom-modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: hsl(var(--muted-foreground));
+            cursor: pointer;
+            padding: 0;
+            width: 2rem;
+            height: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .custom-modal-close:hover {
+            background: hsl(var(--muted) / 0.5);
+            color: hsl(var(--foreground));
+        }
+        
+        .custom-modal-body {
+            padding: 1.5rem;
+        }
+    </style>
+
     <script>
         const profileForm = document.getElementById('profileForm');
         const errorMsg = document.getElementById('errorMessage');
         const successMsg = document.getElementById('successMessage');
 
-        // No additional JavaScript needed for now
+        function openChangePasswordModal() {
+            document.getElementById('changePasswordModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            document.getElementById('changePasswordForm').reset();
+            document.getElementById('passwordError').style.display = 'none';
+            document.getElementById('passwordSuccess').style.display = 'none';
+        }
+
+        function closeChangePasswordModal() {
+            document.getElementById('changePasswordModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const errorDiv = document.getElementById('passwordError');
+            const successDiv = document.getElementById('passwordSuccess');
+            const submitBtn = document.getElementById('changePasswordBtn');
+            
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Validation
+            if (newPassword.length < 6) {
+                Toast.error('New password must be at least 6 characters long');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                Toast.error('New passwords do not match');
+                return;
+            }
+            
+            if (currentPassword === newPassword) {
+                Toast.error('New password must be different from current password');
+                return;
+            }
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Changing...';
+            
+            try {
+                const response = await fetch('/settings/change-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ currentPassword, newPassword })
+                });
+                
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    Toast.error(result.message || 'Failed to change password');
+                } else {
+                    Toast.success('Password changed successfully!');
+                    document.getElementById('changePasswordForm').reset();
+                    
+                    setTimeout(() => {
+                        closeChangePasswordModal();
+                    }, 1500);
+                }
+            } catch (error) {
+                Toast.error('An error occurred. Please try again.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Change Password';
+            }
+        });
+
+        function togglePasswordVisibility(fieldId) {
+            const field = document.getElementById(fieldId);
+            const icon = document.getElementById(fieldId + '-icon');
+            
+            if (field.type === 'password') {
+                field.type = 'text';
+                // Change to eye-off icon
+                icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+            } else {
+                field.type = 'password';
+                // Change to eye icon
+                icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+            }
+        }
 
         async function showDeleteUnavailable() {
             await Modal.warning(

@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= project.title %> - Projexia</title>
+    <link rel="icon" type="image/jpeg" href="/images/favicon.jpg" />
     
     <!-- CSS Files -->
     <link rel="stylesheet" href="/css/projexia-design-system.css" />
@@ -27,7 +28,7 @@
       
       <!-- Main Content -->
       <main style="flex: 1; padding-top: 4rem; background: hsl(var(--background));">
-        <div style="max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; width: 100%; box-sizing: border-box;">
+        <div class="project-detail-container">
           <div class="project-detail-grid">
               <!-- Main Content -->
               <div class="project-detail-main">
@@ -193,11 +194,38 @@
                         <% } %>
                       <% } %>
                     </div>
+
+                    <!-- Project Links inside main card -->
+                    <% if (project.githubLink || project.websiteLink) { %>
+                      <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid hsl(var(--border));">
+                        <h3 style="font-family: var(--font-poppins); font-size: 0.95rem; font-weight: 600; color: hsl(var(--foreground)); margin: 0 0 1rem 0;">Project Links</h3>
+                        <div class="project-links">
+                          <% if (project.githubLink) { %>
+                            <a href="<%= project.githubLink %>" target="_blank" rel="noopener noreferrer" class="btn btn-outline">
+                              <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20" style="margin-right: 0.5rem;">
+                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v 3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                              </svg>
+                              GitHub Repository
+                            </a>
+                          <% } %>
+                          <% if (project.websiteLink) { %>
+                            <a href="<%= project.websiteLink %>" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+                              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20" style="margin-right: 0.5rem;">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                                <path d="M2 12h20"></path>
+                              </svg>
+                              Live Demo
+                            </a>
+                          <% } %>
+                        </div>
+                      </div>
+                    <% } %>
                   </div>
                 </div>
 
                 <!-- Project Description -->
-                <div class="project-section">
+                <div class="project-section about-section">
                   <h2 class="section-title">About This Project</h2>
                   <div class="project-description-full">
                     <%= project.description %>
@@ -206,37 +234,11 @@
 
                 <!-- Technologies moved to sidebar -->
                 <!-- Developers/Team Members moved to sidebar -->
-
-                <!-- Project Links -->
-                <% if (project.githubLink || project.websiteLink) { %>
-                  <div class="project-section">
-                    <h2 class="section-title">Project Links</h2>
-                    <div class="project-links">
-                      <% if (project.githubLink) { %>
-                        <a href="<%= project.githubLink %>" target="_blank" rel="noopener noreferrer" class="btn btn-outline">
-                          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20" style="margin-right: 0.5rem;">
-                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v 3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                          </svg>
-                          GitHub Repository
-                        </a>
-                      <% } %>
-                      <% if (project.websiteLink) { %>
-                        <a href="<%= project.websiteLink %>" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20" style="margin-right: 0.5rem;">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                            <path d="M2 12h20"></path>
-                          </svg>
-                          Live Demo
-                        </a>
-                      <% } %>
-                    </div>
-                  </div>
-                <% } %>
+                <!-- Project Links moved inside main card -->
 
                 <!-- Project Gallery -->
                 <% if (project.otherImages && project.otherImages.length > 0) { %>
-                  <div class="project-section">
+                  <div class="project-section gallery-section">
                     <h2 class="section-title">Project Gallery</h2>
                     <div class="project-gallery">
                       <% project.otherImages.forEach((img, index) => { %>
@@ -313,7 +315,7 @@
                             <div style="display: flex; justify-content: space-between; align-items: center;">
                               <div>
                                 <p class="comment-author"><%= comment.userId?.fullName || 'Anonymous' %></p>
-                                <p class="comment-date"><%= new Date(comment.createdAt).toLocaleDateString() %></p>
+                                <p class="comment-date" data-date="<%= comment.createdAt %>"><%= new Date(comment.createdAt).toLocaleDateString() %></p>
                               </div>
                               <% if (user && (user._id.toString() === comment.userId?._id.toString() || user._id.toString() === project.userId?._id.toString())) { %>
                                 <button class="comment-delete-btn" onclick="deleteComment('<%= project._id %>', '<%= comment._id %>')">×</button>
@@ -334,8 +336,15 @@
                                       </div>
                                     <% } %>
                                     <div class="reply-content">
-                                      <p class="reply-author"><%= reply.userId?.fullName || 'Anonymous' %></p>
-                                      <p class="reply-date"><%= new Date(reply.createdAt).toLocaleDateString() %></p>
+                                      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                          <p class="reply-author"><%= reply.userId?.fullName || 'Anonymous' %></p>
+                                          <p class="reply-date" data-date="<%= reply.createdAt %>"><%= new Date(reply.createdAt).toLocaleDateString() %></p>
+                                        </div>
+                                        <% if (user && (user._id.toString() === reply.userId?._id.toString() || user._id.toString() === project.userId?._id.toString())) { %>
+                                          <button class="comment-delete-btn" onclick="deleteReply('<%= project._id %>', '<%= comment._id %>', '<%= reply._id %>')">×</button>
+                                        <% } %>
+                                      </div>
                                       <p class="reply-text"><%= reply.text %></p>
                                     </div>
                                   </div>
@@ -388,7 +397,7 @@
               <aside class="project-sidebar">
                 <!-- Technologies -->
                 <% if (project.technologies && project.technologies.length > 0) { %>
-                  <div class="info-card">
+                  <div class="info-card technologies-card">
                     <h3>Technologies Used</h3>
                     <div class="tech-list-sidebar">
                       <% project.technologies.forEach(tech => { %>
@@ -400,7 +409,7 @@
 
                 <!-- Team Members -->
                 <% if (project.developers && project.developers.length > 0) { %>
-                  <div class="info-card">
+                  <div class="info-card team-members-card">
                     <h3>Team Members</h3>
                     <div class="developers-list-sidebar">
                       <% project.developers.forEach(dev => { %>
@@ -633,6 +642,33 @@
         } catch (error) {
           console.error('Error deleting comment:', error);
           await Modal.error('Failed to delete comment', 'Error');
+        }
+      }
+
+      // ========================================
+      // DELETE REPLY
+      // ========================================
+      async function deleteReply(projectId, commentId, replyId) {
+        const confirmed = await Modal.confirm('Delete this reply?', 'Confirm', 'Delete', 'Cancel');
+        if (!confirmed) return;
+
+        try {
+          const response = await fetch(`/api/projects/${projectId}/comment/${commentId}/reply/${replyId}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' }
+          });
+          
+          if (response.ok) {
+            // Reload page to refresh comments
+            window.location.reload();
+          } else if (response.status === 403) {
+            await Modal.error('You are not authorized to delete this reply', 'Error');
+          } else {
+            await Modal.error('Failed to delete reply', 'Error');
+          }
+        } catch (error) {
+          console.error('Error deleting reply:', error);
+          await Modal.error('Failed to delete reply', 'Error');
         }
       }
 
@@ -892,21 +928,43 @@
           ? `<img src="${reply.userId.profilePicture.url}" alt="Profile" class="reply-avatar-img">`
           : `<div class="reply-avatar">${reply.userId?.fullName?.charAt(0) || '?'}</div>`;
         
+        // Check if current user can delete (is reply author)
+        const currentUserId = '<%= user?._id %>';
+        const replyUserId = reply.userId?._id;
+        const canDelete = currentUserId && (currentUserId === replyUserId);
+        
+        const deleteButtonHTML = canDelete 
+          ? `<button class="comment-delete-btn" onclick="deleteReply('<%= project._id %>', '${commentId}', '${reply._id}')">×</button>`
+          : '';
+        
         replyDiv.innerHTML = `
           ${avatarHTML}
           <div class="reply-content">
-            <p class="reply-author">${reply.userId?.fullName || 'Anonymous'}</p>
-            <p class="reply-date">${new Date(reply.createdAt).toLocaleDateString()}</p>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <div>
+                <p class="reply-author">${reply.userId?.fullName || 'Anonymous'}</p>
+                <p class="reply-date" data-date="${reply.createdAt}">${new Date(reply.createdAt).toLocaleDateString()}</p>
+              </div>
+              ${deleteButtonHTML}
+            </div>
             <p class="reply-text">${reply.text}</p>
           </div>
         `;
         
         repliesSection.appendChild(replyDiv);
+        
+        // Update time ago for the new reply
+        if (typeof updateTimeAgo === 'function') {
+          updateTimeAgo();
+        }
       }
     </script>
     
     <!-- Modal System -->
     <script src="/js/modal.js"></script>
+    
+    <!-- Time Ago Utility -->
+    <script src="/js/timeago.js"></script>
     
     <!-- Socket.IO Client -->
     <script src="/socket.io/socket.io.js"></script>

@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Upload Project - Projexia</title>
+    <link rel="icon" type="image/jpeg" href="/images/favicon.jpg" />
     
     <!-- CSS Files -->
     <link rel="stylesheet" href="/css/projexia-design-system.css" />
@@ -29,14 +30,15 @@
         
         <!-- Form Content -->
         <main class="form-page-content">
-            <div class="container" style="max-width: 700px;">
+            <div class="container" style="max-width: 1200px;">
                 <div class="form-page-header">
                     <h1>Upload Project</h1>
                     <p>Share your amazing project with the CCS community</p>
                 </div>
 
-                <div class="form-card">
-                    <form id="uploadForm" class="form-section" enctype="multipart/form-data" novalidate>
+                <div class="upload-grid">
+                    <form id="uploadForm" class="upload-form-wrapper" enctype="multipart/form-data" novalidate>
+                        <div class="form-card form-card-left">
                         <!-- Hidden User ID -->
                         <input type="hidden" name="userId" value="<%= user._id %>" />
 
@@ -89,6 +91,33 @@
                             <p class="form-help-text">List all team members who worked on this project (comma-separated)</p>
                         </div>
 
+                        <!-- Source Code Link (Optional) -->
+                        <div class="form-group">
+                            <label for="sourceCode">Source Code Link (Optional)</label>
+                            <input 
+                                type="url" 
+                                id="sourceCode" 
+                                name="sourceCode" 
+                                placeholder="https://github.com/username/project"
+                            />
+                            <p class="form-help-text">Link to your GitHub repository or other code hosting platform</p>
+                        </div>
+
+                        <!-- Live Demo Link (Optional) -->
+                        <div class="form-group">
+                            <label for="liveDemo">Live Demo Link (Optional)</label>
+                            <input 
+                                type="url" 
+                                id="liveDemo" 
+                                name="liveDemo" 
+                                placeholder="https://myproject.com"
+                            />
+                            <p class="form-help-text">Link to the live, deployed version of your project</p>
+                        </div>
+
+                        </div>
+                        
+                        <div class="form-card form-card-right">
                         <!-- Thumbnail Upload -->
                         <div class="form-group">
                             <label for="thumbnail">Project Thumbnail *</label>
@@ -133,35 +162,13 @@
                             </div>
                             <p class="form-help-text">Upload up to 5 additional project images to showcase your work</p>
                         </div>
-
-                        <!-- Source Code Link (Optional) -->
-                        <div class="form-group">
-                            <label for="sourceCode">Source Code Link (Optional)</label>
-                            <input 
-                                type="url" 
-                                id="sourceCode" 
-                                name="sourceCode" 
-                                placeholder="https://github.com/username/project"
-                            />
-                            <p class="form-help-text">Link to your GitHub repository or other code hosting platform</p>
-                        </div>
-
-                        <!-- Live Demo Link (Optional) -->
-                        <div class="form-group">
-                            <label for="liveDemo">Live Demo Link (Optional)</label>
-                            <input 
-                                type="url" 
-                                id="liveDemo" 
-                                name="liveDemo" 
-                                placeholder="https://myproject.com"
-                            />
-                            <p class="form-help-text">Link to the live, deployed version of your project</p>
-                        </div>
-
+                        
                         <!-- Form Actions -->
                         <div class="form-actions">
                             <a href="/home" class="btn btn-secondary">Cancel</a>
                             <button type="submit" class="btn btn-primary" id="submitBtn">Upload Project</button>
+                        </div>
+
                         </div>
                     </form>
                 </div>
