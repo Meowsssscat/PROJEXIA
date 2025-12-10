@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Edit Profile - Projexia</title>
-    <link rel="icon" type="image/jpeg" href="/images/favicon.jpg" />
+    <link rel="icon" type="image/png" href="/images/favicon.png" />
     
     <!-- CSS Files -->
     <link rel="stylesheet" href="/css/projexia-design-system.css" />
@@ -16,6 +16,7 @@
     
     <!-- SVG Icons -->
     <script src="/js/svgIcons.js"></script>
+    <script src="/js/toast.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
@@ -29,22 +30,49 @@
         }
 
         .avatar-display {
-            width: 120px;
-            height: 120px;
-            border-radius: 12px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
             background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: bold;
             margin: 0 auto 1rem;
+            overflow: hidden;
         }
 
         .avatar-upload-btn {
             display: inline-block;
             margin-top: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .avatar-section {
+                margin-bottom: 1.5rem;
+                padding-bottom: 1.5rem;
+            }
+            
+            .avatar-display {
+                width: 80px;
+                height: 80px;
+                font-size: 1.75rem;
+            }
+            
+            .avatar-upload-btn {
+                margin-top: 0.75rem;
+            }
+            
+            .avatar-upload-btn .file-upload-area {
+                padding: 1rem !important;
+            }
+            
+            .avatar-upload-btn .btn {
+                padding: 0.625rem 1rem !important;
+                font-size: 0.8rem !important;
+            }
         }
     </style>
     <script src="/js/theme.js"></script>
@@ -63,35 +91,47 @@
                 </div>
 
                 <div class="form-card">
-                    <div id="successMessage" class="form-message form-success"></div>
-                    <div id="errorMessage" class="form-message form-error"></div>
-
                     <form id="editProfileForm" class="form-section">
                         <!-- Avatar Section -->
                         <div class="avatar-section">
-                            <div class="avatar-display">
-                                <%= user.fullName.charAt(0) %>
+                            <div class="avatar-display" id="avatarDisplay">
+                                <% if (user.profilePicture && user.profilePicture.url) { %>
+                                    <img src="<%= user.profilePicture.url %>" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                                <% } else { %>
+                                    <%= user.fullName.charAt(0) %>
+                                <% } %>
                             </div>
                             <div class="form-group avatar-upload-btn">
-                                <label for="avatar">Upload Avatar (Optional)</label>
-                                <div class="file-upload-area" id="avatarArea">
-                                    <svg class="file-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <circle cx="12" cy="12" r="1"></circle>
-                                        <circle cx="19" cy="12" r="1"></circle>
-                                        <circle cx="5" cy="12" r="1"></circle>
-                                        <path d="M12 9v6m-4-2a4 4 0 1 0 8 0"></path>
-                                    </svg>
-                                    <p class="file-upload-text">Click to upload</p>
-                                    <p class="file-upload-hint">PNG, JPG up to 2MB</p>
-                                    <input 
-                                        type="file" 
-                                        id="avatar" 
-                                        name="avatar" 
-                                        class="file-upload-input"
-                                        accept="image/*"
-                                    />
+                                <label for="avatar">Profile Picture</label>
+                                <div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
+                                    <div class="file-upload-area" id="avatarArea" style="flex: 1; min-width: 200px;">
+                                        <svg class="file-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                            <polyline points="17 8 12 3 7 8"></polyline>
+                                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                                        </svg>
+                                        <p class="file-upload-text">Click to upload</p>
+                                        <p class="file-upload-hint">PNG, JPG up to 2MB</p>
+                                        <input 
+                                            type="file" 
+                                            id="avatar" 
+                                            name="avatar" 
+                                            class="file-upload-input"
+                                            accept="image/*"
+                                        />
+                                    </div>
+                                    <% if (user.profilePicture && user.profilePicture.url) { %>
+                                        <button type="button" id="deleteAvatarBtn" class="btn btn-outline" style="padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.5rem; color: hsl(var(--destructive)); border-color: hsl(var(--destructive) / 0.3);">
+                                            <svg style="width: 1rem; height: 1rem;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <polyline points="3 6 5 6 21 6"></polyline>
+                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                            </svg>
+                                            Delete
+                                        </button>
+                                    <% } %>
                                 </div>
                             </div>
+                            <input type="hidden" id="deleteAvatar" name="deleteAvatar" value="false">
                         </div>
 
                         <!-- Personal Information -->
@@ -217,8 +257,30 @@
         const editForm = document.getElementById('editProfileForm');
         const avatarArea = document.getElementById('avatarArea');
         const avatarInput = document.getElementById('avatar');
-        const errorMsg = document.getElementById('errorMessage');
-        const successMsg = document.getElementById('successMessage');
+        const avatarDisplay = document.getElementById('avatarDisplay');
+        const deleteAvatarBtn = document.getElementById('deleteAvatarBtn');
+        const deleteAvatarInput = document.getElementById('deleteAvatar');
+
+        // Delete avatar button handler
+        if (deleteAvatarBtn) {
+            deleteAvatarBtn.addEventListener('click', async () => {
+                const confirmed = await Modal.confirm(
+                    'Are you sure you want to delete your profile picture?',
+                    'Delete Profile Picture',
+                    'Delete',
+                    'Cancel'
+                );
+                
+                if (confirmed) {
+                    deleteAvatarInput.value = 'true';
+                    // Update display to show initial
+                    avatarDisplay.innerHTML = '<%= user.fullName.charAt(0) %>';
+                    // Hide delete button
+                    deleteAvatarBtn.style.display = 'none';
+                    Toast.info('Profile picture will be removed when you save changes');
+                }
+            });
+        }
 
         // File upload handling
         avatarArea.addEventListener('click', () => avatarInput.click());
@@ -247,6 +309,10 @@
                 const fileName = e.target.files[0].name;
                 console.log('✅ File selected:', fileName);
                 console.log('File object:', e.target.files[0]);
+                
+                // Reset delete flag when new file is selected
+                deleteAvatarInput.value = 'false';
+                
                 avatarArea.innerHTML = `
                     <svg class="file-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: hsl(var(--primary));">
                         <polyline points="20 6 9 17 4 12"></polyline>
@@ -304,15 +370,45 @@
         // Form submission
         editForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            errorMsg.classList.remove('show');
-            successMsg.classList.remove('show');
+
+            // Get submit button and disable it
+            const submitBtn = editForm.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `
+                <svg style="width: 1rem; height: 1rem; animation: spin 1s linear infinite; display: inline-block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+                </svg>
+                Updating...
+            `;
+
+            // Add spin animation
+            if (!document.getElementById('spin-animation')) {
+                const style = document.createElement('style');
+                style.id = 'spin-animation';
+                style.textContent = '@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }';
+                document.head.appendChild(style);
+            }
 
             const formData = new FormData(editForm);
             
-            // Debug: Check if file is included
+            // Debug: Check form data
             console.log('📤 Submitting form data:');
+            console.log('Delete avatar input element:', deleteAvatarInput);
+            console.log('Delete avatar flag VALUE:', deleteAvatarInput.value);
+            console.log('Delete avatar flag TYPE:', typeof deleteAvatarInput.value);
             console.log('Has avatar file:', avatarInput.files.length > 0);
+            
+            // Explicitly ensure deleteAvatar is in FormData
+            formData.set('deleteAvatar', deleteAvatarInput.value);
+            
+            // Log all form data
+            console.log('=== ALL FORM DATA ===');
+            for (let [key, value] of formData.entries()) {
+                console.log(`  ${key}:`, value);
+            }
+            console.log('===================');
+            
             if (avatarInput.files.length > 0) {
                 console.log('Avatar file:', avatarInput.files[0]);
                 // Ensure file is in FormData
@@ -334,8 +430,7 @@
                         throw new Error(result.message || 'Update failed');
                     }
 
-                    successMsg.textContent = result.message || 'Profile updated successfully!';
-                    successMsg.classList.add('show');
+                    Toast.success(result.message || 'Profile updated successfully!');
 
                     setTimeout(() => {
                         window.location.href = '/profile';
@@ -345,8 +440,11 @@
                     window.location.href = '/profile';
                 }
             } catch (error) {
-                errorMsg.textContent = error.message || 'An error occurred';
-                errorMsg.classList.add('show');
+                Toast.error(error.message || 'An error occurred while updating profile');
+                
+                // Re-enable button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
             }
         });
     </script>

@@ -223,10 +223,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const confirmed = await Modal.confirm(
         'Are you sure you want to delete this project? This action cannot be undone.',
         'Delete Project',
+        'Delete',
         'Cancel'
     );
     
     if (!confirmed) return;
+
+    console.log('🗑️ Starting project deletion...');
+    console.log('Toast object:', typeof Toast);
+    
+    // Show loading toast
+    let loadingToast = null;
+    try {
+        if (typeof Toast !== 'undefined' && Toast.info) {
+            loadingToast = Toast.info('Deleting project and images...', '', 0); // 0 = no auto-dismiss
+            console.log('✅ Loading toast created:', loadingToast);
+        } else {
+            console.error('❌ Toast object not available');
+        }
+    } catch (err) {
+        console.error('❌ Error creating toast:', err);
+    }
 
     try {
         const response = await fetch(`/api/projects/${projectId}`, {
@@ -238,24 +255,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const data = await response.json();
 
+        // Remove loading toast by manipulating DOM
+        if (loadingToast && loadingToast.parentNode) {
+            loadingToast.style.transform = 'translateY(-20px)';
+            loadingToast.style.opacity = '0';
+            setTimeout(() => {
+                if (loadingToast.parentNode) {
+                    loadingToast.parentNode.removeChild(loadingToast);
+                }
+            }, 300);
+        }
+
         if (response.ok) {
-            await Modal.alert('Project deleted successfully', 'success');
+            Toast.success('Project deleted successfully!');
             
-            // Check referrer and redirect with reload
-            const referrer = document.referrer;
-            if (referrer.includes('/profile')) {
-                window.location.href = '/profile';
-            } else if (referrer.includes('/browse')) {
-                window.location.href = '/browse';
-            } else {
-                window.location.href = '/home';
-            }
+            // Redirect after short delay
+            setTimeout(() => {
+                // Check referrer and redirect with reload
+                const referrer = document.referrer;
+                if (referrer.includes('/profile')) {
+                    window.location.href = '/profile';
+                } else if (referrer.includes('/browse')) {
+                    window.location.href = '/browse';
+                } else {
+                    window.location.href = '/home';
+                }
+            }, 1000);
         } else {
-            await Modal.alert(data.error || 'Failed to delete project', 'error');
+            Toast.error(data.error || 'Failed to delete project');
         }
     } catch (error) {
+        // Remove loading toast
+        if (loadingToast && loadingToast.parentNode) {
+            loadingToast.style.transform = 'translateY(-20px)';
+            loadingToast.style.opacity = '0';
+            setTimeout(() => {
+                if (loadingToast.parentNode) {
+                    loadingToast.parentNode.removeChild(loadingToast);
+                }
+            }, 300);
+        }
+        
         console.error('Error deleting project:', error);
-        await Modal.alert('Failed to delete project. Please try again.', 'error');
+        Toast.error('Failed to delete project. Please try again.');
     }
 }
     /**

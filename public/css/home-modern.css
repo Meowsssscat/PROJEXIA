@@ -40,8 +40,8 @@
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 1fr;
     gap: 1.5rem;
-    margin: 1rem 0 2rem;
-    padding: 2rem;
+    margin: 0.75rem 0 1.25rem;
+    padding: 1.25rem;
     background: hsl(var(--card));
     border: 1px solid hsl(var(--border));
     border-radius: var(--radius);
@@ -77,6 +77,12 @@
     appearance: none;
 }
 
+/* Remove background arrow from tech filter button since it has its own SVG */
+.tech-filter-button {
+    background-image: none !important;
+    padding-right: 1rem !important;
+}
+
 .filter-input:hover,
 .filter-select:hover {
     border-color: hsl(var(--primary) / 0.5);
@@ -96,15 +102,15 @@
 
 /* Section Styles */
 .section {
-    margin-bottom: 5rem;
+    margin-bottom: 2rem;
 }
 
 .section-header {
-    margin-bottom: 3rem;
+    margin-bottom: 1.5rem;
 }
 
 .section-header-trending {
-    padding: 3rem 1rem 2rem 1rem;
+    padding: 1.5rem 1rem 1rem 1rem;
 }
 
 .trending-badge {

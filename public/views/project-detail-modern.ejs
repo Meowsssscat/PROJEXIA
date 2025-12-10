@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= project.title %> - Projexia</title>
-    <link rel="icon" type="image/jpeg" href="/images/favicon.jpg" />
+    <link rel="icon" type="image/png" href="/images/favicon.png" />
     
     <!-- CSS Files -->
     <link rel="stylesheet" href="/css/projexia-design-system.css" />
@@ -16,6 +16,7 @@
     
     <!-- SVG Icons -->
     <script src="/js/svgIcons.js"></script>
+    <script src="/js/toast.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
@@ -776,6 +777,25 @@
         
         if (!confirmed) return;
 
+        // Get delete button and disable it
+        const deleteBtn = document.getElementById('deleteProjectBtn');
+        const originalBtnHTML = deleteBtn.innerHTML;
+        deleteBtn.disabled = true;
+        deleteBtn.innerHTML = `
+          <svg style="width: 1rem; height: 1rem; animation: spin 1s linear infinite; display: inline-block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+          </svg>
+          Deleting...
+        `;
+
+        // Add spin animation if not exists
+        if (!document.getElementById('spin-animation')) {
+          const style = document.createElement('style');
+          style.id = 'spin-animation';
+          style.textContent = '@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }';
+          document.head.appendChild(style);
+        }
+
         try {
           const response = await fetch(`/api/projects/${projectId}`, {
             method: 'DELETE',
@@ -783,18 +803,27 @@
           });
           
           if (response.ok) {
-            Toast.success('Project deleted successfully', 'Deleted');
+            Toast.success('Project deleted successfully!');
             setTimeout(() => {
               window.location.href = '/profile';
-            }, 1500);
+            }, 1000);
           } else if (response.status === 403) {
-            await Modal.error('You are not authorized to delete this project', 'Error');
+            Toast.error('You are not authorized to delete this project');
+            // Re-enable button
+            deleteBtn.disabled = false;
+            deleteBtn.innerHTML = originalBtnHTML;
           } else {
-            await Modal.error('Failed to delete project', 'Error');
+            Toast.error('Failed to delete project');
+            // Re-enable button
+            deleteBtn.disabled = false;
+            deleteBtn.innerHTML = originalBtnHTML;
           }
         } catch (error) {
           console.error('Error deleting project:', error);
-          await Modal.error('Failed to delete project', 'Error');
+          Toast.error('Failed to delete project. Please try again.');
+          // Re-enable button
+          deleteBtn.disabled = false;
+          deleteBtn.innerHTML = originalBtnHTML;
         }
       }
 

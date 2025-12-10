@@ -587,17 +587,34 @@ exports.deleteProject = async (req, res) => {
       return res.status(403).json({ error: 'You are not authorized to delete this project' });
 
     // Delete images from Cloudinary
+    console.log('🗑️ Deleting project images from Cloudinary...');
+    
+    // Delete thumbnail
     if (project.thumbnailUrl?.public_id) {
-      await cloudinary.uploader.destroy(project.thumbnailUrl.public_id);
+      try {
+        const result = await cloudinary.uploader.destroy(project.thumbnailUrl.public_id);
+        console.log('✅ Thumbnail deleted:', result);
+      } catch (err) {
+        console.error('❌ Failed to delete thumbnail:', err);
+      }
     }
 
+    // Delete other images
     if (project.otherImages && project.otherImages.length > 0) {
+      console.log(`🗑️ Deleting ${project.otherImages.length} other images...`);
       for (const img of project.otherImages) {
         if (img.public_id) {
-          await cloudinary.uploader.destroy(img.public_id);
+          try {
+            const result = await cloudinary.uploader.destroy(img.public_id);
+            console.log('✅ Image deleted:', img.public_id, result);
+          } catch (err) {
+            console.error('❌ Failed to delete image:', img.public_id, err);
+          }
         }
       }
     }
+    
+    console.log('✅ All project images deleted from Cloudinary');
 
     // Delete associated data
     await Comment.deleteMany({ projectId });
