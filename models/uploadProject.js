@@ -8,6 +8,8 @@ const ProjectSchema = new Schema(
     description: { type: String, default: '' },
     developers: { type: [String], default: [] },
     technologies: { type: [String], default: [] },
+    program: { type: String, default: '' },
+    yearLevel: { type: String, default: '' },
 
     // Store both URL and Cloudinary public_id
     thumbnailUrl: {

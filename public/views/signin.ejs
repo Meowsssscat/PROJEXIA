@@ -4,9 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sign In - Projexia</title>
-    <link rel="stylesheet" href="/css/common.css" />
+    <link rel="icon" type="image/png" href="/images/favicon.png" />
+    <link rel="stylesheet" href="/css/projexia-design-system.css" />
+    <link rel="stylesheet" href="/css/navbar-modern.css" />
+    <link rel="stylesheet" href="/css/footer-modern.css" />
     <link rel="stylesheet" href="/css/publicHeaderFooter.css" />
     <link rel="stylesheet" href="/css/auth.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
   </head>
   <body>
     <%- include('partials/publicHeader') %>
@@ -78,9 +82,6 @@
             <p>Enter your credentials to access your account</p>
           </div>
           
-          <div id="errorMessage" class="form-error"></div>
-          <div id="successMessage" class="form-success"></div>
-          
           <form id="signinForm" class="auth-form" novalidate>
             <div class="form-group">
               <label for="email">Institutional Email</label>
@@ -96,14 +97,25 @@
 
             <div class="form-group">
               <label for="password">Password</label>
-              <input 
-                type="password" 
-                id="password" 
-                name="password" 
-                required 
-                placeholder="Enter your password"
-                autocomplete="current-password"
-              />
+              <div style="position: relative;">
+                <input 
+                  type="password" 
+                  id="password" 
+                  name="password" 
+                  required 
+                  placeholder="Enter your password"
+                  autocomplete="current-password"
+                  style="padding-right: 45px;"
+                />
+                <button 
+                  type="button" 
+                  onclick="togglePassword('password')" 
+                  style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.2rem; color: #8d8f8c; padding: 5px;"
+                  aria-label="Toggle password visibility"
+                >
+                  <span id="password-icon">👁️</span>
+                </button>
+              </div>
               <div class="auth-link" style="text-align: right; margin-top: 0.5rem;">
                 <a href="/forgot-password">Forgot Password?</a>
               </div>
@@ -130,10 +142,26 @@
     
     <%- include('partials/publicFooter') %>
 
+    <script src="/js/modal.js"></script>
     <script src="/js/config.js"></script>
     <script src="/js/passwordToggle.js"></script>
     <script src="/js/publicHeaderFooter.js"></script>
     <script src="/js/signin.js"></script>
+    <script>
+      // Toggle password visibility
+      function togglePassword(fieldId) {
+        const field = document.getElementById(fieldId);
+        const icon = document.getElementById(fieldId + '-icon');
+        
+        if (field.type === 'password') {
+          field.type = 'text';
+          icon.textContent = '🙈';
+        } else {
+          field.type = 'password';
+          icon.textContent = '👁️';
+        }
+      }
+    </script>
   </body>
 </html>
 

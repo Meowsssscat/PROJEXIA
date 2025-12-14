@@ -24,6 +24,7 @@ exports.getNotifications = async (req, res) => {
     // Format notifications for frontend
     const formattedNotifications = notifications.map(n => ({
       _id: n._id,
+      senderId: n.senderId?._id,
       senderName: n.senderId?.fullName || 'Unknown User',
       projectName: n.projectId?.name || 'Unknown Project',
       projectId: n.projectId?._id,
@@ -162,5 +163,49 @@ exports.deleteNotification = async (req, res) => {
   } catch (err) {
     console.error('Error deleting notification:', err);
     res.status(500).json({ error: 'Failed to delete notification' });
+  }
+};
+
+// ===============================
+// HANDLE NOTIFICATION CLICK
+// ===============================
+exports.handleNotificationClick = async (req, res) => {
+  try {
+    const userId = req.session?.userId;
+    const { notificationId } = req.params;
+    
+    if (!userId) {
+      return res.status(401).json({ error: 'Not logged in' });
+    }
+
+    // Find and mark notification as read
+    const notification = await Notification.findOneAndUpdate(
+      { _id: notificationId, recipientId: userId },
+      { isRead: true },
+      { new: true }
+    ).populate('projectId', '_id');
+
+    if (!notification) {
+      return res.status(404).json({ error: 'Notification not found' });
+    }
+
+    // Determine redirect route based on notification type
+    let redirectUrl = '/';
+    
+    if (notification.type === 'like' || notification.type === 'comment' || notification.type === 'reply') {
+      if (notification.projectId?._id) {
+        redirectUrl = `/project/${notification.projectId._id}`;
+      }
+    } else if (notification.type === 'follow') {
+      if (notification.senderId) {
+        redirectUrl = `/profile/${notification.senderId}`;
+      }
+    }
+
+    res.json({ success: true, redirectUrl });
+
+  } catch (err) {
+    console.error('Error handling notification click:', err);
+    res.status(500).json({ error: 'Failed to handle notification click' });
   }
 };

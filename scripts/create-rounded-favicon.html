@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Rounded Favicon</title>
+</head>
+<body>
+    <h2>Rounded Favicon Generator</h2>
+    <p>This will create a rounded version of favicon.png</p>
+    <canvas id="canvas" width="512" height="512" style="border: 1px solid #ccc;"></canvas>
+    <br><br>
+    <button onclick="downloadRounded()">Download Rounded Favicon</button>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        
+        img.onload = function() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Create circular clipping path
+            ctx.beginPath();
+            ctx.arc(256, 256, 256, 0, Math.PI * 2);
+            ctx.closePath();
+            ctx.clip();
+            
+            // Scale image slightly (1.2x zoom)
+            const scale = 1.2;
+            const scaledSize = 512 * scale;
+            const offset = (512 - scaledSize) / 2;
+            
+            // Draw image with zoom
+            ctx.drawImage(img, offset, offset, scaledSize, scaledSize);
+        };
+        
+        // Load the original favicon
+        img.src = '../public/images/favicon.png';
+        
+        function downloadRounded() {
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'favicon-rounded.png';
+                a.click();
+                URL.revokeObjectURL(url);
+                alert('Downloaded! Please replace the file at public/images/favicon.png with this rounded version.');
+            });
+        }
+    </script>
+</body>
+</html>

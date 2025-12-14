@@ -1,158 +1,117 @@
-// Signup page JavaScript
+// Track options based on program
+const trackOptions = {
+  BSIT: ['WMAD', 'AMG', 'SMP', 'NETAD'],
+  BSCS: ['IS', 'GV'],
+  BSIS: []
+};
 
-document.addEventListener('DOMContentLoaded', () => {
-    Utils.initColorModeToggle();
+// DOM elements
+const programSelect = document.getElementById('program');
+const yearSelect = document.getElementById('year');
+const trackGroup = document.getElementById('trackGroup');
+const trackSelect = document.getElementById('track');
+const signupForm = document.getElementById('signupForm');
+const errorMessage = document.getElementById('errorMessage');
+const successMessage = document.getElementById('successMessage');
+const submitBtn = document.getElementById('submitBtn');
+const loading = document.getElementById('loading');
 
-    const signupForm = document.getElementById('signupForm');
-    const fullNameInput = document.getElementById('fullName');
-    const programSelect = document.getElementById('program');
-    const yearSelect = document.getElementById('year');
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
+// Update track field visibility and options
+function updateTrackField() {
+  const program = programSelect.value;
+  const year = yearSelect.value;
+  const isThirdOrFourthYear = year === '3rd' || year === '4th';
 
-    // Form submission handler
-    signupForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+  // Show track field only for 3rd and 4th year students
+  if (isThirdOrFourthYear && program) {
+    trackGroup.style.display = 'block';
+    trackSelect.required = true;
+    updateTrackOptions(program);
+  } else {
+    trackGroup.style.display = 'none';
+    trackSelect.required = false;
+    trackSelect.value = '';
+  }
+}
 
-        // Hide previous messages
-        Utils.hideMessage('errorMessage');
-        Utils.hideMessage('successMessage');
+// Update track options based on program
+function updateTrackOptions(program) {
+  const options = trackOptions[program] || [];
+  
+  // Clear existing options except the first one
+  trackSelect.innerHTML = '<option value="">Select Track</option>';
+  
+  // Add program-specific options
+  options.forEach(track => {
+    const option = document.createElement('option');
+    option.value = track;
+    option.textContent = track;
+    trackSelect.appendChild(option);
+  });
+}
 
-        // Get form data
-        const formData = {
-            fullName: fullNameInput.value.trim(),
-            program: programSelect.value,
-            year: yearSelect.value,
-            email: emailInput.value.trim().toLowerCase(),
-            password: passwordInput.value
-        };
+// Event listeners
+programSelect.addEventListener('change', updateTrackField);
+yearSelect.addEventListener('change', updateTrackField);
 
-        // Client-side validation
-        const validationError = validateForm(formData);
-        if (validationError) {
-            Utils.showError('errorMessage', validationError);
-            return;
-        }
+// Handle form submission
+signupForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
 
-        // Show loading state
-        Utils.showLoading('submitBtn', 'loading');
+  // Messages will be shown via Toast
 
-        // Make API request
-        const result = await Utils.apiRequest(
-            getApiUrl('SIGNUP'),
-            'POST',
-            formData
-        );
+  // Get form data
+  const formData = {
+    fullName: document.getElementById('fullName').value,
+    program: programSelect.value,
+    year: yearSelect.value,
+    email: document.getElementById('email').value,
+    password: document.getElementById('password').value
+  };
 
-        // Hide loading state
-        Utils.hideLoading('submitBtn', 'loading');
+  // Add track if required
+  if (trackSelect.required && trackSelect.value) {
+    formData.track = trackSelect.value;
+  }
 
-        // Handle response
-        if (result.success) {
-            Utils.showSuccess('successMessage', result.data.message);
+  // Validate track for 3rd and 4th year
+  if ((formData.year === '3rd' || formData.year === '4th') && !formData.track) {
+    Toast.error('Please select a specialization track', 'Validation Error');
+    return;
+  }
 
-            // Store email for confirmation page
-            Utils.setLocalStorage('verificationEmail', formData.email);
+  // Show loading
+  submitBtn.style.display = 'none';
+  loading.style.display = 'block';
 
-            // Redirect to confirmation page after 2 seconds
-            setTimeout(() => {
-                window.location.href = '/confirmation';
-            }, 2000);
-        } else {
-            Utils.showError('errorMessage', result.data.message);
-        }
+  try {
+    const response = await fetch('/api/auth/signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
     });
 
-    // Real-time email validation
-    emailInput.addEventListener('blur', () => {
-        const email = emailInput.value.trim();
-        resetInputState(emailInput);
+    const result = await response.json();
 
-        if (email && !Utils.isValidLSPUEmail(email)) {
-            setInputState(emailInput, 'error');
-            Utils.showError('errorMessage', 'Please use your LSPU institutional email');
-        } else {
-            Utils.hideMessage('errorMessage');
-        }
-    });
-
-    // Real-time password validation
-    passwordInput.addEventListener('input', () => {
-        const password = passwordInput.value;
-        const validation = Utils.validatePassword(password);
-        resetInputState(passwordInput);
-
-        if (password.length > 0 && !validation.isValid) {
-            setInputState(passwordInput, 'warning');
-        } else if (validation.isValid) {
-            setInputState(passwordInput, 'success');
-        }
-    });
-
-    // Clear error messages when user starts typing
-    [fullNameInput, programSelect, yearSelect, emailInput, passwordInput].forEach(input => {
-        input.addEventListener('input', () => {
-            Utils.hideMessage('errorMessage');
-            resetInputState(input);
-        });
-    });
-
-    [programSelect, yearSelect].forEach(select => {
-        select.addEventListener('change', () => {
-            Utils.hideMessage('errorMessage');
-            resetInputState(select);
-        });
-    });
+    if (response.ok) {
+      Toast.success(result.message || 'Account created successfully! Please check your email to verify your account.', 'Sign Up Successful');
+      signupForm.reset();
+      trackGroup.style.display = 'none';
+      
+      // Redirect to verification page after 2 seconds
+      setTimeout(() => {
+        window.location.href = `/auth?type=verify&email=${encodeURIComponent(formData.email)}`;
+      }, 2000);
+    } else {
+      Toast.error(result.message || 'Signup failed. Please try again.', 'Sign Up Failed');
+    }
+  } catch (error) {
+    console.error('Signup error:', error);
+    Toast.error('Network error. Please try again.', 'Connection Error');
+  } finally {
+    submitBtn.style.display = 'block';
+    loading.style.display = 'none';
+  }
 });
-
-// Validate form data
-function validateForm(data) {
-    // Check if all fields are filled
-    if (!data.fullName || !data.program || !data.year || !data.email || !data.password) {
-        return 'All fields are required';
-    }
-
-    // Validate full name (at least 2 characters)
-    if (data.fullName.length < 2) {
-        return 'Full name must be at least 2 characters';
-    }
-
-    // Validate program
-    if (!['BSIT', 'BSIS', 'BSCS'].includes(data.program)) {
-        return 'Please select a valid program';
-    }
-
-    // Validate year
-    if (!['1st', '2nd', '3rd', '4th'].includes(data.year)) {
-        return 'Please select a valid year level';
-    }
-
-    // Validate email format
-    if (!Utils.isValidEmail(data.email)) {
-        return 'Invalid email format';
-    }
-
-    // Validate LSPU email
-    if (!Utils.isValidLSPUEmail(data.email)) {
-        return 'Please use your LSPU institutional email (@lspu.edu.ph)';
-    }
-
-    // Validate password
-    const passwordValidation = Utils.validatePassword(data.password);
-    if (!passwordValidation.isValid) {
-        return passwordValidation.errors[0];
-    }
-
-    return null;
-}
-
-function setInputState(element, state) {
-    resetInputState(element);
-    if (state) {
-        element.classList.add(`input--${state}`);
-    }
-}
-
-function resetInputState(element) {
-    element.classList.remove('input--error', 'input--warning', 'input--success');
-}

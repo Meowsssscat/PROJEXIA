@@ -4,14 +4,24 @@ const ratingSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true,
-    unique: true // One rating per user
+    required: false,
+    default: null // Allow anonymous ratings
   },
   rating: {
     type: Number,
     required: true,
     min: 1,
     max: 5
+  },
+  comments: {
+    type: String,
+    required: false,
+    default: '',
+    maxlength: 500
+  },
+  isPublic: {
+    type: Boolean,
+    default: true
   },
   createdAt: {
     type: Date,
@@ -25,6 +35,7 @@ const ratingSchema = new mongoose.Schema({
 
 // Index for faster queries
 ratingSchema.index({ userId: 1 });
+ratingSchema.index({ createdAt: -1 });
 
 // Update timestamp on save
 ratingSchema.pre('save', function(next) {

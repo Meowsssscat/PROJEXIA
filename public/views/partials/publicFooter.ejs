@@ -1,4 +1,53 @@
-<footer class="public-footer">
+<footer class="footer">
+  <div class="footer-container">
+    <!-- Footer Grid -->
+    <div class="footer-grid">
+      <!-- Brand Section -->
+      <div class="footer-col span-2">
+        <div class="footer-brand-section">
+          <h3>
+            <span class="brand-span-primary">Proje</span><span class="brand-span-secondary">X</span><span class="brand-span-primary">ia</span>
+          </h3>
+          <p>The premier platform for College of Computer Studies students to showcase their innovative projects 
+              and connect with the academic community.</p>
+        </div>
+      </div>
+
+      <!-- Platform Links -->
+      <div class="footer-col">
+        <h4>Platform</h4>
+        <div class="footer-links">
+          <a href="/browse" class="footer-link">Browse Projects</a>
+          <a href="/upload" class="footer-link">Upload Project</a>
+          <a href="/portfolio" class="footer-link">Student Portfolios</a>
+          <a href="/#how-it-works" class="footer-link">How It Works</a>
+        </div>
+      </div>
+
+      <!-- Support Links -->
+      <div class="footer-col">
+        <h4>Support</h4>
+        <div class="footer-links">
+          <a href="/help" class="footer-link">Help Center</a>
+          <a href="/guidelines" class="footer-link">Guidelines</a>
+          <a href="/contact" class="footer-link">Contact Faculty</a>
+          <% if (typeof currentUser !== 'undefined' && currentUser) { %>
+            <a href="/report" class="footer-link">Report Issue</a>
+          <% } else { %>
+            <a href="/signin" class="footer-link">Report Issue</a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+      <div class="footer-bottom-content">
+        <p>&copy; 2025 Projexia. All rights reserved. Built for CCS Excellence.</p>
+      </div>
+    </div>
+  </div>
+</footer>
   <div class="public-footer__container">
     
     <!-- Logo & About Section -->
@@ -82,6 +131,6 @@
 
   <!-- Bottom Bar -->
   <div class="public-footer__bottom">
-    <p>&copy; 2024 Projexia. All rights reserved. Built with ❤️ by CCS Students.</p>
+        <p>&copy; 2025 Projexia. All rights reserved. Built for CCS Excellence.</p>
   </div>
 </footer>

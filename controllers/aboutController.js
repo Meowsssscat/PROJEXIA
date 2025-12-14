@@ -1,22 +1,13 @@
 const User = require('../models/User');
 
-// GET /about - About page
+// GET /about - About page (accessible to everyone)
 exports.getAboutPage = async (req, res) => {
     try {
-        const userId = req.session.userId;
-        
-        if (!userId) {
-            return res.redirect('/signin');
-        }
+        // Use req.user from optionalAuth middleware
+        const currentUser = req.user || null;
 
-        const currentUser = await User.findById(userId).select('-password');
-        
-        if (!currentUser) {
-            req.session.destroy();
-            return res.redirect('/signin');
-        }
-
-        res.render('about', {
+        res.render('about-modern', {
+            user: currentUser,
             currentUser
         });
     } catch (error) {

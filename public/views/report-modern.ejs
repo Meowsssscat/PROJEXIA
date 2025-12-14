@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Report an Issue - Projexia</title>
+    <link rel="icon" type="image/png" href="/images/favicon.png" />
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="/css/projexia-design-system.css" />
+    <link rel="stylesheet" href="/css/navbar-modern.css" />
+    <link rel="stylesheet" href="/css/footer-modern.css" />
+    <link rel="stylesheet" href="/css/utility-pages-modern.css" />
+    <link rel="stylesheet" href="/css/dropdown-modern.css" />
+    
+    <!-- SVG Icons -->
+    <script src="/js/svgIcons.js"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+    <script src="/js/theme.js"></script>
+    
+    <style>
+        .report-container {
+            max-width: 48rem;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .report-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .report-header h1 {
+            font-family: var(--font-poppins);
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 0 0.75rem 0;
+            color: hsl(var(--foreground));
+        }
+
+        .report-header p {
+            font-size: 1rem;
+            color: hsl(var(--muted-foreground));
+            margin: 0;
+        }
+
+        .report-form {
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: hsl(var(--foreground));
+            font-family: var(--font-inter);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid hsl(var(--border));
+            border-radius: 6px;
+            background: hsl(var(--background));
+            color: hsl(var(--foreground));
+            font-family: var(--font-inter);
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: hsl(var(--primary));
+            box-shadow: 0 0 8px hsl(var(--primary) / 0.2);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 8rem;
+        }
+
+        .form-group select {
+            cursor: pointer;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1.25rem;
+            padding-right: 2.5rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: var(--font-inter);
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: hsl(var(--primary) / 0.85);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px hsl(var(--primary) / 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: hsl(var(--foreground));
+            border: 1px solid hsl(var(--border));
+        }
+
+        .btn-outline:hover {
+            border-color: hsl(var(--primary));
+            color: hsl(var(--primary));
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .info-box {
+            background: hsl(var(--primary) / 0.08);
+            border: 1px solid hsl(var(--primary) / 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .success-message {
+            display: none;
+            background: hsl(142 76% 36% / 0.15);
+            border: 1px solid hsl(142 76% 36% / 0.3);
+            color: hsl(142 76% 36%);
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .error-message {
+            display: none;
+            background: hsl(0 84% 60% / 0.15);
+            border: 1px solid hsl(0 84% 60% / 0.3);
+            color: hsl(0 84% 60%);
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        @media (max-width: 640px) {
+            .report-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen flex flex-col">
+        <!-- Navbar -->
+        <%- include('partials/navbar-modern') %>
+        
+        <!-- Main Content -->
+        <main style="flex: 1; padding-top: 4rem;">
+            <div class="report-container">
+                <div class="report-header">
+                    <h1>Report an Issue</h1>
+                    <p>Help us improve Projexia by reporting bugs, issues, or suggesting improvements</p>
+                </div>
+
+                <div class="report-form">
+                    <div class="info-box">
+                        Please provide detailed information about the issue you encountered. This helps us identify and fix problems faster.
+                    </div>
+
+                    <div class="success-message" id="successMessage">
+                        Thank you! Your report has been submitted successfully. Our team will review it shortly.
+                    </div>
+
+                    <div class="error-message" id="errorMessage">
+                        An error occurred while submitting your report. Please try again.
+                    </div>
+
+                    <form id="reportForm" onsubmit="handleReportSubmit(event)">
+                        <div class="form-group">
+                            <label for="reportType">Issue Type *</label>
+                            <select id="reportType" name="reportType" required>
+                                <option value="">Select an issue type</option>
+                                <option value="bug">Bug Report</option>
+                                <option value="suggestion">Feature Suggestion</option>
+                                <option value="ui">UI/UX Improvement</option>
+                                <option value="performance">Performance Issue</option>
+                                <option value="security">Security Concern</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="title">Title *</label>
+                            <input type="text" id="title" name="title" placeholder="Brief title of the issue" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Description *</label>
+                            <textarea id="description" name="description" placeholder="Detailed description of the issue. Include steps to reproduce if applicable." required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pageUrl">Page or Feature</label>
+                            <input type="text" id="pageUrl" name="pageUrl" placeholder="e.g., Browse Projects, User Profile, Upload Page" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="userEmail">Your Email</label>
+                            <input type="email" id="userEmail" name="userEmail" placeholder="<%= user?.email || 'your@email.com' %>" <% if (user?.email) { %>value="<%= user.email %>" readonly<% } %> />
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Submit Report</button>
+                            <button type="reset" class="btn btn-outline">Clear</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Footer -->
+        <%- include('partials/footer-modern') %>
+    </div>
+
+    <script>
+        function handleReportSubmit(e) {
+            e.preventDefault();
+            
+            const form = document.getElementById('reportForm');
+            const successMsg = document.getElementById('successMessage');
+            const errorMsg = document.getElementById('errorMessage');
+            const submitBtn = form.querySelector('button[type="submit"]');
+            
+            // Hide messages
+            successMsg.style.display = 'none';
+            errorMsg.style.display = 'none';
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Submitting...';
+            
+            // Collect form data
+            const formData = {
+                type: document.getElementById('reportType').value,
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                pageUrl: document.getElementById('pageUrl').value,
+                email: document.getElementById('userEmail').value,
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent
+            };
+            
+            // Simulate form submission (in production, this would send to a backend endpoint)
+            console.log('Report submitted:', formData);
+            
+            // For now, show success message
+            setTimeout(() => {
+                successMsg.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+                form.reset();
+                
+                // Hide success message after 5 seconds
+                setTimeout(() => {
+                    successMsg.style.display = 'none';
+                }, 5000);
+            }, 1000);
+        }
+    </script>
+    
+    <!-- Socket.IO Client -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Notifications System -->
+    <script src="/js/notifications.js"></script>
+    <!-- Liked Projects System -->
+    <script src="/js/liked-projects.js"></script>
+</body>
+</html>
