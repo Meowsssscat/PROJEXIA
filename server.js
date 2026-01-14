@@ -56,10 +56,12 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+    secure: false, // Set to false for Railway - Railway handles HTTPS at proxy level
     httpOnly: true,
-    maxAge: 1000 * 60 * 60 * 24 // 24 hours
-  }
+    maxAge: 1000 * 60 * 60 * 24, // 24 hours
+    sameSite: 'lax' // Important for Railway deployment
+  },
+  proxy: process.env.NODE_ENV === 'production' // Trust Railway's proxy
 }));
 
 // Optional user middleware - Attach user to req if logged in (doesn't require authentication)
