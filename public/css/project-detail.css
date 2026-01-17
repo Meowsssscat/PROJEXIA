@@ -626,6 +626,11 @@
   line-height: 1.6;
   white-space: pre-wrap;
   word-wrap: break-word;
+  text-indent: 0; /* Remove any indentation */
+}
+
+.project-description-full::first-line {
+  text-indent: 0; /* Ensure first line has no indent */
 }
 
 @media (min-width: 769px) {

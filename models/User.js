@@ -31,8 +31,8 @@ const userSchema = new mongoose.Schema({
     default: null,
     validate: {
       validator: function(value) {
-        // Track is required for 3rd and 4th year students
-        if ((this.year === '3rd' || this.year === '4th') && !value) {
+        // Track is required for 3rd and 4th year BSIT and BSCS students only (BSIS has no tracks)
+        if ((this.year === '3rd' || this.year === '4th') && this.program !== 'BSIS' && !value) {
           return false;
         }
         // BSIT students can have: WMAD, AMG, SMP, NETAD

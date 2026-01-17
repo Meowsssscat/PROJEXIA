@@ -765,7 +765,8 @@
             const year = yearSelect.value;
             const isThirdOrFourthYear = year === '3rd' || year === '4th';
 
-            if (isThirdOrFourthYear && program) {
+            // Only show track field for BSIT and BSCS (BSIS has no tracks)
+            if (isThirdOrFourthYear && program && program !== 'BSIS') {
                 trackGroup.style.display = 'block';
                 trackSelect.required = true;
                 updateTrackOptions(program);
@@ -808,8 +809,8 @@
             // Determine if signup or signin
             const isSignupForm = !!document.getElementById('fullName');
             
-            // Validate track for 3rd and 4th year students
-            if (isSignupForm && (data.yearLevel === '3rd' || data.yearLevel === '4th') && !data.track) {
+            // Validate track for 3rd and 4th year students (except BSIS - they don't have tracks)
+            if (isSignupForm && (data.yearLevel === '3rd' || data.yearLevel === '4th') && data.program !== 'BSIS' && !data.track) {
                 showMessage('Please select a specialization track', 'error');
                 submitBtn.disabled = false;
                 return;

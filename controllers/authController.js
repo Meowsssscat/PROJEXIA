@@ -10,8 +10,8 @@ const signup = async (req, res) => {
   try {
     const { fullName, program, year, email, password, track } = req.body;
 
-    // Validate track for 3rd and 4th year students
-    if ((year === '3rd' || year === '4th') && !track) {
+    // Validate track for 3rd and 4th year students (except BSIS - they don't have tracks)
+    if ((year === '3rd' || year === '4th') && program !== 'BSIS' && !track) {
       return res.status(400).json({ 
         message: 'Track is required for 3rd and 4th year students' 
       });

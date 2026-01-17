@@ -86,23 +86,39 @@ exports.createProject = async (req, res) => {
     let thumbnail = null;
     if (thumb) {
       try {
-        // Don't specify timestamp - let Cloudinary handle it
+        console.log('Uploading thumbnail:', thumb.originalname, 'Size:', thumb.size, 'bytes');
+        
         const result = await cloudinary.uploader.upload(thumb.path, {
           folder: `projects/${userId}/${name}/thumbnail`,
-          resource_type: 'auto'
+          resource_type: 'auto',
+          timeout: 60000, // 60 seconds
+          transformation: [
+            { width: 1200, height: 630, crop: 'limit' }, // Limit max size
+            { quality: 'auto:good' } // Auto optimize quality
+          ]
         });
+        
         thumbnail = {
           url: result.secure_url,
           public_id: result.public_id
         };
         fs.unlinkSync(thumb.path);
+        console.log('Thumbnail uploaded successfully');
       } catch (uploadError) {
         console.error('Thumbnail upload error:', uploadError);
         // Clean up file
         if (fs.existsSync(thumb.path)) {
           fs.unlinkSync(thumb.path);
         }
-        throw new Error('Failed to upload thumbnail image. Your system time may be incorrect. Please sync your computer clock and try again.');
+        
+        // Better error message based on error type
+        if (uploadError.http_code === 499 || uploadError.name === 'TimeoutError') {
+          throw new Error('Upload timeout. Please check your internet connection and try again with a smaller image.');
+        } else if (uploadError.message.includes('File size too large')) {
+          throw new Error('Image file is too large. Please use an image smaller than 10MB.');
+        } else {
+          throw new Error('Failed to upload thumbnail image. Please try again.');
+        }
       }
     }
 
@@ -111,15 +127,24 @@ exports.createProject = async (req, res) => {
     const imagesToUpload = imgs.slice(0, 5); // Ensure max 5 images
     for (const file of imagesToUpload) {
       try {
+        console.log('Uploading image:', file.originalname, 'Size:', file.size, 'bytes');
+        
         const result = await cloudinary.uploader.upload(file.path, {
           folder: `projects/${userId}/${name}/images`,
-          resource_type: 'auto'
+          resource_type: 'auto',
+          timeout: 60000, // 60 seconds
+          transformation: [
+            { width: 1920, height: 1080, crop: 'limit' }, // Limit max size
+            { quality: 'auto:good' } // Auto optimize quality
+          ]
         });
+        
         otherImages.push({
           url: result.secure_url,
           public_id: result.public_id
         });
         fs.unlinkSync(file.path);
+        console.log('Image uploaded successfully');
       } catch (uploadError) {
         console.error('Image upload error:', uploadError);
         // Clean up file and continue with other images
@@ -127,6 +152,7 @@ exports.createProject = async (req, res) => {
           fs.unlinkSync(file.path);
         }
         // Continue with other images even if one fails
+        console.log('Skipping failed image, continuing with others...');
       }
     }
 
