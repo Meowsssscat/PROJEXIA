@@ -135,7 +135,7 @@ exports.getProject = async (req, res) => {
         // ========================================
         // PASS ALL DATA TO FRONTEND
         // ========================================
-        return res.render('profile', {
+        return res.render('profile-modern', {
             project: projectObject,
             uploader: userObject,
             comments: allComments,
@@ -148,7 +148,8 @@ exports.getProject = async (req, res) => {
             userIdsWhoViewed,
             hasLiked: !!hasLiked,
             hasViewed: !!hasViewed,
-            isUploader  // ADD THIS
+            isUploader,  // ADD THIS
+            likedProjectsData: {}  // Add empty object to prevent errors
             
         });
         
@@ -342,6 +343,10 @@ exports.getProfile = async (req, res) => {
     // Get ONLY projects of the logged-in user
     const projects = await Project.find({ userId: userId });
 
+    // Get liked projects by the user
+    const likedProjectIds = await Like.find({ userId: userId }).distinct('projectId');
+    const likedProjects = await Project.find({ _id: { $in: likedProjectIds } });
+
     // Fetch counts for user's projects
     const projectIds = projects.map(p => p._id);
     
@@ -380,13 +385,24 @@ exports.getProfile = async (req, res) => {
     });
 
     const data = this.prepareData(users, projects, projectStats);
+    
+    // Prepare liked projects data
+    const likedProjectsData = this.prepareData(users, likedProjects, projectStats);
 
-    return res.render('profile', { 
+    return res.render('profile-modern', { 
     data,
-    currentUser: {
+    likedProjectsData,
+    user: currentUser, // For navbar
+    userProfile: {
         fullName: currentUser.fullName,
         program: currentUser.program,
         year: currentUser.year,
+        track: currentUser.track,
+        bio: currentUser.bio,
+        profilePicture: currentUser.profilePicture,
+        github: currentUser.github,
+        portfolio: currentUser.portfolio,
+        linkedin: currentUser.linkedin,
         email: currentUser.email,
         lastProfileEdit: currentUser.lastProfileEdit
     }

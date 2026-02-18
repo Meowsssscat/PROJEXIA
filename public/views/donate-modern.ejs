@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Support Projexia - Donate</title>
+    <link rel="icon" type="image/png" href="/images/favicon.png" />
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="/css/projexia-design-system.css" />
+    <link rel="stylesheet" href="/css/navbar-modern.css" />
+    <link rel="stylesheet" href="/css/footer-modern.css" />
+    <link rel="stylesheet" href="/css/utility-pages-modern.css" />
+    <link rel="stylesheet" href="/css/dropdown-modern.css" />
+    
+    <!-- SVG Icons -->
+    <script src="/js/svgIcons.js"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+    <script src="/js/theme.js"></script>
+    
+    <style>
+        .donate-container {
+            max-width: 64rem;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .donate-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .donate-header h1 {
+            font-family: var(--font-poppins);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0 0 0.75rem 0;
+            color: hsl(var(--foreground));
+        }
+
+        .donate-header p {
+            font-size: 1.1rem;
+            color: hsl(var(--muted-foreground));
+            max-width: 40rem;
+            margin: 0 auto;
+        }
+
+        .donate-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .donate-content {
+                grid-template-columns: 1fr;
+            }
+
+            .donate-header h1 {
+                font-size: 2rem;
+            }
+        }
+
+        .donate-card {
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .donate-card:hover {
+            border-color: hsl(var(--primary));
+            box-shadow: 0 4px 12px hsl(var(--primary) / 0.15);
+            transform: translateY(-2px);
+        }
+
+        .donate-card h3 {
+            font-family: var(--font-poppins);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0 0 1rem 0;
+            color: hsl(var(--foreground));
+        }
+
+        .donate-card p {
+            color: hsl(var(--muted-foreground));
+            margin: 0 0 1.5rem 0;
+            line-height: 1.6;
+        }
+
+        .donate-button {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            text-decoration: none;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: var(--font-inter);
+        }
+
+        .donate-button:hover {
+            background: hsl(var(--primary) / 0.85);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px hsl(var(--primary) / 0.3);
+        }
+
+        .info-section {
+            background: hsl(var(--primary) / 0.08);
+            border: 1px solid hsl(var(--primary) / 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .info-section h2 {
+            font-family: var(--font-poppins);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0 0 1rem 0;
+            color: hsl(var(--foreground));
+        }
+
+        .info-section p {
+            color: hsl(var(--muted-foreground));
+            line-height: 1.8;
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen flex flex-col">
+        <!-- Navbar -->
+        <%- include('partials/navbar-modern') %>
+        
+        <!-- Main Content -->
+        <main style="flex: 1; padding-top: 4rem;">
+            <div class="donate-container">
+                <div class="donate-header">
+                    <h1>Support Projexia</h1>
+                    <p>Help us continue building the best platform for CCS students to showcase their projects and collaborate.</p>
+                </div>
+
+                <div class="donate-content">
+                    <div class="donate-card">
+                        <h3>Make a Donation</h3>
+                        <p>Your support helps us maintain and improve Projexia for all CCS students. Every contribution makes a difference!</p>
+                        <p style="font-size: 0.9rem; color: hsl(var(--primary));">Coming soon: Support us through donations via PayPal, GCash, or other payment methods.</p>
+                        <button class="donate-button" disabled style="opacity: 0.6; cursor: not-allowed;">
+                            Coming Soon
+                        </button>
+                    </div>
+
+                    <div class="donate-card">
+                        <h3>Partner With Us</h3>
+                        <p>Interested in partnering with Projexia? We're always looking for sponsors and collaborators who share our vision.</p>
+                        <p style="font-size: 0.9rem; color: hsl(var(--primary));">Get in touch with our team to discuss partnership opportunities.</p>
+                        <a href="https://www.facebook.com/profile.php?id=61584430631441" target="_blank" rel="noopener noreferrer" class="donate-button">Contact Us</a>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h2>Why Support Projexia?</h2>
+                    <p>Projexia is a student-built platform designed by CCS students, for CCS students. We're committed to creating a space where students can:</p>
+                    <ul style="margin: 1rem 0 0 1.5rem; color: hsl(var(--muted-foreground));">
+                        <li>Showcase their academic and personal projects</li>
+                        <li>Discover and learn from other students' work</li>
+                        <li>Build their professional portfolios</li>
+                        <li>Collaborate and network with peers</li>
+                        <li>Get recognition for their contributions</li>
+                    </ul>
+                    <p style="margin-top: 1.5rem;">By supporting Projexia, you're investing in the future of our community and helping us create opportunities for students to grow and succeed.</p>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Footer -->
+        <%- include('partials/footer-modern') %>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="/js/liked-projects.js"></script>
+    <script src="/js/notifications.js"></script>
+</body>
+</html>

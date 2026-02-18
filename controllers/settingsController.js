@@ -24,7 +24,7 @@ exports.getSettings = async (req, res) => {
       return res.redirect('/signin');
     }
 
-    return res.render('settings', {
+    return res.render('settings-modern', {
       currentUser: {
         _id: user._id,
         fullName: user.fullName,
@@ -38,6 +38,63 @@ exports.getSettings = async (req, res) => {
   } catch (error) {
     console.error('Error loading settings:', error);
     return res.status(500).json({ message: 'Failed to load settings' });
+  }
+};
+
+// ===============================
+// CHANGE PASSWORD
+// ===============================
+exports.changePassword = async (req, res) => {
+  try {
+    const userId = req.session?.userId;
+    const { currentPassword, newPassword } = req.body;
+
+    if (!userId) {
+      return res.status(401).json({ message: 'Not logged in' });
+    }
+
+    // Validate input
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: 'New password must be at least 6 characters long' });
+    }
+
+    // Get user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Verify current password
+    const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Current password is incorrect' });
+    }
+
+    // Check if new password is same as current
+    const isSamePassword = await bcrypt.compare(newPassword, user.password);
+    if (isSamePassword) {
+      return res.status(400).json({ message: 'New password must be different from current password' });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update password
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.json({ 
+      success: true, 
+      message: 'Password changed successfully' 
+    });
+
+  } catch (error) {
+    console.error('Error changing password:', error);
+    return res.status(500).json({ message: 'Failed to change password' });
   }
 };
 

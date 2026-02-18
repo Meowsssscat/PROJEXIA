@@ -8,14 +8,15 @@ if (process.env.SENDGRID_API_KEY) {
   console.warn('⚠️ SENDGRID_API_KEY not found - emails will not work!');
 }
 
-// Generate 5-digit OTP
+// Generate 6-digit OTP
 const generateOTP = () => {
-  return Math.floor(10000 + Math.random() * 90000).toString();
+  return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
 // Send OTP Email via SendGrid
 const sendOTPEmail = async (email, otp) => {
   console.log('📧 Sending OTP via SendGrid:', otp, 'to:', email);
+  console.log(otp);
   
   const msg = {
     to: email,
@@ -33,99 +34,83 @@ const sendOTPEmail = async (email, otp) => {
         <style>
           * { margin: 0; padding: 0; box-sizing: border-box; }
           body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
             line-height: 1.6; 
-            color: #141414; 
-            background: #f2f1ed;
+            color: #333; 
+            background: #f5f5f5;
             padding: 20px;
           }
           .container { 
-            max-width: 600px; 
+            max-width: 500px; 
             margin: 0 auto; 
             background: white;
-            border-radius: 20px;
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
           }
           .header { 
-            background: linear-gradient(135deg, #c9362e 0%, #d0312d 100%); 
-            color: white; 
-            padding: 40px 30px; 
-            text-align: center;
+            background: white;
+            padding: 30px 30px 20px; 
+            border-bottom: 1px solid #e0e0e0;
           }
           .logo { 
-            font-size: 2.5rem; 
-            font-weight: 700; 
-            margin-bottom: 10px;
-            letter-spacing: -0.5px;
+            font-size: 1.5rem; 
+            font-weight: 600; 
+            color: #333;
+            margin-bottom: 5px;
           }
           .tagline { 
-            font-size: 0.95rem; 
-            opacity: 0.95;
-            margin: 0;
+            font-size: 0.85rem; 
+            color: #666;
           }
           .content { 
-            padding: 40px 30px;
+            padding: 30px;
           }
           .title {
-            color: #c9362e;
-            font-size: 1.8rem;
-            margin-bottom: 20px;
+            color: #333;
+            font-size: 1.25rem;
+            margin-bottom: 15px;
             font-weight: 600;
           }
           .message {
-            color: #141414;
-            font-size: 1rem;
-            margin-bottom: 30px;
+            color: #555;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
           }
           .otp-box { 
-            background: #f2f1ed;
-            padding: 25px; 
-            text-align: center; 
-            font-size: 42px; 
-            font-weight: 700; 
-            letter-spacing: 12px; 
-            margin: 30px 0; 
-            border: 3px solid #c9362e; 
-            border-radius: 12px; 
-            color: #c9362e;
-          }
-          .info-box { 
-            background: #fff3cd; 
-            border-left: 4px solid #f08c41; 
+            background: #f9f9f9;
             padding: 20px; 
-            margin: 25px 0;
+            text-align: center; 
+            font-size: 32px; 
+            font-weight: 600; 
+            letter-spacing: 8px; 
+            margin: 25px 0; 
+            border: 2px solid #e0e0e0; 
+            border-radius: 6px; 
+            color: #333;
+          }
+          .info-text { 
+            background: #f9f9f9; 
+            padding: 15px; 
+            margin: 20px 0;
             border-radius: 8px;
-          }
-          .info-box strong {
-            color: #141414;
-            display: block;
-            margin-bottom: 10px;
-            font-size: 1.05rem;
-          }
-          .info-box ul {
-            margin: 10px 0 0 0;
-            padding-left: 20px;
-            color: #141414;
-          }
-          .info-box li {
-            margin: 8px 0;
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.5;
+            border: 1px solid #e8e8e8;
           }
           .footer { 
-            background: #f2f1ed;
+            background: #f9f9f9;
             text-align: center; 
-            padding: 30px;
-            color: #8d8f8c; 
-            font-size: 0.9rem;
+            padding: 20px;
+            color: #999; 
+            font-size: 0.8rem;
+            border-top: 1px solid #e0e0e0;
           }
           .footer-title {
-            color: #141414;
+            color: #666;
             font-weight: 600;
             margin-bottom: 5px;
-          }
-          .footer-copy {
-            margin-top: 10px;
-            font-size: 0.85rem;
           }
         </style>
       </head>
@@ -136,26 +121,21 @@ const sendOTPEmail = async (email, otp) => {
             <p class="tagline">College of Computer Studies</p>
           </div>
           <div class="content">
-            <h2 class="title">✉️ Email Verification</h2>
-            <p class="message">Thank you for signing up! Please use the following verification code to complete your registration:</p>
+            <h2 class="title">Email Verification</h2>
+            <p class="message">Thank you for signing up. Please use the following code to verify your email:</p>
             
             <div class="otp-box">${otp}</div>
             
-            <div class="info-box">
-              <strong>⚠️ Important Information:</strong>
-              <ul>
-                <li>This code will expire in <strong>10 minutes</strong></li>
-                <li>You have <strong>3 attempts</strong> to enter the correct code</li>
-                <li>Do not share this code with anyone</li>
-              </ul>
+            <div class="info-text">
+              This code will expire in 10 minutes. You have 3 attempts to enter the correct code. Do not share this code with anyone.
             </div>
             
-            <p class="message">If you didn't request this code, please ignore this email and your account will remain secure.</p>
+            <p class="message">If you didn't request this code, please ignore this email.</p>
           </div>
           <div class="footer">
             <p class="footer-title">PROJEXIA</p>
             <p>Project Showcase Platform for CCS Students</p>
-            <p class="footer-copy">&copy; ${new Date().getFullYear()} LSPU College of Computer Studies. All rights reserved.</p>
+            <p>&copy; ${new Date().getFullYear()} LSPU College of Computer Studies</p>
           </div>
         </div>
       </body>
@@ -197,149 +177,120 @@ const sendPasswordResetEmail = async (email, otp) => {
         <style>
           * { margin: 0; padding: 0; box-sizing: border-box; }
           body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
             line-height: 1.6; 
-            color: #141414; 
-            background: #f2f1ed;
+            color: #333; 
+            background: #f5f5f5;
             padding: 20px;
           }
           .container { 
-            max-width: 600px; 
+            max-width: 500px; 
             margin: 0 auto; 
             background: white;
-            border-radius: 20px;
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
           }
           .header { 
-            background: linear-gradient(135deg, #c9362e 0%, #d0312d 100%); 
-            color: white; 
-            padding: 40px 30px; 
-            text-align: center;
+            background: white;
+            padding: 30px 30px 20px; 
+            border-bottom: 1px solid #e0e0e0;
           }
           .logo { 
-            font-size: 2.5rem; 
-            font-weight: 700; 
-            margin-bottom: 10px;
-            letter-spacing: -0.5px;
+            font-size: 1.5rem; 
+            font-weight: 600; 
+            color: #333;
+            margin-bottom: 5px;
           }
           .tagline { 
-            font-size: 0.95rem; 
-            opacity: 0.95;
-            margin: 0;
+            font-size: 0.85rem; 
+            color: #666;
           }
           .content { 
-            padding: 40px 30px;
+            padding: 30px;
           }
           .title {
-            color: #c9362e;
-            font-size: 1.8rem;
-            margin-bottom: 20px;
+            color: #333;
+            font-size: 1.25rem;
+            margin-bottom: 15px;
             font-weight: 600;
           }
           .message {
-            color: #141414;
-            font-size: 1rem;
-            margin-bottom: 30px;
+            color: #555;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
           }
           .otp-box { 
-            background: #f2f1ed;
-            padding: 25px; 
-            text-align: center; 
-            font-size: 42px; 
-            font-weight: 700; 
-            letter-spacing: 12px; 
-            margin: 30px 0; 
-            border: 3px solid #c9362e; 
-            border-radius: 12px; 
-            color: #c9362e;
-          }
-          .info-box { 
-            background: #fff3cd; 
-            border-left: 4px solid #f08c41; 
+            background: #f9f9f9;
             padding: 20px; 
-            margin: 25px 0;
+            text-align: center; 
+            font-size: 32px; 
+            font-weight: 600; 
+            letter-spacing: 8px; 
+            margin: 25px 0; 
+            border: 2px solid #e0e0e0; 
+            border-radius: 6px; 
+            color: #333;
+          }
+          .info-text { 
+            background: #f9f9f9; 
+            padding: 15px; 
+            margin: 20px 0;
             border-radius: 8px;
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.5;
+            border: 1px solid #e8e8e8;
           }
-          .info-box strong {
-            color: #141414;
-            display: block;
-            margin-bottom: 10px;
-            font-size: 1.05rem;
-          }
-          .info-box ul {
-            margin: 10px 0 0 0;
-            padding-left: 20px;
-            color: #141414;
-          }
-          .info-box li {
-            margin: 8px 0;
-          }
-          .security-box {
-            background: rgba(201, 54, 46, 0.1);
-            border-left: 4px solid #c9362e;
-            padding: 20px;
-            margin: 25px 0;
+          .security-text {
+            background: #fff9f0;
+            padding: 15px;
+            margin: 20px 0;
             border-radius: 8px;
-          }
-          .security-box strong {
-            color: #c9362e;
-            display: block;
-            margin-bottom: 10px;
-            font-size: 1.05rem;
-          }
-          .security-box p {
-            color: #141414;
-            margin: 0;
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.5;
+            border: 1px solid #ffe4b3;
           }
           .footer { 
-            background: #f2f1ed;
+            background: #f9f9f9;
             text-align: center; 
-            padding: 30px;
-            color: #8d8f8c; 
-            font-size: 0.9rem;
+            padding: 20px;
+            color: #999; 
+            font-size: 0.8rem;
+            border-top: 1px solid #e0e0e0;
           }
           .footer-title {
-            color: #141414;
+            color: #666;
             font-weight: 600;
             margin-bottom: 5px;
-          }
-          .footer-copy {
-            margin-top: 10px;
-            font-size: 0.85rem;
           }
         </style>
       </head>
       <body>
         <div class="container">
           <div class="header">
-            <div class="logo">🔒 PROJEXIA</div>
+            <div class="logo">PROJEXIA</div>
             <p class="tagline">Password Reset Request</p>
           </div>
           <div class="content">
             <h2 class="title">Reset Your Password</h2>
-            <p class="message">We received a request to reset your password. Use the following verification code to proceed:</p>
+            <p class="message">We received a request to reset your password. Use the following code to proceed:</p>
             
             <div class="otp-box">${otp}</div>
             
-            <div class="info-box">
-              <strong>⚠️ Important Information:</strong>
-              <ul>
-                <li>This code will expire in <strong>10 minutes</strong></li>
-                <li>You have <strong>3 attempts</strong> to enter the correct code</li>
-                <li>Do not share this code with anyone</li>
-              </ul>
+            <div class="info-text">
+              This code will expire in 10 minutes. You have 3 attempts to enter the correct code. Do not share this code with anyone.
             </div>
             
-            <div class="security-box">
-              <strong>🔐 Security Notice</strong>
-              <p>If you didn't request a password reset, please ignore this email and ensure your account is secure. Your password will not be changed unless you complete the reset process.</p>
+            <div class="security-text">
+              <strong>Security Notice:</strong> If you didn't request a password reset, please ignore this email. Your password will not be changed unless you complete the reset process.
             </div>
           </div>
           <div class="footer">
             <p class="footer-title">PROJEXIA</p>
             <p>Project Showcase Platform for CCS Students</p>
-            <p class="footer-copy">&copy; ${new Date().getFullYear()} LSPU College of Computer Studies. All rights reserved.</p>
+            <p>&copy; ${new Date().getFullYear()} LSPU College of Computer Studies</p>
           </div>
         </div>
       </body>

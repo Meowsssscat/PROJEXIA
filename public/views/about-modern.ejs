@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About Projexia</title>
+    <link rel="icon" type="image/png" href="/images/favicon.png" />
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="/css/projexia-design-system.css" />
+    <link rel="stylesheet" href="/css/navbar-modern.css" />
+    <link rel="stylesheet" href="/css/modal-modern.css" />
+    <link rel="stylesheet" href="/css/footer-modern.css" />
+    <link rel="stylesheet" href="/css/dropdown-modern.css" />
+    
+    <!-- SVG Icons -->
+    <script src="/js/svgIcons.js"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+    <script src="/js/theme.js"></script>
+    
+    <style>
+        /* About Page Specific Styles */
+        .about-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .about-content {
+            flex: 1;
+            padding-top: 0;
+        }
+
+        /* Hero Section */
+        .about-hero {
+            background: hsl(var(--muted));
+            border-bottom: 1px solid hsl(var(--border));
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero-title {
+            font-family: var(--font-orbitron);
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            color: hsl(var(--foreground));
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: hsl(var(--primary));
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            color: hsl(var(--muted-foreground));
+            line-height: 1.7;
+        }
+
+        /* Features Section */
+        .about-features {
+            padding: 4rem 2rem;
+            background: hsl(var(--background));
+        }
+
+        .features-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            padding: 2rem;
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: hsl(var(--primary));
+            box-shadow: 0 4px 12px hsl(var(--primary) / 0.1);
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            width: 4rem;
+            height: 4rem;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--secondary) / 0.1));
+            border-radius: var(--radius);
+            color: hsl(var(--primary));
+        }
+
+        .feature-icon svg {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            color: hsl(var(--foreground));
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .feature-card p {
+            color: hsl(var(--muted-foreground));
+            line-height: 1.6;
+        }
+
+        /* Mission & Vision Sections */
+        .about-mission,
+        .about-vision {
+            padding: 4rem 2rem;
+        }
+
+        .about-mission {
+            background: hsl(var(--card));
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        .about-vision {
+            background: hsl(var(--background));
+        }
+
+        .mission-content,
+        .vision-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .mission-content h2,
+        .vision-content h2 {
+            font-family: var(--font-orbitron);
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            color: hsl(var(--foreground));
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .mission-content h2::before,
+        .vision-content h2::before {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--secondary)));
+        }
+
+        .mission-content p,
+        .vision-content p {
+            font-size: 1.1rem;
+            color: hsl(var(--muted-foreground));
+            line-height: 1.8;
+            margin-top: 2rem;
+        }
+
+        /* Academic Information Section */
+        .about-academic {
+            padding: 4rem 2rem;
+            background: hsl(var(--muted));
+            border-top: 1px solid hsl(var(--border));
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        .academic-title {
+            font-family: var(--font-orbitron);
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            color: hsl(var(--foreground));
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .academic-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--secondary)));
+        }
+
+        .academic-grid {
+            max-width: 1200px;
+            margin: 3rem auto 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .academic-card {
+            padding: 2rem;
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .academic-card:hover {
+            border-color: hsl(var(--primary));
+            box-shadow: 0 4px 12px hsl(var(--primary) / 0.1);
+            transform: translateY(-4px);
+        }
+
+        .academic-icon {
+            width: 3.5rem;
+            height: 3.5rem;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--secondary) / 0.1));
+            border-radius: var(--radius);
+            color: hsl(var(--primary));
+        }
+
+        .academic-icon svg {
+            width: 1.75rem;
+            height: 1.75rem;
+        }
+
+        .academic-card h4 {
+            font-size: 1.1rem;
+            color: hsl(var(--foreground));
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .academic-card p {
+            color: hsl(var(--muted-foreground));
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* Team Section */
+        .about-team {
+            padding: 4rem 2rem;
+            background: hsl(var(--background));
+        }
+
+        .team-title {
+            font-family: var(--font-orbitron);
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            color: hsl(var(--foreground));
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .team-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--secondary)));
+        }
+
+        .team-grid {
+            max-width: 1200px;
+            margin: 3rem auto 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .team-member {
+            padding: 2rem;
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .team-member:hover {
+            border-color: hsl(var(--primary));
+            box-shadow: 0 4px 12px hsl(var(--primary) / 0.1);
+            transform: translateY(-4px);
+        }
+
+        .member-avatar {
+            width: 5rem;
+            height: 5rem;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+            color: hsl(var(--primary-foreground));
+            border-radius: 50%;
+            font-size: 1.25rem;
+            font-weight: 700;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .member-avatar:hover {
+            transform: scale(1.1);
+        }
+
+        .member-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Image Modal Styles */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .image-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            animation: zoomIn 0.3s ease;
+        }
+
+        .image-modal-close {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .image-modal-close:hover {
+            transform: scale(1.2);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.5); }
+            to { transform: scale(1); }
+        }
+
+        .team-member h3 {
+            font-size: 1.1rem;
+            color: hsl(var(--foreground));
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .member-role {
+            color: hsl(var(--primary));
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .member-description {
+            color: hsl(var(--muted-foreground));
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* Tech Stack Section */
+        .about-tech {
+            padding: 4rem 2rem;
+            background: hsl(var(--card));
+            border-top: 1px solid hsl(var(--border));
+        }
+
+        .tech-title {
+            font-family: var(--font-orbitron);
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            color: hsl(var(--foreground));
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .tech-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--secondary)));
+        }
+
+        .tech-grid {
+            max-width: 1200px;
+            margin: 3rem auto 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .tech-item {
+            padding: 2rem;
+            background: hsl(var(--background));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .tech-item:hover {
+            border-color: hsl(var(--secondary));
+            box-shadow: 0 4px 12px hsl(var(--secondary) / 0.1);
+            transform: translateY(-4px);
+        }
+
+        .tech-icon {
+            width: 3.5rem;
+            height: 3.5rem;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: hsl(var(--secondary));
+        }
+
+        .tech-icon svg {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .tech-item h4 {
+            font-size: 1.1rem;
+            color: hsl(var(--foreground));
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .tech-item p {
+            color: hsl(var(--muted-foreground));
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .about-hero,
+            .about-features,
+            .about-mission,
+            .about-vision,
+            .about-academic,
+            .about-team,
+            .about-tech {
+                padding: 2.5rem 1.5rem;
+            }
+
+            .hero-title {
+                margin-bottom: 0.75rem;
+                font-size: 1.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+            
+            .hero-description {
+                font-size: 0.9rem;
+            }
+            
+            .mission-content h2,
+            .vision-content h2 {
+                font-size: 1.5rem;
+            }
+            
+            .mission-content p,
+            .vision-content p {
+                font-size: 0.9rem;
+            }
+
+            .features-grid,
+            .academic-grid,
+            .team-grid,
+            .tech-grid {
+                gap: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 500px) {
+            .about-hero,
+            .about-features,
+            .about-mission,
+            .about-vision,
+            .about-academic,
+            .about-team,
+            .about-tech {
+                padding: 2rem 1rem;
+            }
+            
+            /* Reduce all text sizes for mobile */
+            .hero-title {
+                font-size: 1.35rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .hero-description {
+                font-size: 0.8rem;
+            }
+            
+            .mission-content h2,
+            .vision-content h2,
+            .academic-title,
+            .team-title,
+            .tech-title {
+                font-size: 1.25rem;
+            }
+            
+            .mission-content p,
+            .vision-content p {
+                font-size: 0.8rem;
+            }
+            
+            /* First 3 feature cards: 2 in first row, 1 centered in second row */
+            .features-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
+            }
+            
+            .feature-card:nth-child(3) {
+                grid-column: 1 / -1;
+                max-width: 50%;
+                margin: 0 auto;
+            }
+            
+            .feature-card {
+                padding: 1.25rem;
+            }
+            
+            .feature-icon {
+                width: 3rem;
+                height: 3rem;
+                margin-bottom: 1rem;
+            }
+            
+            .feature-icon svg {
+                width: 1.5rem;
+                height: 1.5rem;
+            }
+            
+            .feature-card h3 {
+                font-size: 0.95rem;
+            }
+            
+            .feature-card p {
+                font-size: 0.75rem;
+            }
+            
+            /* Academic cards: 2 per row */
+            .academic-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
+            }
+            
+            .academic-card {
+                padding: 1.25rem;
+            }
+            
+            .academic-icon {
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+            
+            .academic-icon svg {
+                width: 1.25rem;
+                height: 1.25rem;
+            }
+            
+            .academic-card h4 {
+                font-size: 0.85rem;
+            }
+            
+            .academic-card p {
+                font-size: 0.75rem;
+            }
+            
+            /* Development Team: Enhanced styling */
+            .team-grid {
+                gap: 1.5rem;
+                padding: 1rem;
+                background: linear-gradient(135deg, hsl(var(--primary) / 0.05), hsl(var(--secondary) / 0.05));
+                border-radius: var(--radius);
+            }
+            
+            .team-member {
+                padding: 1.5rem;
+                background: hsl(var(--card));
+                border: 2px solid hsl(var(--primary) / 0.3);
+                box-shadow: 0 4px 12px hsl(var(--primary) / 0.15);
+            }
+            
+            .team-member:hover {
+                border-color: hsl(var(--primary));
+                box-shadow: 0 8px 24px hsl(var(--primary) / 0.25);
+            }
+            
+            .member-avatar {
+                width: 4.5rem;
+                height: 4.5rem;
+                border: 3px solid hsl(var(--primary));
+            }
+            
+            .team-member h3 {
+                font-size: 0.95rem;
+            }
+            
+            .member-role {
+                font-size: 0.8rem;
+            }
+            
+            .member-description {
+                font-size: 0.75rem;
+            }
+            
+            /* Built With: 2 cards first row, 1 centered second row */
+            .tech-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
+            }
+            
+            .tech-item:nth-child(3) {
+                grid-column: 1 / -1;
+                max-width: 50%;
+                margin: 0 auto;
+            }
+            
+            .tech-item {
+                padding: 1.25rem;
+            }
+            
+            .tech-icon {
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+            
+            .tech-icon svg {
+                width: 1.5rem;
+                height: 1.5rem;
+            }
+            
+            .tech-item h4 {
+                font-size: 0.9rem;
+            }
+            
+            .tech-item p {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="about-container">
+        <!-- Navbar -->
+        <%- include('partials/navbar-modern') %>
+        
+        <!-- Main Content -->
+        <div class="about-content">
+            <!-- Hero Section -->
+            <section class="about-hero">
+                <div class="hero-content">
+                    <h1 class="hero-title">About Projexia</h1>
+                    <p class="hero-subtitle">A platform built by students, for students</p>
+                    <p class="hero-description">
+                        Projexia is designed to showcase academic projects and foster collaboration 
+                        within the academic community.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section class="about-features">
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <h3>Student-Focused</h3>
+                        <p>Built specifically for students to showcase their academic achievements</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="2" y1="12" x2="22" y2="12"></line>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                            </svg>
+                        </div>
+                        <h3>Open Source</h3>
+                        <p>Transparent development and community-driven improvements</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                        </div>
+                        <h3>Made with Love</h3>
+                        <p>Crafted with passion and dedication by fellow students</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mission Section -->
+            <section class="about-mission">
+                <div class="mission-content">
+                    <h2>Our Mission</h2>
+                    <p>
+                        To create a comprehensive platform where students can showcase their academic projects, 
+                        discover inspiration from peers, and build meaningful connections within their academic community. 
+                        We believe that every project tells a story and deserves to be shared.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Vision Section -->
+            <section class="about-vision">
+                <div class="vision-content">
+                    <h2>Vision</h2>
+                    <p>
+                        To become the leading platform for academic project collaboration and showcase, 
+                        empowering students to learn from each other, celebrate achievements, and build 
+                        a vibrant community of innovators and creators. We envision a future where every 
+                        student's work is recognized, valued, and serves as inspiration for the next generation 
+                        of learners.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Academic Information Section -->
+            <section class="about-academic">
+                <h2 class="academic-title">Academic Information</h2>
+                <div class="academic-grid">
+                    <div class="academic-card">
+                        <div class="academic-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <h4>Professor</h4>
+                        <p>Sir Joshua C. Leones</p>
+                    </div>
+
+                    <div class="academic-card">
+                        <div class="academic-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                            </svg>
+                        </div>
+                        <h4>Course</h4>
+                        <p>Client-Server Technologies</p>
+                    </div>
+
+                    <div class="academic-card">
+                        <div class="academic-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                                <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                            </svg>
+                        </div>
+                        <h4>Program</h4>
+                        <p>Bachelor of Science in Information Technology</p>
+                    </div>
+
+                    <div class="academic-card">
+                        <div class="academic-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                        </div>
+                        <h4>Year Level</h4>
+                        <p>3rd Year</p>
+                    </div>
+
+                    <div class="academic-card">
+                        <div class="academic-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="16 18 22 12 16 6"></polyline>
+                                <polyline points="8 6 2 12 8 18"></polyline>
+                            </svg>
+                        </div>
+                        <h4>Major/Track</h4>
+                        <p>Web and Mobile Application Development</p>
+                    </div>
+
+                    <div class="academic-card">
+                        <div class="academic-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </div>
+                        <h4>Year of Development</h4>
+                        <p>2025-2026</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Team Section -->
+            <section class="about-team">
+                <h2 class="team-title">Development Team</h2>
+                <div class="team-grid">
+                    <div class="team-member">
+                        <div class="member-avatar" onclick="openImageModal('/images/ALPHI.png')" title="Click to view full image">
+                            <img src="/images/ALPHI.png" alt="Alphi Fidelino" />
+                        </div>
+                        <h3>ALPHI FIDELINO</h3>
+                        <p class="member-role">Full-stack Developer</p>
+                        <p class="member-description">Architecting the backbone of Projexia with seamless full-stack solutions.</p>
+                    </div>
+
+                    <div class="team-member">
+                        <div class="member-avatar" onclick="openImageModal('/images/ZED.jpg')" title="Click to view full image">
+                            <img src="/images/ZED.jpg" alt="Zedrick Orantia" />
+                        </div>
+                        <h3>ZEDRICK ORANTIA</h3>
+                        <p class="member-role">Front-end Developer</p>
+                        <p class="member-description">Transforming design visions into elegant and responsive user experiences.</p>
+                    </div>
+
+                    <div class="team-member">
+                        <div class="member-avatar" onclick="openImageModal('/images/KYLE.jpg')" title="Click to view full image">
+                            <img src="/images/KYLE.jpg" alt="Kyle Deroma" />
+                        </div>
+                        <h3>KYLE DEROMA</h3>
+                        <p class="member-role">Back-end Developer</p>
+                        <p class="member-description">Engineering scalable systems that power Projexia's core functionality.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tech Stack Section -->
+            <section class="about-tech">
+                <h2 class="tech-title">Built With</h2>
+                <div class="tech-grid">
+                    <div class="tech-item">
+                        <div class="tech-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 0L1.75 6v12L12 24l10.25-6V6L12 0zm-1.775 18.55v-6.3L4.55 9.45v6.3l5.675 2.8zm0-7.45L4.55 8.3 10.225 5.5 15.9 8.3l-5.675 2.8zm7.45 4.65l-5.675 2.8v-6.3l5.675-2.8v6.3z"/>
+                            </svg>
+                        </div>
+                        <h4>Node.js</h4>
+                        <p>JavaScript runtime</p>
+                    </div>
+
+                    <div class="tech-item">
+                        <div class="tech-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M24 18.588a1.529 1.529 0 01-1.895-.72l-3.45-4.771-.5-.667-4.003 5.444a1.466 1.466 0 01-1.802.708l5.158-6.92-4.798-6.251a1.595 1.595 0 011.9.666l3.576 4.83 3.596-4.81a1.435 1.435 0 011.788-.668L21.708 7.9l-2.522 3.283a.666.666 0 000 .994l4.804 6.412zM.002 11.576l.42-2.075c1.154-4.103 5.858-5.81 9.094-3.27 1.895 1.489 2.368 3.597 2.275 5.973H1.116C.943 16.447 4.005 19.009 7.92 17.7a4.078 4.078 0 002.582-2.876c.207-.666.548-.78 1.174-.588a5.417 5.417 0 01-2.589 3.957 6.272 6.272 0 01-7.306-.933 6.575 6.575 0 01-1.64-3.858c0-.235-.08-.455-.134-.666A88.33 88.33 0 010 11.577zm1.127-.286h9.654c-.06-3.076-2.001-5.258-4.59-5.278-2.882-.04-4.944 2.094-5.071 5.264z"/>
+                            </svg>
+                        </div>
+                        <h4>Express.js</h4>
+                        <p>Web framework</p>
+                    </div>
+
+                    <div class="tech-item">
+                        <div class="tech-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M17.193 9.555c-1.264-5.58-4.252-7.414-4.573-8.115-.28-.394-.53-.954-.735-1.44-.036.495-.055.685-.523 1.184-.723.566-4.438 3.682-4.74 10.02-.282 5.912 4.27 9.435 4.888 9.884l.07.05A73.49 73.49 0 0111.91 24h.481c.114-1.032.284-2.056.51-3.07.417-.296.604-.463.85-.693a11.342 11.342 0 003.639-8.464c.01-.814-.103-1.662-.197-2.218zm-5.336 8.195s0-8.291.275-8.29c.213 0 .49 10.695.49 10.695-.381-.045-.765-1.76-.765-2.405z"/>
+                            </svg>
+                        </div>
+                        <h4>MongoDB</h4>
+                        <p>NoSQL database</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <%- include('partials/footer-modern') %>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+        <span class="image-modal-close">&times;</span>
+        <img class="image-modal-content" id="modalImage" alt="Full size image">
+    </div>
+    
+    <!-- Modal System -->
+    <script src="/js/modal.js"></script>
+    
+    <!-- Image Modal Script -->
+    <script>
+        function openImageModal(imageSrc) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modal.classList.add('active');
+            modalImg.src = imageSrc;
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeImageModal();
+            }
+        });
+    </script>
+    
+    <!-- Socket.IO Client -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Notifications System -->
+    <script src="/js/notifications.js"></script>
+    <!-- Liked Projects System -->
+    <script src="/js/liked-projects.js"></script>
+</body>
+</html>

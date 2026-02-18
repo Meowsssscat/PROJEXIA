@@ -7,7 +7,7 @@ const View = require('../models/views');
 // --- Helper Functions ---
 
 /**
- * Calculate popularity score (likes + views)
+ * Calculate popularity score (likes + views only, no comments to prevent spam)
  */
 const calculatePopularity = (projectStats, projectId) => {
   const stats = projectStats[projectId] || {};
@@ -43,9 +43,11 @@ const prepareProjectData = (users, projects, projectStats) => {
     const projectId = project._id.toString();
     const userId = project.userId.toString();
 
+    const thumbnailUrl = project.thumbnailUrl?.url || '/uploads/default-thumbnail.jpg';
+    
     data[projectId] = {
       projectId,
-      projectThumbnail: project.thumbnailUrl?.url || '',
+      projectThumbnail: thumbnailUrl,
       projectName: project.name,
       technologies: project.technologies,
       program: usersObject[userId]?.program || '',
@@ -56,15 +58,20 @@ const prepareProjectData = (users, projects, projectStats) => {
       popularity: calculatePopularity(projectStats, projectId),
       createdAt: project.createdAt
     };
+    
+    // Debug log
+    if (!project.thumbnailUrl?.url) {
+      console.log(`⚠️ Project "${project.name}" has no thumbnail URL`);
+    }
   });
 
   return data;
 };
 
 /**
- * Get top 3 trending projects (EXACTLY 3 projects only)
+ * Get top 10 trending projects for carousel
  */
-const getTop3Trending = (projectData) => {
+const getTop10Trending = (projectData) => {
   // Convert to array and sort by popularity
   const projectArray = Object.entries(projectData).map(([id, data]) => ({
     id,
@@ -80,39 +87,34 @@ const getTop3Trending = (projectData) => {
     return new Date(b.createdAt) - new Date(a.createdAt);
   });
 
-  // Return EXACTLY top 3 projects
-  return projectArray.slice(0, 3);
+  // Return top 10 projects
+  return projectArray.slice(0, 10);
 };
 
 /**
- * Get batchmate projects (same year as current user, excluding top3)
+ * Get batchmate projects (same year as current user, excluding top 10)
+ * Returns in random order
  */
 const getBatchmateProjects = (projectData, currentUserYear, excludeIds) => {
   if (!currentUserYear) return [];
 
   const batchmateProjects = Object.entries(projectData)
     .filter(([id, data]) => {
-      // Exclude projects that are already in top 3
+      // Exclude projects that are already in top 10
       return data.year === currentUserYear && !excludeIds.includes(id);
     })
     .map(([id, data]) => ({ id, ...data }));
 
-  // Sort by popularity (descending)
-  batchmateProjects.sort((a, b) => {
-    if (b.popularity !== a.popularity) {
-      return b.popularity - a.popularity;
-    }
-    return new Date(b.createdAt) - new Date(a.createdAt);
-  });
-
-  return batchmateProjects;
+  // Shuffle randomly
+  return shuffleArray(batchmateProjects);
 };
 
 /**
- * Get remaining projects (excluding top 3 and batchmates)
+ * Get remaining projects (excluding top 10 and batchmates)
+ * Returns in random order
  */
-const getRemainingProjects = (projectData, top3Ids, batchmateIds) => {
-  const excludedIds = new Set([...top3Ids, ...batchmateIds]);
+const getRemainingProjects = (projectData, top10Ids, batchmateIds) => {
+  const excludedIds = new Set([...top10Ids, ...batchmateIds]);
   
   const remainingProjects = Object.entries(projectData)
     .filter(([id]) => !excludedIds.has(id))
@@ -130,6 +132,14 @@ const getRemainingProjects = (projectData, top3Ids, batchmateIds) => {
  */
 exports.getHome = async (req, res) => {
   try {
+    const { search = '', program = '', yearLevel = '', track = '' } = req.query;
+    
+    // Handle multiple language parameters
+    let languages = req.query.language;
+    if (languages && !Array.isArray(languages)) {
+      languages = [languages];
+    }
+    
     const currentUserId = req.session?.userId;
     let currentUser = null;
 
@@ -138,8 +148,74 @@ exports.getHome = async (req, res) => {
       currentUser = await User.findById(currentUserId);
     }
 
-    const users = await User.find();
-    const projects = await allProjects.find();
+    // Build filters
+    let projectFilter = {};
+    let userFilter = {};
+
+    // Search filter
+    if (search) {
+      projectFilter.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } },
+        { technologies: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    // Technology filter
+    if (languages && languages.length > 0) {
+      projectFilter.technologies = { $in: languages };
+    }
+
+    // User filters (program, year, track)
+    if (program) {
+      userFilter.program = program;
+    }
+    if (yearLevel) {
+      const yearMap = {
+        '1': '1st',
+        '2': '2nd',
+        '3': '3rd',
+        '4': '4th'
+      };
+      userFilter.year = yearMap[yearLevel] || yearLevel;
+    }
+    if (track) {
+      userFilter.track = track;
+    }
+
+    // Get users (filtered if needed)
+    const users = Object.keys(userFilter).length > 0 
+      ? await User.find(userFilter)
+      : await User.find();
+    
+    // If user filter is applied but no users match, return empty
+    if (Object.keys(userFilter).length > 0 && users.length === 0) {
+      return res.render('home-modern', { 
+        top10Trending: [],
+        batchmateProjects: [],
+        remainingProjects: [],
+        currentUser: currentUser ? {
+          _id: currentUser._id,
+          year: currentUser.year,
+          program: currentUser.program
+        } : null,
+        user: currentUser,
+        searchTerm: search,
+        selectedProgram: program,
+        selectedYear: yearLevel,
+        selectedLanguages: languages || [],
+        selectedTrack: track,
+        availableTechnologies: []
+      });
+    }
+
+    // Filter projects by user IDs if user filter is applied
+    if (Object.keys(userFilter).length > 0) {
+      const userIds = users.map(u => u._id);
+      projectFilter.userId = { $in: userIds };
+    }
+
+    const projects = await allProjects.find(projectFilter);
 
     // Fetch counts for all projects
     const projectIds = projects.map(p => p._id);
@@ -181,31 +257,52 @@ exports.getHome = async (req, res) => {
     // Prepare all project data
     const allProjectData = prepareProjectData(users, projects, projectStats);
 
-    // Section 1: Top 3 Trending (EXACTLY 3 projects)
-    const weeklyTop3 = getTop3Trending(allProjectData);
-    const top3Ids = weeklyTop3.map(p => p.id);
+    // Section 1: Top 10 Trending (for carousel)
+    const top10Trending = getTop10Trending(allProjectData);
+    const top10Ids = top10Trending.map(p => p.id);
 
-    // Section 2: Batchmate Projects (excluding top 3)
+    // Section 2: Batchmate Projects (excluding top 10, random order)
     const batchmateProjects = currentUser 
-      ? getBatchmateProjects(allProjectData, currentUser.year, top3Ids)
+      ? getBatchmateProjects(allProjectData, currentUser.year, top10Ids)
       : [];
     const batchmateIds = batchmateProjects.map(p => p.id);
 
-    // Section 3: Remaining Projects (excluding top 3 and batchmates, shuffled)
-    const remainingProjects = getRemainingProjects(allProjectData, top3Ids, batchmateIds);
+    // Section 3: Remaining Projects (excluding top 10 and batchmates, random order)
+    const remainingProjects = getRemainingProjects(allProjectData, top10Ids, batchmateIds);
 
     console.log("Home page data prepared with sections");
-    console.log(`Top 3 Trending: ${top3Ids.length}, Batchmates: ${batchmateIds.length}, Remaining: ${remainingProjects.length}`);
+    console.log(`Top 10 Trending: ${top10Ids.length}, Batchmates: ${batchmateIds.length}, Remaining: ${remainingProjects.length}`);
 
-    return res.render('home', { 
-      weeklyTop3,
+    // Get all unique technologies from all projects for filter dropdown
+    const allProjectsForTech = await allProjects.find().select('technologies').lean();
+    const allTechnologies = new Set();
+    allProjectsForTech.forEach(project => {
+      if (project.technologies && Array.isArray(project.technologies)) {
+        project.technologies.forEach(tech => {
+          if (tech && tech.trim()) {
+            allTechnologies.add(tech.trim());
+          }
+        });
+      }
+    });
+    const availableTechnologies = Array.from(allTechnologies).sort();
+
+    return res.render('home-modern', { 
+      top10Trending,
       batchmateProjects,
       remainingProjects,
       currentUser: currentUser ? {
         _id: currentUser._id,
         year: currentUser.year,
         program: currentUser.program
-      } : null
+      } : null,
+      user: currentUser, // Add user for navbar compatibility
+      searchTerm: search,
+      selectedProgram: program,
+      selectedYear: yearLevel,
+      selectedLanguages: languages || [],
+      selectedTrack: track,
+      availableTechnologies: availableTechnologies
     });
   } catch (error) {
     console.error('getHome error', error);

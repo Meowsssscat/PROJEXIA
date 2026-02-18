@@ -139,6 +139,43 @@ exports.getUserRating = async (req, res) => {
 };
 
 // ===============================
+// SUBMIT RATING WITH COMMENTS
+// ===============================
+exports.submitRatingWithComments = async (req, res) => {
+  try {
+    const userId = req.session?.userId;
+    const { rating, comments } = req.body;
+
+    // Allow submission even without auth (optional login)
+    if (!rating || rating < 1 || rating > 5) {
+      return res.status(400).json({ error: 'Rating must be between 1 and 5' });
+    }
+
+    if (!comments || comments.trim().length === 0) {
+      return res.status(400).json({ error: 'Comments are required' });
+    }
+
+    // Create rating with comments
+    const newRating = await Rating.create({
+      userId: userId || null,
+      rating,
+      comments: comments.trim(),
+      isPublic: true
+    });
+
+    res.json({
+      message: 'Thank you for your feedback!',
+      success: true,
+      rating: newRating
+    });
+
+  } catch (error) {
+    console.error('Error submitting rating with comments:', error);
+    res.status(500).json({ error: 'Failed to submit feedback' });
+  }
+};
+
+// ===============================
 // SUBMIT ISSUE REPORT
 // ===============================
 exports.submitIssueReport = async (req, res) => {

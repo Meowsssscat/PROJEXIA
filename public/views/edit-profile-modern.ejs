@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Profile - Projexia</title>
+    <link rel="icon" type="image/png" href="/images/favicon.png" />
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="/css/projexia-design-system.css" />
+    <link rel="stylesheet" href="/css/navbar-modern.css" />
+    <link rel="stylesheet" href="/css/modal-modern.css" />
+    <link rel="stylesheet" href="/css/footer-modern.css" />
+    <link rel="stylesheet" href="/css/utility-pages-modern.css" />
+    <link rel="stylesheet" href="/css/dropdown-modern.css" />
+    
+    <!-- SVG Icons -->
+    <script src="/js/svgIcons.js"></script>
+    <script src="/js/toast.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+
+    <style>
+        .avatar-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        .avatar-display {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0 auto 1rem;
+            overflow: hidden;
+        }
+
+        .avatar-upload-btn {
+            display: inline-block;
+            margin-top: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .avatar-section {
+                margin-bottom: 1.5rem;
+                padding-bottom: 1.5rem;
+            }
+            
+            .avatar-display {
+                width: 80px;
+                height: 80px;
+                font-size: 1.75rem;
+            }
+            
+            .avatar-upload-btn {
+                margin-top: 0.75rem;
+            }
+            
+            .avatar-upload-btn .file-upload-area {
+                padding: 1rem !important;
+            }
+            
+            .avatar-upload-btn .btn {
+                padding: 0.625rem 1rem !important;
+                font-size: 0.8rem !important;
+            }
+        }
+    </style>
+    <script src="/js/theme.js"></script>
+</head>
+<body>
+    <div class="form-page-container">
+        <!-- Navbar -->
+        <%- include('partials/navbar-modern') %>
+        
+        <!-- Edit Profile Content -->
+        <main class="form-page-content">
+            <div class="container" style="max-width: 700px;">
+                <div class="form-page-header">
+                    <h1>Edit Profile</h1>
+                    <p>Update your profile information</p>
+                </div>
+
+                <div class="form-card">
+                    <form id="editProfileForm" class="form-section">
+                        <!-- Avatar Section -->
+                        <div class="avatar-section">
+                            <div class="avatar-display" id="avatarDisplay">
+                                <% if (user.profilePicture && user.profilePicture.url) { %>
+                                    <img src="<%= user.profilePicture.url %>" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                                <% } else { %>
+                                    <%= user.fullName.charAt(0) %>
+                                <% } %>
+                            </div>
+                            <div class="form-group avatar-upload-btn">
+                                <label for="avatar">Profile Picture</label>
+                                <div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
+                                    <div class="file-upload-area" id="avatarArea" style="flex: 1; min-width: 200px;">
+                                        <svg class="file-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                            <polyline points="17 8 12 3 7 8"></polyline>
+                                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                                        </svg>
+                                        <p class="file-upload-text">Click to upload</p>
+                                        <p class="file-upload-hint">PNG, JPG up to 2MB</p>
+                                        <input 
+                                            type="file" 
+                                            id="avatar" 
+                                            name="avatar" 
+                                            class="file-upload-input"
+                                            accept="image/*"
+                                        />
+                                    </div>
+                                    <% if (user.profilePicture && user.profilePicture.url) { %>
+                                        <button type="button" id="deleteAvatarBtn" class="btn btn-outline" style="padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.5rem; color: hsl(var(--destructive)); border-color: hsl(var(--destructive) / 0.3);">
+                                            <svg style="width: 1rem; height: 1rem;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <polyline points="3 6 5 6 21 6"></polyline>
+                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                            </svg>
+                                            Delete
+                                        </button>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <input type="hidden" id="deleteAvatar" name="deleteAvatar" value="false">
+                        </div>
+
+                        <!-- Personal Information -->
+                        <div class="form-group">
+                            <label for="fullName">Full Name</label>
+                            <input 
+                                type="text" 
+                                id="fullName" 
+                                name="fullName" 
+                                value="<%= user.fullName %>"
+                                required
+                            />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bio">Bio</label>
+                            <textarea 
+                                id="bio" 
+                                name="bio" 
+                                placeholder="Tell the community about yourself..."
+                            ><%= user.bio || '' %></textarea>
+                            <p class="form-help-text">Maximum 160 characters</p>
+                        </div>
+
+                        <!-- Academic Information -->
+                        <div class="form-group">
+                            <label for="program">Program</label>
+                            <select id="program" name="program" required>
+                                <option value="BSIT" <%= user.program === 'BSIT' ? 'selected' : '' %>>BS Information Technology</option>
+                                <option value="BSIS" <%= user.program === 'BSIS' ? 'selected' : '' %>>BS Information Systems</option>
+                                <option value="BSCS" <%= user.program === 'BSCS' ? 'selected' : '' %>>BS Computer Science</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="year">Year Level</label>
+                            <select id="year" name="year" required>
+                                <option value="1st" <%= user.year === '1st' ? 'selected' : '' %>>1st Year</option>
+                                <option value="2nd" <%= user.year === '2nd' ? 'selected' : '' %>>2nd Year</option>
+                                <option value="3rd" <%= user.year === '3rd' ? 'selected' : '' %>>3rd Year</option>
+                                <option value="4th" <%= user.year === '4th' ? 'selected' : '' %>>4th Year</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="trackGroup">
+                            <label for="track">Track/Specialization</label>
+                            <select id="track" name="track">
+                                <option value="">Select Track</option>
+                                <!-- BSIT Tracks -->
+                                <option value="WMAD" <%= user.track === 'WMAD' ? 'selected' : '' %> data-program="BSIT">Web and Mobile Application Development (WMAD)</option>
+                                <option value="AMG" <%= user.track === 'AMG' ? 'selected' : '' %> data-program="BSIT">Animation and Motion Graphics (AMG)</option>
+                                <option value="SMP" <%= user.track === 'SMP' ? 'selected' : '' %> data-program="BSIT">Service Management Program (SMP)</option>
+                                <option value="NETAD" <%= user.track === 'NETAD' ? 'selected' : '' %> data-program="BSIT">Network Administration (NETAD)</option>
+                                <!-- BSCS Tracks -->
+                                <option value="IS" <%= user.track === 'IS' ? 'selected' : '' %> data-program="BSCS">Intelligent System (IS)</option>
+                                <option value="GV" <%= user.track === 'GV' ? 'selected' : '' %> data-program="BSCS">Graphics Visualisation (GV)</option>
+                            </select>
+                            <p class="form-help-text">Required for 3rd and 4th year students</p>
+                        </div>
+
+                        <!-- Contact Information -->
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                value="<%= user.email %>"
+                                disabled
+                            />
+                            <p class="form-help-text">Contact support to change your email</p>
+                        </div>
+
+                        <!-- Social Links -->
+                        <div class="form-group">
+                            <label for="github">GitHub Profile (Optional)</label>
+                            <input 
+                                type="url" 
+                                id="github" 
+                                name="github" 
+                                placeholder="https://github.com/yourprofile"
+                                value="<%= user.github || '' %>"
+                            />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="portfolio">Portfolio Website (Optional)</label>
+                            <input 
+                                type="url" 
+                                id="portfolio" 
+                                name="portfolio" 
+                                placeholder="https://yourportfolio.com"
+                                value="<%= user.portfolio || '' %>"
+                            />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="linkedin">LinkedIn Profile (Optional)</label>
+                            <input 
+                                type="url" 
+                                id="linkedin" 
+                                name="linkedin" 
+                                placeholder="https://linkedin.com/in/yourprofile"
+                                value="<%= user.linkedin || '' %>"
+                            />
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <a href="/profile" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <%- include('partials/footer-modern') %>
+    </div>
+
+    <script>
+        const editForm = document.getElementById('editProfileForm');
+        const avatarArea = document.getElementById('avatarArea');
+        const avatarInput = document.getElementById('avatar');
+        const avatarDisplay = document.getElementById('avatarDisplay');
+        const deleteAvatarBtn = document.getElementById('deleteAvatarBtn');
+        const deleteAvatarInput = document.getElementById('deleteAvatar');
+
+        // Delete avatar button handler
+        if (deleteAvatarBtn) {
+            deleteAvatarBtn.addEventListener('click', async () => {
+                const confirmed = await Modal.confirm(
+                    'Are you sure you want to delete your profile picture?',
+                    'Delete Profile Picture',
+                    'Delete',
+                    'Cancel'
+                );
+                
+                if (confirmed) {
+                    deleteAvatarInput.value = 'true';
+                    // Update display to show initial
+                    avatarDisplay.innerHTML = '<%= user.fullName.charAt(0) %>';
+                    // Hide delete button
+                    deleteAvatarBtn.style.display = 'none';
+                    Toast.info('Profile picture will be removed when you save changes');
+                }
+            });
+        }
+
+        // File upload handling
+        avatarArea.addEventListener('click', () => avatarInput.click());
+
+        avatarArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            avatarArea.classList.add('drag-over');
+        });
+
+        avatarArea.addEventListener('dragleave', () => {
+            avatarArea.classList.remove('drag-over');
+        });
+
+        avatarArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            avatarArea.classList.remove('drag-over');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                avatarInput.files = files;
+            }
+        });
+
+        avatarInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                const fileName = e.target.files[0].name;
+                console.log('✅ File selected:', fileName);
+                console.log('File object:', e.target.files[0]);
+                
+                // Reset delete flag when new file is selected
+                deleteAvatarInput.value = 'false';
+                
+                avatarArea.innerHTML = `
+                    <svg class="file-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: hsl(var(--primary));">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <p class="file-upload-text">${fileName} selected</p>
+                    <p class="file-upload-hint">Click to change file</p>
+                `;
+            }
+        });
+
+        // Track field visibility and validation
+        const programSelect = document.getElementById('program');
+        const yearSelect = document.getElementById('year');
+        const trackGroup = document.getElementById('trackGroup');
+        const trackSelect = document.getElementById('track');
+
+        function updateTrackField() {
+            const program = programSelect.value;
+            const year = yearSelect.value;
+            
+            // Show/hide track options based on program
+            const trackOptions = trackSelect.querySelectorAll('option[data-program]');
+            trackOptions.forEach(option => {
+                if (option.dataset.program === program) {
+                    option.style.display = 'block';
+                } else {
+                    option.style.display = 'none';
+                }
+            });
+
+            // BSIS students don't have tracks
+            if (program === 'BSIS') {
+                trackGroup.style.display = 'none';
+                trackSelect.removeAttribute('required');
+                trackSelect.value = '';
+            } 
+            // 3rd and 4th year students need tracks
+            else if (year === '3rd' || year === '4th') {
+                trackGroup.style.display = 'block';
+                trackSelect.setAttribute('required', 'required');
+            } 
+            // 1st and 2nd year students don't need tracks
+            else {
+                trackGroup.style.display = 'block';
+                trackSelect.removeAttribute('required');
+            }
+        }
+
+        programSelect.addEventListener('change', updateTrackField);
+        yearSelect.addEventListener('change', updateTrackField);
+        
+        // Initialize on page load
+        updateTrackField();
+
+        // Form submission
+        editForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Get submit button and disable it
+            const submitBtn = editForm.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `
+                <svg style="width: 1rem; height: 1rem; animation: spin 1s linear infinite; display: inline-block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+                </svg>
+                Updating...
+            `;
+
+            // Add spin animation
+            if (!document.getElementById('spin-animation')) {
+                const style = document.createElement('style');
+                style.id = 'spin-animation';
+                style.textContent = '@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }';
+                document.head.appendChild(style);
+            }
+
+            const formData = new FormData(editForm);
+            
+            // Debug: Check form data
+            console.log('📤 Submitting form data:');
+            console.log('Delete avatar input element:', deleteAvatarInput);
+            console.log('Delete avatar flag VALUE:', deleteAvatarInput.value);
+            console.log('Delete avatar flag TYPE:', typeof deleteAvatarInput.value);
+            console.log('Has avatar file:', avatarInput.files.length > 0);
+            
+            // Explicitly ensure deleteAvatar is in FormData
+            formData.set('deleteAvatar', deleteAvatarInput.value);
+            
+            // Log all form data
+            console.log('=== ALL FORM DATA ===');
+            for (let [key, value] of formData.entries()) {
+                console.log(`  ${key}:`, value);
+            }
+            console.log('===================');
+            
+            if (avatarInput.files.length > 0) {
+                console.log('Avatar file:', avatarInput.files[0]);
+                // Ensure file is in FormData
+                formData.set('avatar', avatarInput.files[0]);
+            }
+
+            try {
+                const response = await fetch('/api/editProfile', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                // Check if response is JSON or redirect
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    const result = await response.json();
+                    
+                    if (!response.ok) {
+                        throw new Error(result.message || 'Update failed');
+                    }
+
+                    Toast.success(result.message || 'Profile updated successfully!');
+
+                    setTimeout(() => {
+                        window.location.href = '/profile';
+                    }, 1500);
+                } else {
+                    // If it's a redirect, follow it
+                    window.location.href = '/profile';
+                }
+            } catch (error) {
+                Toast.error(error.message || 'An error occurred while updating profile');
+                
+                // Re-enable button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            }
+        });
+    </script>
+    
+    <!-- Modal System -->
+    <script src="/js/modal.js"></script>
+    
+    <!-- Socket.IO Client -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Notifications System -->
+    <script src="/js/notifications.js"></script>
+    <!-- Liked Projects System -->
+    <script src="/js/liked-projects.js"></script>
+</body>
+</html>

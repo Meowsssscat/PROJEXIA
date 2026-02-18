@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Explore Projects - Projexia</title>
+    <link rel="icon" type="image/png" href="/images/favicon.png" />
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="/css/projexia-design-system.css" />
+    <link rel="stylesheet" href="/css/navbar-modern.css" />
+    <link rel="stylesheet" href="/css/modal-modern.css" />
+    <link rel="stylesheet" href="/css/footer-modern.css" />
+    <link rel="stylesheet" href="/css/home-modern.css" />
+    <link rel="stylesheet" href="/css/dropdown-modern.css" />
+    
+    <!-- SVG Icons -->
+    <script src="/js/svgIcons.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+    <script src="/js/theme.js"></script>
+</head>
+<body>
+    <div class="home-container">
+        <!-- Navbar -->
+        <%- include('partials/navbar-modern') %>
+        
+        <!-- Main Content -->
+        <main class="home-content" style="padding-top: 0;">
+            <div class="home-wrapper">
+                <!-- Search Bar and Filter Toggle -->
+                <div style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                    <!-- Search Bar (Always Visible) -->
+                    <input 
+                        type="text" 
+                        id="searchProject" 
+                        class="filter-input" 
+                        placeholder="Search projects..." 
+                        autocomplete="off"
+                        value="<%= searchTerm || '' %>"
+                        style="flex: 1; min-width: 250px;"
+                    />
+                    
+                    <!-- Filter Toggle Button -->
+                    <button id="toggleFiltersBtn" class="btn btn-outline" style="display: flex; align-items: center; justify-content: center; padding: 0.75rem;" title="Hide Filters">
+                        <svg id="filterIcon" style="width: 1.25rem; height: 1.25rem;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Collapsible Filter Container -->
+                <div class="filter-container" id="filtersContainer">
+                    <select class="filter-select" id="filterProgram" name="filterProgram">
+                        <option value="">Program</option>
+                        <option value="BSIT" <%= selectedProgram === 'BSIT' ? 'selected' : '' %>>BSIT</option>
+                        <option value="BSIS" <%= selectedProgram === 'BSIS' ? 'selected' : '' %>>BSIS</option>
+                        <option value="BSCS" <%= selectedProgram === 'BSCS' ? 'selected' : '' %>>BSCS</option>
+                    </select>
+
+                    <select class="filter-select" id="filterYear" name="filterYear">
+                        <option value="">Year Level</option>
+                        <option value="1" <%= selectedYear === '1' ? 'selected' : '' %>>1st Year</option>
+                        <option value="2" <%= selectedYear === '2' ? 'selected' : '' %>>2nd Year</option>
+                        <option value="3" <%= selectedYear === '3' ? 'selected' : '' %>>3rd Year</option>
+                        <option value="4" <%= selectedYear === '4' ? 'selected' : '' %>>4th Year</option>
+                    </select>
+
+                    <select class="filter-select" id="filterTrack" name="filterTrack" style="display: none;">
+                        <option value="">Track</option>
+                        <option value="WMAD" data-program="BSIT" <%= selectedTrack === 'WMAD' ? 'selected' : '' %>>WMAD</option>
+                        <option value="AMG" data-program="BSIT" <%= selectedTrack === 'AMG' ? 'selected' : '' %>>AMG</option>
+                        <option value="SMP" data-program="BSIT" <%= selectedTrack === 'SMP' ? 'selected' : '' %>>SMP</option>
+                        <option value="NETAD" data-program="BSIT" <%= selectedTrack === 'NETAD' ? 'selected' : '' %>>NETAD</option>
+                        <!-- BSCS Tracks -->
+                        <option value="IS" data-program="BSCS" <%= selectedTrack === 'IS' ? 'selected' : '' %>>IS</option>
+                        <option value="GV" data-program="BSCS" <%= selectedTrack === 'GV' ? 'selected' : '' %>>GV</option>
+                    </select>
+
+                    <!-- Technology Filter (Multi-select) -->
+                    <div class="tech-filter-wrapper" style="position: relative; display: inline-block;">
+                        <button type="button" class="filter-select tech-filter-button" id="techFilterButton" style="text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 200px;">
+                            <span id="techFilterLabel">Technologies</span>
+                            <svg style="width: 1rem; height: 1rem;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="tech-filter-dropdown" id="techFilterDropdown" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: 0.5rem; margin-top: 0.25rem; max-height: 350px; overflow: hidden; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <div style="padding: 0.5rem; max-height: 280px; overflow-y: auto;">
+                                <% if (availableTechnologies && availableTechnologies.length > 0) { %>
+                                    <% availableTechnologies.forEach(tech => { %>
+                                        <label style="display: flex; align-items: center; padding: 0.5rem; cursor: pointer; border-radius: 0.25rem;" onmouseover="this.style.background='hsl(var(--accent))'" onmouseout="this.style.background=''">
+                                            <input type="checkbox" class="tech-checkbox" value="<%= tech %>" style="margin-right: 0.5rem;">
+                                            <span><%= tech %></span>
+                                        </label>
+                                    <% }); %>
+                                <% } %>
+                            </div>
+                            <div style="padding: 0.5rem; border-top: 1px solid hsl(var(--border)); display: flex; gap: 0.5rem;">
+                                <button id="applyTechFilter" class="btn btn-primary" style="flex: 1; padding: 0.5rem; font-size: 0.875rem;">Apply</button>
+                                <button id="clearTechFilter" class="btn btn-outline" style="flex: 1; padding: 0.5rem; font-size: 0.875rem;">Clear</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Clear Filters Button -->
+                <% if (searchTerm || selectedProgram || selectedYear || selectedTrack || (selectedLanguages && selectedLanguages.length > 0)) { %>
+                    <div style="margin: 1rem 0; text-align: center;">
+                        <button onclick="window.location.href='/home'" class="btn btn-outline" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                            <svg style="width: 1rem; height: 1rem;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                            Clear All Filters
+                        </button>
+                    </div>
+                <% } %>
+
+                <!-- Section 1: Top 10 Trending Projects (Carousel) -->
+                <% if (top10Trending && top10Trending.length > 0) { %>
+                <section class="section section-trending" style="padding: 0 0 3rem 0; margin-bottom: 3rem;">
+                    <div class="section-header section-header-trending">
+                        <h2 class="section-title">Top 10 Trending Projects</h2>
+                    </div>
+
+                    <div class="projects-grid top3-grid">
+                        <% top10Trending.forEach((project, index) => { %>
+                        <a href="/project/<%= project.id %>" class="project-card-link">
+                            <div class="project-card top3-card" 
+                                 data-program="<%= project.program %>" 
+                                 data-year="<%= project.year %>"
+                                 data-technologies="<%= project.technologies.join(',') %>"
+                                 data-project-name="<%= project.projectName.toLowerCase() %>"
+                                 data-popularity="<%= project.popularity %>">
+
+                                <!-- Thumbnail --> 
+                                <div class="project-thumbnail">
+                                    <img src="<%= project.projectThumbnail %>" 
+                                         alt="<%= project.projectName %>"
+                                         onerror="this.src='/uploads/default-thumbnail.jpg'">
+                                    <div class="popularity-badge">
+                                        <span class="popularity-score"><%= project.popularity %></span>
+                                    </div>
+                                </div>
+
+                                <!-- Content -->
+                                <div class="project-content">
+                                    <h3 class="project-name"><%= project.projectName %></h3>
+
+                                    <!-- Technologies -->
+                                    <div class="tech-list">
+                                        <% project.technologies.slice(0, 3).forEach(tech => { %>
+                                        <span class="tech-tag"><%= tech %></span>
+                                        <% }) %>
+                                    </div>
+
+                                    <!-- Stats -->
+                                    <div class="project-stats">
+                                        <div class="stat">
+                                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                            </svg>
+                                            <span><%= project.likeCount %></span>
+                                        </div>
+                                        
+                                        <div class="stat">
+                                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                            </svg>
+                                            <span><%= project.commentCount %></span>
+                                        </div>
+                                        
+                                        <div class="stat">
+                                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
+                                            <span><%= project.viewCount %></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <% }) %>
+                    </div>
+                </section>
+                <% } %>
+
+                <!-- Section 2: Your Batchmates' Projects -->
+                <% if (currentUser && batchmateProjects && batchmateProjects.length > 0) { %>
+                <section class="section section-batchmates">
+                    <div class="section-header">
+                        <h2 class="section-title">Batchmates</h2>
+                        <p class="section-subtitle"><%= currentUser.program %> • <%= currentUser.year %> Year</p>
+                    </div>
+
+                    <div class="projects-grid">
+                        <% batchmateProjects.forEach(project => { %>
+                        <a href="/project/<%= project.id %>" class="project-card-link">
+                            <div class="project-card" 
+                                 data-program="<%= project.program %>" 
+                                 data-year="<%= project.year %>"
+                                 data-technologies="<%= project.technologies.join(',') %>"
+                                 data-project-name="<%= project.projectName.toLowerCase() %>"
+                                 data-popularity="<%= project.popularity %>">
+
+                                <div class="project-thumbnail">
+                                    <img src="<%= project.projectThumbnail %>" alt="<%= project.projectName %>" onerror="this.src='/uploads/default-thumbnail.jpg'">
+                                </div>
+
+                                <div class="project-content">
+                                    <h3 class="project-name"><%= project.projectName %></h3>
+
+                                    <div class="tech-list">
+                                        <% project.technologies.slice(0, 3).forEach(tech => { %>
+                                        <span class="tech-tag"><%= tech %></span>
+                                        <% }) %>
+                                    </div>
+
+                                    <div class="project-stats">
+                                        <div class="stat">
+                                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                            </svg>
+                                            <span><%= project.likeCount %></span>
+                                        </div>
+                                        
+                                        <div class="stat">
+                                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                            </svg>
+                                            <span><%= project.commentCount %></span>
+                                        </div>
+                                        
+                                        <div class="stat">
+                                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
+                                            <span><%= project.viewCount %></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <% }) %>
+                    </div>
+                </section>
+                <% } %>
+
+                <!-- Section 3: Discover More Projects -->
+                <% if (remainingProjects && remainingProjects.length > 0) { %>
+                <section class="section section-all">
+                    <div class="section-header">
+                        <h2 class="section-title">Explore more</h2>
+                    </div>
+
+                    <div class="projects-grid">
+                        <% remainingProjects.forEach(project => { %>
+                        <a href="/project/<%= project.id %>" class="project-card-link">
+                            <div class="project-card" 
+                                 data-program="<%= project.program %>" 
+                                 data-year="<%= project.year %>"
+                                 data-technologies="<%= project.technologies.join(',') %>"
+                                 data-project-name="<%= project.projectName.toLowerCase() %>"
+                                 data-popularity="<%= project.popularity %>">
+
+                                <div class="project-thumbnail">
+                                    <img src="<%= project.projectThumbnail %>" alt="<%= project.projectName %>" onerror="this.src='/uploads/default-thumbnail.jpg'">
+                                </div>
+
+                                <div class="project-content">
+                                    <h3 class="project-name"><%= project.projectName %></h3>
+
+                                    <div class="tech-list">
+                                        <% project.technologies.slice(0, 3).forEach(tech => { %>
+                                        <span class="tech-tag"><%= tech %></span>
+                                        <% }) %>
+                                    </div>
+
+                                    <div class="project-stats">
+                                        <div class="stat">
+                                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                            </svg>
+                                            <span><%= project.likeCount %></span>
+                                        </div>
+                                        
+                                        <div class="stat">
+                                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                            </svg>
+                                            <span><%= project.commentCount %></span>
+                                        </div>
+                                        
+                                        <div class="stat">
+                                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
+                                            <span><%= project.viewCount %></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <% }) %>
+                    </div>
+                </section>
+                <% } %>
+
+                <!-- No Projects Message -->
+                <% if ((!top10Trending || top10Trending.length === 0) && (!batchmateProjects || batchmateProjects.length === 0) && (!remainingProjects || remainingProjects.length === 0)) { %>
+                <section class="section section-empty">
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                            <polyline points="13 2 13 9 20 9"></polyline>
+                        </svg>
+                        <h3>No Projects Yet</h3>
+                        <p>Check back soon for new projects from the community!</p>
+                    </div>
+                </section>
+                <% } %>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <%- include('partials/footer-modern') %>
+    </div>
+
+    <script>
+        // Toggle filters functionality (icon only, no text)
+        const toggleFiltersBtn = document.getElementById('toggleFiltersBtn');
+        const filtersContainer = document.getElementById('filtersContainer');
+        const filterIcon = document.getElementById('filterIcon');
+        let filtersVisible = true;
+
+        if (toggleFiltersBtn) {
+            toggleFiltersBtn.addEventListener('click', () => {
+                filtersVisible = !filtersVisible;
+                filtersContainer.classList.toggle('hidden', !filtersVisible);
+                toggleFiltersBtn.setAttribute('title', filtersVisible ? 'Hide Filters' : 'Show Filters');
+            });
+        }
+
+        // Filter functionality - server-side filtering
+        const searchInput = document.getElementById('searchProject');
+        const programFilter = document.getElementById('filterProgram');
+        const yearFilter = document.getElementById('filterYear');
+        const trackFilter = document.getElementById('filterTrack');
+        const techFilterButton = document.getElementById('techFilterButton');
+        const techFilterDropdown = document.getElementById('techFilterDropdown');
+        const techFilterLabel = document.getElementById('techFilterLabel');
+        const techCheckboxes = document.querySelectorAll('.tech-checkbox');
+
+        // Initialize filter values from URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        searchInput.value = urlParams.get('search') || '';
+        programFilter.value = urlParams.get('program') || '';
+        yearFilter.value = urlParams.get('yearLevel') || '';
+        trackFilter.value = urlParams.get('track') || '';
+
+        // Set initial values for selected technologies
+        const selectedTechs = <%- JSON.stringify(selectedLanguages || []) %>;
+        if (selectedTechs.length > 0) {
+            techCheckboxes.forEach(checkbox => {
+                if (selectedTechs.includes(checkbox.value)) {
+                    checkbox.checked = true;
+                }
+            });
+            updateTechFilterLabel();
+        }
+
+        // Toggle technology filter dropdown
+        if (techFilterButton) {
+            techFilterButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                techFilterDropdown.style.display = techFilterDropdown.style.display === 'none' ? 'block' : 'none';
+            });
+        }
+
+        // Close dropdown when clicking outside (without applying)
+        document.addEventListener('click', (e) => {
+            if (techFilterButton && !techFilterButton.contains(e.target) && !techFilterDropdown.contains(e.target)) {
+                techFilterDropdown.style.display = 'none';
+            }
+        });
+
+        // Handle individual technology checkboxes - just update label
+        techCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                updateTechFilterLabel();
+            });
+        });
+        
+        // Apply button - apply filters and close dropdown
+        const applyTechFilterBtn = document.getElementById('applyTechFilter');
+        if (applyTechFilterBtn) {
+            applyTechFilterBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                techFilterDropdown.style.display = 'none';
+                applyFilters();
+            });
+        }
+        
+        // Clear button - uncheck all and update label
+        const clearTechFilterBtn = document.getElementById('clearTechFilter');
+        if (clearTechFilterBtn) {
+            clearTechFilterBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                techCheckboxes.forEach(cb => cb.checked = false);
+                updateTechFilterLabel();
+                techFilterDropdown.style.display = 'none';
+                applyFilters();
+            });
+        }
+
+        // Update the label to show selected technologies
+        function updateTechFilterLabel() {
+            const selected = Array.from(techCheckboxes).filter(cb => cb.checked);
+            if (selected.length === 0) {
+                techFilterLabel.textContent = 'Technologies';
+            } else if (selected.length === 1) {
+                techFilterLabel.textContent = selected[0].value;
+            } else {
+                techFilterLabel.textContent = `${selected.length} Technologies`;
+            }
+        }
+
+        // Show/hide track filter based on year and program
+        function updateTrackFilterVisibility() {
+            const year = yearFilter.value;
+            const program = programFilter.value;
+            
+            // Show track filter only for 3rd or 4th year BSIT/BSCS students
+            const shouldShowTrack = (program === 'BSIT' || program === 'BSCS') && (year === '3' || year === '4');
+            
+            if (shouldShowTrack) {
+                trackFilter.style.display = '';
+                
+                const options = trackFilter.querySelectorAll('option[data-program]');
+                options.forEach(option => {
+                    const optionProgram = option.getAttribute('data-program');
+                    if (optionProgram === program) {
+                        option.style.display = '';
+                    } else {
+                        option.style.display = 'none';
+                    }
+                });
+                
+                const selectedOption = trackFilter.options[trackFilter.selectedIndex];
+                if (selectedOption && selectedOption.getAttribute('data-program') !== program && selectedOption.value !== '') {
+                    trackFilter.value = '';
+                }
+            } else {
+                trackFilter.style.display = 'none';
+                trackFilter.value = '';
+            }
+        }
+
+        updateTrackFilterVisibility();
+
+        function applyFilters() {
+            const params = new URLSearchParams();
+            
+            const search = searchInput.value.trim();
+            const program = programFilter.value;
+            const year = yearFilter.value;
+            const track = trackFilter.value;
+            
+            const selectedTechnologies = Array.from(techCheckboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+
+            if (search) params.set('search', search);
+            if (program) params.set('program', program);
+            if (year) params.set('yearLevel', year);
+            if (track) params.set('track', track); // Track filter works independently
+            
+            selectedTechnologies.forEach(tech => {
+                params.append('language', tech);
+            });
+
+            window.location.href = '/home' + (params.toString() ? '?' + params.toString() : '');
+        }
+
+        // Apply filters on change
+        programFilter.addEventListener('change', () => {
+            updateTrackFilterVisibility();
+            applyFilters();
+        });
+        yearFilter.addEventListener('change', () => {
+            updateTrackFilterVisibility();
+            applyFilters();
+        });
+        trackFilter.addEventListener('change', applyFilters);
+
+        // Search only on Enter key press
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                applyFilters();
+            }
+        });
+    </script>
+
+    <!-- Socket.IO Client -->
+    <script src="/socket.io/socket.io.js"></script>
+    <% if (locals.currentUser) { %>
+    <script>
+        const USER_ID = "<%= currentUser._id || '' %>";
+    </script>
+    <% } %>
+    
+    <!-- External Scripts -->
+    <script src="/js/home-modern.js"></script>
+    
+    <!-- Modal System -->
+    <script src="/js/modal.js"></script>
+    
+    <!-- Notification System -->
+    <script src="/js/notification.js"></script>
+    
+    <!-- Real-time Notifications System -->
+    <script src="/js/notifications.js"></script>
+    <!-- Liked Projects System -->
+    <script src="/js/liked-projects.js"></script>
+</body>
+</html>
