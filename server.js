@@ -3,6 +3,7 @@ const session = require('express-session');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
+const axios = require('axios');
 require('dotenv').config();
 
 // Import database configuration
@@ -65,37 +66,7 @@ app.use(session({
 }));
 
 
-console.log('=======')
-// Chat endpoint
-app.post('/api/support/chat', async (req, res) => {
-  const { message, userId } = req.body;
-  
-  try {
-    const response = await axios.post(
-      process.env.AI_PLATFORM_URL + '/api/v1/chat',
-      { prompt: message },
-      {
-        headers: {
-          'X-API-Key': process.env.AI_PLATFORM_API_KEY,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-    
-    // Log for your analytics
-    console.log(`User ${userId} asked: ${message}`);
-    
-    res.json({
-      reply: response.data.message,
-      model: response.data.model
-    });
-  } catch (error) {
-    console.error('AI Platform Error:', error.message);
-    res.status(500).json({ 
-      error: 'Sorry, our support assistant is temporarily unavailable.' 
-    });
-  }
-});
+
 
 
 
@@ -205,6 +176,33 @@ app.get('/debug-env', (req, res) => {
     NODE_ENV: process.env.NODE_ENV,
     MONGODB_URI_EXISTS: !!process.env.MONGODB_URI
   });
+});
+
+console.log('=======')
+// Chat endpoint
+app.post('/api/support/chat', async (req, res) => {
+  const { message, userId } = req.body;
+  try {
+    const response = await axios.post(process.env.AI_PLATFORM_URL + '/api/v1/chat',
+      { prompt: message },
+      {
+        headers: {
+          'X-API-Key': process.env.AI_PLATFORM_API_KEY,
+          'Content-Type': 'application/json'
+        }
+      });
+    
+    // Log for your analytics
+    console.log(`User ${userId} asked: ${message}`);
+    
+    res.json({
+      reply: response.data.message,
+      model: response.data.model
+    });
+  } catch (error) {
+    console.error('AI Platform Error:', error.message);
+    res.status(500).json({ error: 'Sorry, our support assistant is temporarily unavailable.' });
+  }
 });
 
 // 404 Handler
