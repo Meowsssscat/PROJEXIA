@@ -155,6 +155,9 @@ app.get('/signup', (req, res) => res.redirect('/auth?type=signup'));
 app.get('/confirmation', (req, res) => res.render('confirmation'));
 app.get('/forgot-password', (req, res) => res.render('forgotPassword'));
 
+// Test chat page
+app.get('/test-chat', (req, res) => res.render('test-chat'));
+
 // Logout route - clears session and redirects to landing page
 app.get('/auth/logout', (req, res) => {
   req.session.destroy((err) => {
