@@ -64,6 +64,42 @@ app.use(session({
   proxy: process.env.NODE_ENV === 'production' // Trust Railway's proxy
 }));
 
+
+console.log('=======')
+// Chat endpoint
+app.post('/api/support/chat', async (req, res) => {
+  const { message, userId } = req.body;
+  
+  try {
+    const response = await axios.post(
+      process.env.AI_PLATFORM_URL + '/api/v1/chat',
+      { prompt: message },
+      {
+        headers: {
+          'X-API-Key': process.env.AI_PLATFORM_API_KEY,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    
+    // Log for your analytics
+    console.log(`User ${userId} asked: ${message}`);
+    
+    res.json({
+      reply: response.data.message,
+      model: response.data.model
+    });
+  } catch (error) {
+    console.error('AI Platform Error:', error.message);
+    res.status(500).json({ 
+      error: 'Sorry, our support assistant is temporarily unavailable.' 
+    });
+  }
+});
+
+
+
+
 // Optional user middleware - Attach user to req if logged in (doesn't require authentication)
 app.use(async (req, res, next) => {
   try {
