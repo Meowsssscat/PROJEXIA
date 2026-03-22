@@ -134,6 +134,8 @@ const aboutRoutes = require('./routes/about');
 app.use('/about', aboutRoutes);
 const likedProjectsRoutes = require('./routes/likedProjects');
 app.use('/', likedProjectsRoutes);
+const recommendationRoutes = require('./routes/recommendations');
+app.use('/api/recommendations', recommendationRoutes);
 
 // API: Get current user ID (for notifications)
 app.get('/api/user-id', (req, res) => {
