@@ -502,6 +502,18 @@
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 applyFilters();
+                const query = searchInput.value.trim();
+                if (query) {
+                    console.log('[AI Search] triggered, query:', query);
+                    fetch('/api/support/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: query })
+                    })
+                    .then(res => { console.log('[AI Search] status:', res.status); return res.json(); })
+                    .then(data => console.log('[AI Response]', data.reply))
+                    .catch(err => console.error('[AI Error]', err));
+                }
             }
         });
     </script>
