@@ -501,7 +501,6 @@
         // Search only on Enter key press
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                applyFilters();
                 const query = searchInput.value.trim();
                 if (query) {
                     console.log('[AI Search] triggered, query:', query);
@@ -514,6 +513,7 @@
                     .then(data => console.log('[AI Response]', data.reply))
                     .catch(err => console.error('[AI Error]', err));
                 }
+                applyFilters();
             }
         });
     </script>
