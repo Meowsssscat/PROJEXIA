@@ -130,6 +130,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // Event listeners for filters
     if (searchProject) {
         searchProject.addEventListener('input', filterProjects);
+        searchProject.addEventListener('input', async (e) => {
+            const query = e.target.value.trim();
+            if (!query) return;
+            try {
+                console.log('qwww')
+                const res = await fetch('/api/support/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: query })
+                });
+                const data = await res.json();
+                console.log('[AI Response]', data.reply);
+            } catch (err) {
+                console.error('[AI Error]', err);
+            }
+        });
     }
     if (filterProgram) {
         filterProgram.addEventListener('change', filterProjects);

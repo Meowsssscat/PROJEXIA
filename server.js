@@ -192,7 +192,7 @@ app.post('/api/support/chat', async (req, res) => {
       { prompt: message },
       {
         headers: {
-          'X-API-Key': process.env.AI_PLATFORM_API_KEY,
+          'X-API-Key': process.env.AI_API_KEY,
           'Content-Type': 'application/json'
         }
       });
