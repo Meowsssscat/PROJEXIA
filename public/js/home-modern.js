@@ -132,14 +132,16 @@ document.addEventListener('DOMContentLoaded', () => {
         searchProject.addEventListener('input', filterProjects);
         searchProject.addEventListener('input', async (e) => {
             const query = e.target.value.trim();
+            console.log('[AI Search] triggered, query:', query);
             if (!query) return;
             try {
-                console.log('qwww')
+                console.log('[AI Search] sending request to /api/support/chat...');
                 const res = await fetch('/api/support/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message: query })
                 });
+                console.log('[AI Search] response status:', res.status);
                 const data = await res.json();
                 console.log('[AI Response]', data.reply);
             } catch (err) {

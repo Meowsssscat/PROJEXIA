@@ -183,9 +183,10 @@ app.get('/debug-env', (req, res) => {
   });
 });
 
-console.log('=======')
+
 // Chat endpoint
 app.post('/api/support/chat', async (req, res) => {
+  console.log('llwlwl')
   const { message, userId } = req.body;
   try {
     const response = await axios.post(process.env.AI_PLATFORM_URL + '/api/v1/chat',
