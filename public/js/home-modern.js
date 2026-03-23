@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!query) return;
             try {
                 console.log('[AI Search] sending request to /api/support/chat...');
-                const res = await fetch('/api/support/chat', {
+                const res = await fetch('/api/v1/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message: query })

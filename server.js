@@ -185,7 +185,7 @@ app.get('/debug-env', (req, res) => {
 
 
 // Chat endpoint
-app.post('/api/support/chat', async (req, res) => {
+app.post('/api/v1/chat', async (req, res) => {
   console.log('llwlwl')
   const { message, userId } = req.body;
   try {
@@ -206,8 +206,8 @@ app.post('/api/support/chat', async (req, res) => {
       model: response.data.model
     });
   } catch (error) {
-    console.error('AI Platform Error:', error.message);
-    res.status(500).json({ error: 'Sorry, our support assistant is temporarily unavailable.' });
+    console.error('AI Platform Error:', error.message, error.response?.data);
+    res.status(500).json({ error: 'Sorry, our support assistant is temporarily unavailable.', detail: error.message });
   }
 });
 
