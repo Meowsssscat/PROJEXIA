@@ -137,6 +137,10 @@ app.use('/', likedProjectsRoutes);
 const recommendationRoutes = require('./routes/recommendations');
 app.use('/api/recommendations', recommendationRoutes);
 
+// AI Tools API (for external AI function calling)
+const aiToolsRoutes = require('./routes/aiTools');
+app.use('/api/ai-tools', aiToolsRoutes);
+
 // API: Get current user ID (for notifications)
 app.get('/api/user-id', (req, res) => {
   if (req.session?.userId) {
