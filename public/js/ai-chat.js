@@ -44,9 +44,9 @@
         body: JSON.stringify({
           prompt: text,
           userId: userId || undefined,
-          context: {
-            projectId: widget?.dataset.projectId || undefined
-          }
+        //   context: {
+        //     projectId: widget?.dataset.projectId || undefined
+        //   }
         })
       });
 
