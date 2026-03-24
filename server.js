@@ -190,127 +190,17 @@ app.get('/debug-env', (req, res) => {
 
 // Chat endpoint
 app.post('/api/v1/chat', async (req, res) => {
-  const { message, userId, context } = req.body;
-
+  const { prompt, userId } = req.body;
   try {
-    const Project = require('./models/uploadProject');
-    const User = require('./models/User');
-    const Like = require('./models/likes');
-    const View = require('./models/views');
-
-    let contextBlocks = [];
-
-    const msg = (message || '').toLowerCase();
-
-    // --- Project search by technology ---
-    if (msg.includes('react') || msg.includes('node') || msg.includes('vue') ||
-        msg.includes('python') || msg.includes('project') || msg.includes('use') ||
-        msg.includes('built with') || msg.includes('technology') || msg.includes('tech')) {
-
-      // Extract tech keywords from message
-      const techKeywords = ['react', 'node', 'vue', 'angular', 'python', 'java',
-        'php', 'laravel', 'django', 'flutter', 'kotlin', 'swift', 'mongodb',
-        'mysql', 'postgresql', 'express', 'next', 'typescript', 'javascript'];
-      const foundTechs = techKeywords.filter(t => msg.includes(t));
-
-      const query = foundTechs.length > 0
-        ? { technologies: { $in: foundTechs.map(t => new RegExp(t, 'i')) } }
-        : {};
-
-      const projects = await Project.find(query).select('name description technologies').limit(15).lean();
-
-      if (projects.length > 0) {
-        contextBlocks.push(
-          'Projects in the platform:\n' +
-          projects.map(p => `- "${p.name}": ${p.description || 'No description'}. Tech: ${(p.technologies || []).join(', ')}`).join('\n')
-        );
-      }
-    }
-
-    // --- Similar projects (if context.projectId passed) ---
-    if (context?.projectId && (msg.includes('similar') || msg.includes('like this') || msg.includes('recommend'))) {
-      const current = await Project.findById(context.projectId).select('name technologies').lean();
-      if (current) {
-        const similar = await Project.find({
-          _id: { $ne: current._id },
-          technologies: { $in: current.technologies }
-        }).select('name description technologies').limit(8).lean();
-
-        contextBlocks.push(
-          `Current project: "${current.name}" uses ${current.technologies.join(', ')}.\n` +
-          'Similar projects:\n' +
-          similar.map(p => `- "${p.name}": ${p.description || 'No description'}. Tech: ${(p.technologies || []).join(', ')}`).join('\n')
-        );
-      }
-    }
-
-    // --- Explain current project ---
-    if (context?.projectId && (msg.includes('explain') || msg.includes('what does') || msg.includes('about this'))) {
-      const proj = await Project.findById(context.projectId).select('name description technologies').lean();
-      if (proj) {
-        contextBlocks.push(
-          `Project to explain:\nName: ${proj.name}\nDescription: ${proj.description || 'No description provided'}\nTechnologies: ${(proj.technologies || []).join(', ')}`
-        );
-      }
-    }
-
-    // --- Top contributors ---
-    if (msg.includes('contributor') || msg.includes('top user') || msg.includes('most liked') || msg.includes('popular user')) {
-      const now = new Date();
-      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-
-      const topLiked = await Like.aggregate([
-        { $match: { createdAt: { $gte: startOfMonth } } },
-        { $lookup: { from: 'allprojects', localField: 'projectId', foreignField: '_id', as: 'project' } },
-        { $unwind: '$project' },
-        { $group: { _id: '$project.userId', likeCount: { $sum: 1 } } },
-        { $sort: { likeCount: -1 } },
-        { $limit: 5 }
-      ]);
-
-      const userIds = topLiked.map(t => t._id);
-      const users = await User.find({ _id: { $in: userIds } }).select('fullName program year').lean();
-      const userMap = {};
-      users.forEach(u => { userMap[u._id.toString()] = u; });
-
-      if (topLiked.length > 0) {
-        contextBlocks.push(
-          'Top contributors this month (by likes received):\n' +
-          topLiked.map((t, i) => {
-            const u = userMap[t._id.toString()];
-            return `${i + 1}. ${u?.fullName || 'Unknown'} (${u?.program || ''} ${u?.year || ''}) - ${t.likeCount} likes`;
-          }).join('\n')
-        );
-      }
-    }
-
-    // Build final prompt
-    const systemContext = contextBlocks.length > 0
-      ? `You are a helpful assistant for Projexia, a project showcase platform for CCS students. Use the following data to answer the user's question accurately.\n\n${contextBlocks.join('\n\n')}\n\n`
-      : `You are a helpful assistant for Projexia, a project showcase platform for CCS students. `;
-
-    const fullPrompt = systemContext + `User asks: ${message}`;
-
     const response = await axios.post(
       process.env.AI_PLATFORM_URL + '/api/v1/chat',
-      { prompt: fullPrompt },
-      {
-        headers: {
-          'X-API-Key': process.env.AI_API_KEY,
-          'Content-Type': 'application/json'
-        }
-      }
+      { prompt, user_id: userId || null },
+      { headers: { 'X-API-Key': process.env.AI_API_KEY, 'Content-Type': 'application/json' } }
     );
-
-    console.log(`User ${userId} asked: ${message}`);
-
-    res.json({
-      reply: response.data.message,
-      model: response.data.model
-    });
+    res.json({ reply: response.data.message, model: response.data.model });
   } catch (error) {
     console.error('AI Platform Error:', error.message, error.response?.data);
-    res.status(500).json({ error: 'Sorry, our support assistant is temporarily unavailable.', detail: error.message });
+    res.status(500).json({ error: 'Sorry, our support assistant is temporarily unavailable.' });
   }
 });
 

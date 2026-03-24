@@ -44,12 +44,9 @@
         body: JSON.stringify({
           prompt: text,
           userId: userId || undefined,
-        //   context: {
-        //     projectId: widget?.dataset.projectId || undefined
-        //   }
         })
       });
-
+      
       const data = await res.json();
       typing.remove();
 
