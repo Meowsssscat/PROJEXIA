@@ -41,7 +41,13 @@
       const res = await fetch('/api/v1/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: text, user_id: userId || undefined })
+        body: JSON.stringify({
+          prompt: text,
+          userId: userId || undefined,
+          context: {
+            projectId: widget?.dataset.projectId || undefined
+          }
+        })
       });
 
       const data = await res.json();
