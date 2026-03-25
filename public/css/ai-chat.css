@@ -109,6 +109,25 @@
   font-style: italic;
 }
 
+.ai-msg.bot a {
+  color: hsl(var(--primary));
+  text-decoration: underline;
+  word-break: break-all;
+}
+
+.ai-msg.bot a:hover {
+  opacity: 0.8;
+}
+
+.ai-msg.bot ol {
+  margin: 0.25rem 0 0 1rem;
+  padding: 0;
+}
+
+.ai-msg.bot li {
+  margin-bottom: 0.4rem;
+}
+
 .ai-chat-footer {
   display: flex;
   gap: 0.5rem;

@@ -18,10 +18,40 @@
   });
   sendBtn.addEventListener('click', sendMessage);
 
+  function parseMarkdown(text) {
+    // Escape HTML first
+    let html = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+
+    // Bold: **text**
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+    // Links: [label](url)
+    html = html.replace(
+      /\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g,
+      '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
+    );
+
+    // Numbered list items: lines starting with "1. ", "2. ", etc.
+    html = html.replace(/^(\d+)\.\s+(.+)$/gm, '<li>$2</li>');
+    html = html.replace(/(<li>.*<\/li>)/s, '<ol>$1</ol>');
+
+    // Line breaks
+    html = html.replace(/\n/g, '<br>');
+
+    return html;
+  }
+
   function addMessage(text, type) {
     const div = document.createElement('div');
     div.className = `ai-msg ${type}`;
-    div.textContent = text;
+    if (type === 'bot') {
+      div.innerHTML = parseMarkdown(text);
+    } else {
+      div.textContent = text;
+    }
     messages.appendChild(div);
     messages.scrollTop = messages.scrollHeight;
     return div;
