@@ -31,7 +31,10 @@
     // Links: [label](url)
     html = html.replace(
       /\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g,
-      '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
+      (match, label, url) => {
+        console.log(`[AI Chat Link] ${label}: ${url}`);
+        return `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+      }
     );
 
     // Numbered list items: lines starting with "1. ", "2. ", etc.
