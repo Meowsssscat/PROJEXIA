@@ -84,10 +84,12 @@ app.use(async (req, res, next) => {
       req.user = null;
       res.locals.user = null;
     }
+    res.locals.sessionID = req.sessionID || '';
   } catch (err) {
     console.error('Error in optional user middleware:', err);
     req.user = null;
     res.locals.user = null;
+    res.locals.sessionID = '';
   }
   next();
 });
