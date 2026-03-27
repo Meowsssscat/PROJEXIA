@@ -7,6 +7,7 @@
   const messages = document.getElementById('ai-chat-messages');
   const widget = document.getElementById('ai-chat-widget');
   const userId = widget?.dataset.userId || null;
+  const sessionId = widget?.dataset.sessionId || null;
 
   if (!toggle) return;
 
@@ -76,7 +77,8 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           prompt: text,
-          userId: userId || undefined,
+          user_id: userId || undefined,
+          session_id: sessionId || undefined
         })
       });
       
