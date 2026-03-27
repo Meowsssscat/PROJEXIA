@@ -83,7 +83,9 @@
           session_id: sessionId || undefined
         })
       });
-      
+      console.log('qwq')
+      console.log(userId)
+      console.log(sessionId)
       const data = await res.json();
       typing.remove();
 
