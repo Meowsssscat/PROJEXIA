@@ -72,6 +72,8 @@
     const typing = addMessage('Thinking...', 'bot typing');
 
     try {
+      console.log('sasas')
+      console.log(sessionId)
       const res = await fetch('/api/v1/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
