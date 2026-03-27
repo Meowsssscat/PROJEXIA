@@ -192,16 +192,16 @@ app.get('/debug-env', (req, res) => {
 
 // Chat endpoint
 app.post('/api/v1/chat', async (req, res) => {
-  const { prompt, userId } = req.body;
+  const { prompt, user_id, session_id } = req.body;
   try {
     const response = await axios.post(
       process.env.AI_PLATFORM_URL + '/api/v1/chat',
-      { prompt, user_id: userId || null },
+      { prompt, user_id: user_id || null, session_id: session_id || null },
       { headers: { 'X-API-Key': process.env.AI_API_KEY, 'Content-Type': 'application/json' } }
     );
     res.json({ reply: response.data.message, model: response.data.model });
   } catch (error) {
-    console.error('AI Platform Error:', error.message, error.response?.data);
+    console.error('AI Platform Error:', error.message, error.response?.status, JSON.stringify(error.response?.data));
     res.status(500).json({ error: 'Sorry, our support assistant is temporarily unavailable.' });
   }
 });
