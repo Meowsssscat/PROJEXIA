@@ -19,6 +19,10 @@ async function moderateComment(text) {
     );
 
     const result = response.data;
+    console.log('ppppp')
+    console.log(result)
+
+
 
     // API returns: { flagged, category, confidence, action }
     // action: "allow" | "review" | "remove"
