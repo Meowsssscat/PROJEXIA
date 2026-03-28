@@ -18,7 +18,13 @@ async function analyzeComment(text, userId) {
         timeout: 5000
       }
     );
-    return response.data;
+
+    // response.data.message is a JSON string like '{"toxic":true,...}'
+    const result = typeof response.data.message === 'string'
+      ? JSON.parse(response.data.message)
+      : response.data.message;
+
+    return result;
   } catch (err) {
     console.error("[CommentAnalysis] Error:", err.message);
     console.error("[CommentAnalysis] Response data:", JSON.stringify(err.response?.data));
