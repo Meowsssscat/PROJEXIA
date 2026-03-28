@@ -5,6 +5,7 @@ const axios = require("axios");
  * Returns { flagged: boolean, reason: string|null }
  */
 async function moderateComment(text) {
+  console.log("[ModerationService] Called with:", text);
   try {
     const response = await axios.post(
       `${process.env.AI_PLATFORM_URL}/api/v1/chat`,
@@ -42,8 +43,8 @@ async function moderateComment(text) {
 
     return { flagged: false, reason: null };
   } catch (err) {
-    // If moderation service is down, fail open (allow comment) but log the error
     console.error("[ModerationService] Error:", err.message);
+    console.error("[ModerationService] Full error:", err.response?.data || err.stack);
     return { flagged: false, reason: null };
   }
 }
