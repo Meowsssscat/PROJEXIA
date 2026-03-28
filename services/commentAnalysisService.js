@@ -5,6 +5,7 @@ const axios = require("axios");
  * Returns the API response data, or null if the request fails.
  */
 async function analyzeComment(text) {
+  console.log('[CommentAnalysis] Sending text to API:', text);
   try {
     const response = await axios.post(
       `${process.env.AI_PLATFORM_URL}/api/v1/chat`,
