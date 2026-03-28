@@ -4,6 +4,7 @@ const Comment = require('../models/comments');
 const Like = require('../models/likes');
 const View = require('../models/views');
 const cloudinary = require('../config/cloudinaryConfig');
+const { analyzeComment } = require('../services/commentAnalysisService');
 
 exports.getProject = async (req, res) => {
     try {
@@ -299,6 +300,10 @@ exports.addComment = async (req, res) => {
             return res.status(404).json({ error: 'Project not found' });
         }
         
+        // Analyze comment before saving
+        const analysis = await analyzeComment(text.trim());
+        console.log('[CommentAnalysis] Result:', analysis);
+
         // Create comment
         const newComment = await Comment.create({
             userId,
