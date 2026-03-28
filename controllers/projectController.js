@@ -4,7 +4,6 @@ const Comment = require('../models/comments');
 const Like = require('../models/likes');
 const View = require('../models/views');
 const cloudinary = require('../config/cloudinaryConfig');
-const { moderateComment } = require('../services/moderationService');
 
 exports.getProject = async (req, res) => {
     try {
@@ -284,11 +283,6 @@ exports.addComment = async (req, res) => {
         const userId = req.session.userId;
         const { text } = req.body;
         
-        console.log('=== ADD COMMENT HIT ===');
-        console.log('projectId:', projectId);
-        console.log('userId:', userId);
-        console.log('text:', text);
-        
         if (!userId) {
             return res.status(401).json({ error: 'User not logged in' });
         }
@@ -297,12 +291,6 @@ exports.addComment = async (req, res) => {
             return res.status(400).json({ error: 'Comment text is required' });
         }
         
-        // Moderate comment before saving
-        const { flagged, reason } = await moderateComment(text.trim());
-        if (flagged) {
-            return res.status(400).json({ error: reason });
-        }
-
         // Get project and user info
         const project = await Project.findById(projectId);
         const user = await User.findById(userId);
