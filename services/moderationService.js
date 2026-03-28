@@ -19,7 +19,7 @@ async function moderateComment(text) {
       }
     );
 
-    const result = response.data;
+    const result = response.data.message;
     console.log('ppppp')
     console.log(result)
 
