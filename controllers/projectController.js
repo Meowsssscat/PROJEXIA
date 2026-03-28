@@ -301,7 +301,7 @@ exports.addComment = async (req, res) => {
         }
         
         // Analyze comment before saving
-        const analysis = await analyzeComment(text.trim());
+        const analysis = await analyzeComment(text);
         console.log('[CommentAnalysis] Result:', analysis);
 
         // Create comment

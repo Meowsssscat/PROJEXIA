@@ -7,12 +7,12 @@ const axios = require("axios");
 async function analyzeComment(text) {
   try {
     const response = await axios.post(
-      process.env.AI_PLATFORM_URL,
-      { text },
+      `${process.env.AI_PLATFORM_URL}/api/v1/chat`,
+      { prompt: text },
       {
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.COMMENT_ANALYSIS_API_KEY}`
+          "X-API-Key": process.env.COMMENT_MODERATOR_SERVICE
         },
         timeout: 5000
       }
