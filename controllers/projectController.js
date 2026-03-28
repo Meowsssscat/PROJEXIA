@@ -284,6 +284,11 @@ exports.addComment = async (req, res) => {
         const userId = req.session.userId;
         const { text } = req.body;
         
+        console.log('=== ADD COMMENT HIT ===');
+        console.log('projectId:', projectId);
+        console.log('userId:', userId);
+        console.log('text:', text);
+        
         if (!userId) {
             return res.status(401).json({ error: 'User not logged in' });
         }
