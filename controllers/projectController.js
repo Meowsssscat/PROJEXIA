@@ -303,7 +303,7 @@ exports.addComment = async (req, res) => {
         // Analyze comment before saving
         const analysis = await analyzeComment(text, userId);
         console.log('[CommentAnalysis] Result:', analysis);
-        s
+        
 
         if (analysis && (analysis.toxic || analysis.hate_speech || analysis.spam || analysis.inappropriate_content)) {
             return res.status(400).json({ error: 'Your comment was flagged and could not be posted.' });
